@@ -1,0 +1,15 @@
+Tournament: test
+Tatamis: 3
+Finallblock: NO 
+U16 Duo Mixed 2
+U16 Duo Men 5
+U16 Duo Women 8
+U18 Duo Mixed 12
+U18 Duo Men 5
+U18 Duo Women 9
+U21 Duo Mixed 7
+U21 Duo Men 3
+U21 Duo Women 8
+Adults Duo Mixed 12
+Adults Duo Men 7
+Adults Duo Women 7
