@@ -1,6 +1,6 @@
 Tournament: test
 Tatamis: 3
-Finallblock: NO 
+Finallblock: YES 
 U16 Duo Mixed 2
 U16 Duo Men 5
 U16 Duo Women 8
