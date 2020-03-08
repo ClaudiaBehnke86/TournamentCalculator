@@ -4,7 +4,7 @@ But moslty it is used for me to have a hands on example for python
 import sys
 import os
 import time
-
+import pprint
 from datetime import timedelta
 
 
@@ -12,8 +12,8 @@ def main():
     """ The main function """
     print("-------------------------")
     print("- Tournament Calculator -")
-    print("-------------------------")
     print("Part 1 - Create tournament")
+    print("-------------------------")
     print("")
     name = input("Please enter a name for the tournament: ")
     print("")
@@ -24,15 +24,16 @@ def main():
     print("")
     print("")
     print("----------------------------")
+    print("----------- Part 2 ---------")
     print("-- Please check your input: -")
     print("----------------------------")
     print("")
     print("Catergories and Participants")
 
-    print_dict(cat_par)
     i = 0
 
     while i < 1:
+        print_dict(cat_par)
         check = input("Please type in name of category you want to correct \"OK\" to continue to next step ")
         if check in cat_par:
             print("Change catergory", check)
@@ -48,7 +49,8 @@ def main():
         else:
             print("Catergory", check, "not known. Please try again")
 
-    cat_fights_dict, cat_finals_dict, cat_time_dict = calculate_fight_time(cat_par, final, tatami)
+    cat_fights_dict, cat_finals_dict, cat_time_dict, av_time = calculate_fight_time(cat_par, final, tatami)
+    
     print("")
     print("----------------------------")
     print("----------- Part 3 ---------")
@@ -75,18 +77,30 @@ def main():
             if(m_new > 60 or m_new < 0):
                 print("Minutes must between 0 and 60")
         starttime = timedelta(hours=h_new, minutes=m_new)
+    
     #########################
+    tatamis = list(range(0, tatami)) #create tatamis
+    
+    lpt = LPT(cat_time_dict, tatamis, av_time)
+    scheduled_jobs, loads = lpt.run()
+    print("Scheduled Jobs: \n {} ".format(pprint.pformat(scheduled_jobs)))
+    
+    loads = [x+starttime.seconds for x in loads] #add starttime to loads
+    loads = [str(timedelta(seconds=x)) for x in loads]
+    
+    print("End time: {}".format(pprint.pformat(loads)))
+    
     sys.exit()
 
 def check_yes_no():
     ''' Function to convert Yes No in a Bool'''
     check = False
-    inp1 = input("Please type Yes / No : ")
+    inp1 = input("Please type YES / NO : ")
     while check == False:
-        if inp1 == "Yes":
+        if inp1 == "YES":
             inp1 = True
             check = True
-        elif inp1 == "No":
+        elif inp1 == "NO":
             inp1 = False
             check = True
         else:
@@ -317,8 +331,6 @@ def read_in_file(fname):
             j = int(columns[4])
         cat_par[catname] = int(j)
         par_count += int(j)
-    time.sleep(1)
-    print(cat_par)
     return cat_par, final, par_count, tatami
 
 def print_dict(dict_inp):
@@ -340,10 +352,10 @@ def calculate_fight_time(dict_inp, final, tatami):
     low_par_num = {0:0, 1:0, 2:3, 3:3, 4:6, 5:10, 6:9, 7:12} #fights for low numbers of participants
     # 8:11 from 8 on its always +2
 
-    time_inp = {"Fighting":timedelta(minutes=5, seconds=30),
+    time_inp = {"Fighting":timedelta(minutes=6, seconds=30),
                 "Duo":timedelta(minutes=7),
                 "Show":timedelta(minutes=2),
-                "NeWaza":timedelta(minutes=7)}
+                "NeWaza":timedelta(minutes=8)}
     #fight time.
     #timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)
 
@@ -378,15 +390,122 @@ def calculate_fight_time(dict_inp, final, tatami):
     print("--------- Summary ----------")
     print("----------------------------")
    
+    av_time = tot_time/int(tatami)
     print("You have",
           par_num_total, "participants, which will fight ",
           fight_num_total, " matches in ",
           len(dict_inp), "categories with a total time fight time of (HH:MM:SS)",
           tot_time+final_time)
     print("You have", len(cat_finals_dict), "finals which will take", final_time)
-    print("Average time per tatami will be", tot_time/int(tatami), "with", tatami, "tatamis")
+    print("Average time per tatami will be", av_time , "with", tatami, "tatamis")
 
 
-    return cat_fights_dict, cat_finals_dict, cat_time_dict
+    return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time
+
+class LPT(object):
+    """Implementation of LPT algorithm (Longest Processing Time)."""
+
+    def __init__(self, cat_time_dict, tatamis,av_time):
+        """Initializing with J Jobs, M tatamis."""
+        self.jobs = cat_time_dict
+        self.tatamis = tatamis
+        self.av_time = av_time
+        
+    def run(self):
+        """Run the LPT Algorithm."""
+        scheduled_jobs, loads = self.lpt_algorithm()
+        return scheduled_jobs, loads
+
+    def lpt_algorithm(self):
+        """Run the LPT Algorithm.
+        Steps:
+        0. Split catergories in discipline dictionary
+         Sort J jobs per discipline in descending order of processing time.
+            Check if a catergory can be put totally on one tatami
+        2. Create a array representing loads on each tatami
+                      a. Initially all loads will be 0
+        1. Sort J jobs per discipline in descending order of processing time.
+       
+        3. Create an array of array representing the scheduled jobs
+           on each tatami
+           a. Initially no jobs will be scheduled on the tatamis
+        4. Assign each job to a tatami based on lowest load
+        """
+        # Step 0
+    
+        duoDict = {}
+        fighDict = {}
+        newaDict = {}
+        showDict = {}
+        for (key, value) in self.jobs.items():
+            # Check if key is the same add pair to new dictionary
+            if "Duo" in key:
+                duoDict[key] = value
+            if "Fighting" in key:
+                fighDict[key] = value
+            if "Ne-Waza" in key:
+                newaDict[key] = value
+            if "Show" in key:
+                showDict[key] = value
+        
+        # Step 2, Step 3
+        loads = []
+        scheduled_jobs = []
+        for t in self.tatamis:
+            loads.append(0)
+            scheduled_jobs.append([])
+      
+        #Step2
+        sorted_jobs_duo ={k: v for k, v in sorted(duoDict.items(), key=lambda item: item[1],reverse=True)}
+        duo_time = 0
+        for k, v in sorted_jobs_duo.items():
+            duo_time +=v.seconds
+        if duo_time <= self.av_time.seconds : # relplace with avtime tatami
+            for job in sorted_jobs_duo:
+                scheduled_jobs[0].append(job)
+            loads[0] += duo_time
+            all(map( self.jobs.pop,duoDict ))   # remove objects in duo list from Jobs
+        
+        sorted_jobs_fight ={k: v for k, v in sorted(fighDict.items(), key=lambda item: item[1],reverse=True)}
+        sorted_jobs_newa ={k: v for k, v in sorted(newaDict.items(), key=lambda item: item[1],reverse=True)}
+        sorted_jobs_show ={k: v for k, v in sorted(showDict.items(), key=lambda item: item[1],reverse=True)}
+        
+        
+        sorted_jobs ={k: v for k, v in sorted(self.jobs.items(), key=lambda item: item[1],reverse=True)}
+            
+
+        # Step 4
+        dis_in = ["Fighting", "Duo", "Show", "Ne-Waza"]
+        
+        for job in sorted_jobs:
+            
+#            for i in dis_in:
+#                if i in job:
+#                    jobcat = i
+#           
+            minloadtatami = self._minloadtatami(loads)
+        
+#            for x in scheduled_jobs[minloadtatami]:
+#                if jobcat in x:
+#
+            scheduled_jobs[minloadtatami].append(job)
+                    
+            loads[minloadtatami] += sorted_jobs[job].seconds
+        return scheduled_jobs, loads
+
+    def _minloadtatami(self, loads):
+        """Find the tatami with the minimum load.
+        Break the tie of tatamis having same load on
+        first come first serve basis.
+        """
+        minload = min(loads)
+        for proc, load in enumerate(loads):
+            if load == minload:
+                return proc
+    
+
 
 main()
+
+
+
