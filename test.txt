@@ -40,6 +40,9 @@ Adults Fighting Women 71kg 7
 Adults Duo Women 7
 Adults Duo Mixed 9
 Adults Duo Men 3
+Adults Show Women 8
+Adults Show Mixed 3
+Adults Show Men 0
 Adults Ne-Waza Men 62kg 10
 Adults Ne-Waza Men 69kg 13
 Adults Ne-Waza Men 77kg 14

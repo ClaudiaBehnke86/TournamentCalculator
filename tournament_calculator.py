@@ -4,10 +4,11 @@ But mostly it is used for me to have a hands on example for python
 import sys
 import os
 import  time
-#import pprint # needed for nice prints
+import pprint # needed for nice prints
 from datetime import timedelta
 import matplotlib.pyplot as plt
-
+import itertools # for permutations of discipline order
+import statistics # for standard devitation (to desicde which order is the best)
 def main():
     """ The main function """
     print("-------------------------")
@@ -20,8 +21,8 @@ def main():
 
     age_inp = ["U16", "U18", "U21", "Adults"] #the supported age catergories
     #dis_inp = ["Ne-Waza", "Fighting", "Duo", "Show"] #the supported disciplines
-    dis_inp = ["Fighting", "Duo", "Show","Ne-Waza"] #the supported disciplines
-    #dis_inp = ["Duo", "Show","Ne-Waza","Fighting"] # crashes...
+    #dis_inp = ["Fighting", "Duo", "Show","Ne-Waza"] #the supported disciplines
+    dis_inp = ["Duo", "Show","Ne-Waza","Fighting"] # crashes...
     ### if you modify this, you will also need to change calculate_fight_time()
 
     check_tour(name, age_inp, dis_inp) #function to check if the tournament exists
@@ -37,6 +38,7 @@ def main():
     print("Catergories and Participants")
     cat_par = check_input(cat_par_inp)
     cat_fights_dict, cat_finals_dict, cat_time_dict, av_time = calculate_fight_time(cat_par, final, tatami)
+    starttime = starttime_calc()
     print("")
     print("----------------------------")
     print("----------- Part 3 ---------")
@@ -44,20 +46,70 @@ def main():
     print("----------------------------")
     print("")
 
-    starttime = starttime_calc()
+    
     #########################
-    scheduled_jobs, loads, endtime_planned = lpt_algorithm(cat_time_dict, av_time, dis_inp)
+    
+   
     #print("Scheduled Jobs: \n {} ".format(pprint.pformat(scheduled_jobs)))
-    loads = [x+starttime.seconds for x in loads] #add starttime to loads
-    loads = [str(timedelta(seconds=x)) for x in loads]
-    #print("End time: {}".format(pprint.pformat(loads)))
+    
+    #####
+    # run all with permutaitons of dis inp
+    permutations_object = itertools.permutations(dis_inp)
+    permutations_list = list(permutations_object)
+    
+    scheduled_jobs = [None] * len(permutations_list)
+    loads =  [None] * len(permutations_list)
+    loads_dev =  [None] * len(permutations_list)
+    endtime_planned =  [None] * len(permutations_list)
+    disz_changes =  [None] * len(permutations_list)
+
+    for i, j in enumerate(permutations_list):
+        #print(i, " i: j ", j)
+        scheduled_jobs[i], loads[i], endtime_planned[i], disz_changes[i] = lpt_algorithm(cat_time_dict, av_time, permutations_list[i])
+        loads_dev[i] = statistics.stdev(loads[i])
+        
+    # shortes endtime
+    indexes_min_endtime= [i for i, x in enumerate(endtime_planned) if x == min(endtime_planned)]
+    print("min enddime ", indexes_min_endtime)
+    print("Shortest endtime will be after " , "{:.2f}".format(min(endtime_planned)/3600) , " hrs ")
+    
+    #check for standarddeviation
+    loads_dev_min = []
+    for i in indexes_min_endtime:
+        loads_dev_min.append(loads_dev[i])
+        print(i ," : " ,permutations_list[i])
+    
+    indexes= [i for i, x in enumerate(loads_dev_min) if x == min(loads_dev_min)]
+    
+
+    
+    n = endtime_planned.index(min(endtime_planned))
+    
+    print(loads_dev_min)
+    
+    #m = endtime_planned.index(min(loads_dev))
+    #print("Shortest endtime will be after " , "{:.2f}".format(min(endtime_planned)/3600) , " hrs ")
+        
+    indexes= [i for i, x in enumerate(disz_changes) if x == min(disz_changes)]
+    print(indexes)
+   
+    #print(endtime_planned)
+    
+    #print(loads_dev)
+    #loads_dev.index(min(loads_dev))
+    
+    
+    #print("End time: {}".format(pprint.pformat(loads[n])))
     print("----------------------------")
     print("----------- Part 4 ---------")
     print("------ draw schedule  ------")
     print("----------------------------")
     print("")
-    plot_schedule(scheduled_jobs, cat_time_dict, starttime.seconds,
-                  loads, endtime_planned/3600+starttime.seconds/3600)
+    loads[n] = [x+starttime.seconds for x in loads[n]] #add starttime to loads
+    loads[n] = [str(timedelta(seconds=x)) for x in loads[n]]
+    plot_schedule(scheduled_jobs[n], cat_time_dict, starttime.seconds,
+                  loads[n], endtime_planned[n]/3600+starttime.seconds/3600)
+
 
     sys.exit()
 
@@ -361,6 +413,8 @@ def calculate_fight_time(dict_inp, final, tatami):
     final_time = timedelta()
     low_par_num = {0:0, 1:0, 2:3, 3:3, 4:6, 5:10, 6:9, 7:12} #fights for low numbers of participants
     # 8:11 from 8 on its always +2
+    
+    #fight_num_show
 
     time_inp = {"Fighting":timedelta(minutes=6, seconds=30),
                 "Duo":timedelta(minutes=7),
@@ -371,17 +425,23 @@ def calculate_fight_time(dict_inp, final, tatami):
     for cat_name in dict_inp: #loop over dictionary
         par_num = int(dict_inp.get(cat_name)) #number of fights per catergory
         fight_num = 0 # reset counter
-
-        if final is True and par_num > 5:
-            fight_num = -1 #remove final
-            for keys in time_inp:
+        if "Show" in cat_name:
+            if final is True and par_num > 5:
                 if keys in cat_name: #if name of Discipline is in string of categoroy:
                     cat_finals_dict[cat_name] = time_inp[keys]
-                    final_time += time_inp[keys]
-        if par_num < 8:
-            fight_num += low_par_num.get(par_num)
+                    final_time += time_inp[keys]*par_num
+            fight_num = par_num
         else:
-            fight_num += (par_num-8)*2 + 11
+            if final is True and par_num > 5:
+                fight_num = -1 #remove final
+                for keys in time_inp:
+                    if keys in cat_name: #if name of Discipline is in string of categoroy:
+                        cat_finals_dict[cat_name] = time_inp[keys]
+                        final_time += time_inp[keys]
+            if par_num < 8:
+                fight_num += low_par_num.get(par_num)
+            else:
+                fight_num += (par_num-8)*2 + 11
 
         fight_num_total += fight_num
         par_num_total += par_num #add all participants
@@ -433,16 +493,25 @@ def lpt_algorithm(jobs, av_time, dis_inp):
     for i, j in enumerate(distr_list):
         distr_sor_list[i] = {k: v for k, v in sorted(distr_list[i].items(),
                                                      key=lambda item: item[1], reverse=True)}
+    
+    time_needed = [] # list for calcuating the total needed times per discipline
+    for i, j in enumerate(distr_sor_list):
+        time_needed.append(0)                 #add 0 as starting time for diszipline
+        for (key, value) in distr_list[i].items():
+            time_needed[i] += value.seconds
+        #print("Tatamis needed for", dis_inp[i], " : ",
+        #    "{:.2f}".format(time_needed[i]/av_time.seconds))
+        #print("Time needed for", dis_inp[i], " : ",
+        #    "{:.2f}".format(time_needed[i]/3600))
+    time_needed = list(filter(lambda num: num != 0, time_needed))
+    
+    disz_changes = 0
     # Step 3
     for i, j in enumerate(distr_sor_list):
         ftime.append(0)                 #add 0 as starting time for diszipline
         for (key, value) in distr_list[i].items():
             ftime[i] += value.seconds
         if ftime[i] != 0:
-            print("Tatamis needed for", dis_inp[i], " : ",
-                  "{:.2f}".format(ftime[i]/av_time.seconds))
-            print("Time needed for", dis_inp[i], " : ",
-                  "{:.2f}".format(ftime[i]/3600))
             extra_time = (1-((ftime[i]/av_time.seconds)-(ftime[i]//av_time.seconds)))*av_time.seconds
             for tat_add in range(0, ftime[i]//av_time.seconds):
                 loads.append(0)           #create loads for tatamiss
@@ -450,8 +519,12 @@ def lpt_algorithm(jobs, av_time, dis_inp):
             remove = False #to check extra time, if added time need to be later removed
             if  len(loads) > 0 and min(loads) < extra_time:
                 scheduled_jobs.append([])
-                loads.append(extra_time+1800) #adds the time to the tatami.
-                remove = True
+                if i <= len(time_needed):
+                    loads.append(extra_time+2000) #adds the time to the tatami.
+                    disz_changes += 1
+                    remove = True
+                else: #if last discipline, no extra time is needed
+                    loads.append(0)
             if len(loads) == 0:
                 loads.append(0)           #create loads for tatamiss
                 scheduled_jobs.append([]) #create tatamis
@@ -460,11 +533,11 @@ def lpt_algorithm(jobs, av_time, dis_inp):
                 scheduled_jobs[minload_tatami].append(job)
                 loads[minload_tatami] += distr_sor_list[i][job].seconds
             if  remove is True:
-                loads[len(loads)-1] -= (extra_time+1800) #removed the time to the tatami.
+                loads[len(loads)-1] -= (extra_time+2000) #removed the time to the tatami.
                 remove = False
 
     endtime_planned = max(loads) + 1800 # for displaying the end_time in plot
-    return scheduled_jobs, loads, endtime_planned
+    return scheduled_jobs, loads, endtime_planned , disz_changes
 
 def minloadtatami(loads):
     """Find the tatami with the minimum load.
