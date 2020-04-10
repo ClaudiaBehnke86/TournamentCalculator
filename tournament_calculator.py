@@ -20,15 +20,15 @@ def main():
     print("")
 
     age_inp = ["U16", "U18", "U21", "Adults"] #the supported age catergories
-    #dis_inp = ["Ne-Waza", "Fighting", "Duo", "Show"] #the supported disciplines
-    #dis_inp = ["Fighting", "Duo", "Show","Ne-Waza"] #the supported disciplines
-    dis_inp = ["Duo", "Show","Ne-Waza","Fighting"] # crashes...
+    dis_inp = ["Duo", "Show","Ne-Waza","Fighting"] # order does not matter -> permutations
+    dis_cha = "Discipline change" # indicator of a change of a discipline
+    penalty_dis_check = 15 #add the changeing time for the change betwenn disciplines in minutes
+
     ### if you modify this, you will also need to change calculate_fight_time()
 
     check_tour(name, age_inp, dis_inp) #function to check if the tournament exists
     cat_par_inp, final, tatami = read_in_file(name+".txt")
 
-    print("")
     print("")
     print("----------------------------")
     print("----------- Part 2 ---------")
@@ -45,11 +45,7 @@ def main():
     print("---- distribute matches ----")
     print("----------------------------")
     print("")
-
-    
     #########################
-    
-   
     #print("Scheduled Jobs: \n {} ".format(pprint.pformat(scheduled_jobs)))
     
     #####
@@ -57,58 +53,91 @@ def main():
     permutations_object = itertools.permutations(dis_inp)
     permutations_list = list(permutations_object)
     
+    min_id = []
+   
+    #for x in range(0,penalty_dis_check+penalty_dis_check//2): #make sure that the result is not influences by the chnage of diszipline
+#    for x in range(13,15): #make sure that the result is not influences by the chnage of diszipline
+#        cat_time_dict[dis_cha] = timedelta(minutes = penalty_dis_check)
+#        scheduled_jobs = [None] * len(permutations_list)
+#        loads =  [None] * len(permutations_list)
+#        loads_dev =  [None] * len(permutations_list)
+#        endtime =  [None] * len(permutations_list)
+#        disz_changes =  [None] * len(permutations_list)
+#        disz_changes_tot =  [0] * len(permutations_list)
+#        happyness =  [None] * len(permutations_list)
+#        print(" --- ")
+#        for i, j in enumerate(permutations_list):
+#            scheduled_jobs[i], loads[i] = lpt_algorithm(cat_time_dict, av_time, permutations_list[i], x, dis_cha)
+#            endtime[i] = max(loads[i])      # highest value of loads = endtime
+#            loads_dev[i] = statistics.stdev(loads[i])
+#            disz_changes[i] = changes_per_permutation(scheduled_jobs[i], dis_cha)
+#            print("loads len",len(loads[i]) ," : ", loads[i])
+#            happyness[i] = endtime[i] + loads_dev[i]
+#            disz_changes_tot[i] = sum(disz_changes[i])
+#            print(disz_changes_tot[i] ," : " , disz_changes[i] )
+#        min_id.append(happyness.index(min(happyness)))
+  
+  
+  
+    cat_time_dict[dis_cha] = timedelta(minutes = penalty_dis_check)
     scheduled_jobs = [None] * len(permutations_list)
     loads =  [None] * len(permutations_list)
     loads_dev =  [None] * len(permutations_list)
-    endtime_planned =  [None] * len(permutations_list)
+    endtime =  [None] * len(permutations_list)
     disz_changes =  [None] * len(permutations_list)
-
+    disz_changes_tot =  [0] * len(permutations_list)
+    happyness =  [None] * len(permutations_list)
+    print(" --- ")
+  
     for i, j in enumerate(permutations_list):
-        #print(i, " i: j ", j)
-        scheduled_jobs[i], loads[i], endtime_planned[i], disz_changes[i] = lpt_algorithm(cat_time_dict, av_time, permutations_list[i])
+        scheduled_jobs[i], loads[i] = lpt_algorithm(cat_time_dict, av_time, permutations_list[i], 15, dis_cha)
+        endtime[i] = max(loads[i])      # highest value of loads = endtime
         loads_dev[i] = statistics.stdev(loads[i])
-        
-    # shortes endtime
-    indexes_min_endtime= [i for i, x in enumerate(endtime_planned) if x == min(endtime_planned)]
-    print("min enddime ", indexes_min_endtime)
-    print("Shortest endtime will be after " , "{:.2f}".format(min(endtime_planned)/3600) , " hrs ")
-    
-    #check for standarddeviation
-    loads_dev_min = []
-    for i in indexes_min_endtime:
-        loads_dev_min.append(loads_dev[i])
-        print(i ," : " ,permutations_list[i])
-    
-    indexes= [i for i, x in enumerate(loads_dev_min) if x == min(loads_dev_min)]
-    
+        disz_changes[i] = changes_per_permutation(scheduled_jobs[i], dis_cha)
+        if(len(loads[i]) != tatami):
+            print("!!!!!!!!!!!!!!!!!")
+        print("loads len",len(loads[i]) ," : no ", i)
+        happyness[i] = endtime[i] + loads_dev[i]
+        #disz_changes_tot[i] = sum(disz_changes[i])
+       # print(disz_changes_tot[i] ," : " , disz_changes[i] )
+#min_id.append(happyness.index(min(happyness)))
 
-    
-    n = endtime_planned.index(min(endtime_planned))
-    
-    print(loads_dev_min)
-    
-    #m = endtime_planned.index(min(loads_dev))
-    #print("Shortest endtime will be after " , "{:.2f}".format(min(endtime_planned)/3600) , " hrs ")
+    min_id = 23
         
-    indexes= [i for i, x in enumerate(disz_changes) if x == min(disz_changes)]
-    print(indexes)
-   
-    #print(endtime_planned)
+    print(endtime[i])
+    #most_id = max(set(min_id), key = min_id.count)
+    #print(disz_changes_tot)
     
-    #print(loads_dev)
-    #loads_dev.index(min(loads_dev))
-    
-    
-    #print("End time: {}".format(pprint.pformat(loads[n])))
+#    x = range(0,penalty_dis_check)
+#    fig2, ax3 = plt.subplots()  # Create a figure and an axes.
+#    plt.errorbar(x,  min_id, label='minid')
+#    ax3.set_ylabel('ID ')  # Add an x-label to the axes.
+#    ax3.set_xlabel('penalty [min] ')  # Add a y-label to the axes.
+
+#    x = range(0,len(permutations_list))
+#    fig1, ax1 = plt.subplots()  # Create a figure and an axes.
+#    plt.errorbar(x,  endtime, yerr=loads_dev, uplims=True, label='endtime')
+#    plt.errorbar(x,  happyness, uplims=True, label='happyness')
+#    ax1.set_ylabel('seconds ')  # Add an x-label to the axes.
+#    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+#    ax2.plot(x, disz_changes_tot, color= 'tab:red', label='disz_changes')  # ... and some more.
+#    ax2.set_ylabel('changes ')  # Add an x-label to the axes.
+#    ax1.set_xlabel('permutation ')  # Add a y-label to the axes.
+#    ax1.legend()  # Add a legend.
+#
+#    min_id = endtime.index(min(endtime))
+
+    #print("End time: {}".format(pprint.pformat(loads[min_id])))
     print("----------------------------")
     print("----------- Part 4 ---------")
     print("------ draw schedule  ------")
     print("----------------------------")
     print("")
-    loads[n] = [x+starttime.seconds for x in loads[n]] #add starttime to loads
-    loads[n] = [str(timedelta(seconds=x)) for x in loads[n]]
-    plot_schedule(scheduled_jobs[n], cat_time_dict, starttime.seconds,
-                  loads[n], endtime_planned[n]/3600+starttime.seconds/3600)
+    endtime[min_id] = endtime[min_id]+ 1800 # add for displaying the end_time in plot
+    loads[min_id] = [x+starttime.seconds for x in loads[min_id]] #add starttime to loads
+    loads[min_id] = [str(timedelta(seconds=x)) for x in loads[min_id]]
+    plot_schedule(scheduled_jobs[min_id], cat_time_dict, starttime.seconds,
+                  loads[min_id], endtime[min_id]/3600+starttime.seconds/3600)
 
 
     sys.exit()
@@ -465,11 +494,11 @@ def calculate_fight_time(dict_inp, final, tatami):
           len(dict_inp), "categories with a total time fight time of (HH:MM:SS)",
           tot_time+final_time)
     print("You have", len(cat_finals_dict), "finals which will take", final_time)
-    print("Average time per tatami will be", av_time, "with", tatami, "tatamis")
+    print("Optimal solution time per tatami will be", av_time, "with", tatami, "tatamis")
 
     return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time
 
-def lpt_algorithm(jobs, av_time, dis_inp):
+def lpt_algorithm(jobs, av_time, dis_inp, penalty_dis_change, dis_cha):
     """Run the algorithm:
     1. Create List of dictionaries with, where each diszipline has its own dictionary.
        And fill it with the existing catergories
@@ -479,9 +508,10 @@ def lpt_algorithm(jobs, av_time, dis_inp):
     distr_list = [] # List of dictionaries with, where each dsizipline has its own dictionary
     loads = []      # List of list which stores the times per tatami as a list
     scheduled_jobs = [] # List od list which stores the names per tatami as a list
-    ftime = []          # List which stores the total times per discipline
+    time_needed = [] # list for calcuating the total needed times per discipline
     distr_sor_list = distr_list
 
+    print(" ----- ",dis_inp," ----- ")
     # Step 1
     for i in dis_inp:
         distr_list.append({}) #add a new list for each diszipline
@@ -490,54 +520,99 @@ def lpt_algorithm(jobs, av_time, dis_inp):
             if j in key: # Check if key is the same add pair to new dictionary
                 distr_list[i][key] = value
     # Step 2
-    for i, j in enumerate(distr_list):
+    for i, j in enumerate(distr_list): # sort individual list by lenth of catergories
         distr_sor_list[i] = {k: v for k, v in sorted(distr_list[i].items(),
                                                      key=lambda item: item[1], reverse=True)}
     
-    time_needed = [] # list for calcuating the total needed times per discipline
+    par_tat_need = []
+    par_tat_need.clear()
     for i, j in enumerate(distr_sor_list):
         time_needed.append(0)                 #add 0 as starting time for diszipline
         for (key, value) in distr_list[i].items():
             time_needed[i] += value.seconds
-        #print("Tatamis needed for", dis_inp[i], " : ",
-        #    "{:.2f}".format(time_needed[i]/av_time.seconds))
-        #print("Time needed for", dis_inp[i], " : ",
-        #    "{:.2f}".format(time_needed[i]/3600))
+        par_tat_need.append(time_needed[i]/av_time.seconds-time_needed[i]//av_time.seconds)
+        print("Tatamis needed for", dis_inp[i], " : ",
+            "{:.2f}".format(time_needed[i]/av_time.seconds))
+       # print("Time needed for", dis_inp[i], " : ",
+       #     "{:.2f}".format(time_needed[i]/3600))
     time_needed = list(filter(lambda num: num != 0, time_needed))
-    
-    disz_changes = 0
+   
+    #tat_need = 0
+    remove_tat = 0
     # Step 3
+    print("avtoime ",av_time.seconds)
     for i, j in enumerate(distr_sor_list):
-        ftime.append(0)                 #add 0 as starting time for diszipline
-        for (key, value) in distr_list[i].items():
-            ftime[i] += value.seconds
-        if ftime[i] != 0:
-            extra_time = (1-((ftime[i]/av_time.seconds)-(ftime[i]//av_time.seconds)))*av_time.seconds
-            for tat_add in range(0, ftime[i]//av_time.seconds):
-                loads.append(0)           #create loads for tatamiss
-                scheduled_jobs.append([]) #create tatamis
+        print(" --- next diszipline is ---  ",  dis_inp[i] )
+        
+        if time_needed[i] != 0: #ignore empty disciplicnes
+            extra_time = par_tat_need[i]*av_time.seconds
+            extra_time_t = (1-par_tat_need[i])*av_time.seconds
+            print(1-par_tat_need[i], " =  ",extra_time_t)
+            print(par_tat_need[i], " =  ",extra_time)
+            
             remove = False #to check extra time, if added time need to be later removed
-            if  len(loads) > 0 and min(loads) < extra_time:
-                scheduled_jobs.append([])
-                if i <= len(time_needed):
-                    loads.append(extra_time+2000) #adds the time to the tatami.
-                    disz_changes += 1
-                    remove = True
-                else: #if last discipline, no extra time is needed
-                    loads.append(0)
-            if len(loads) == 0:
+            tat_need += par_tat_need[i]
+          
+            #Step a) creates all of "full" tatamis
+            for tat_add in range(0, time_needed[i]//av_time.seconds): #creates number of full tatamis
                 loads.append(0)           #create loads for tatamiss
                 scheduled_jobs.append([]) #create tatamis
+                print("e) there are ", len(scheduled_jobs), "tatamis now")
+            
+              #Step b) checks if half empty tatami is needed.(eith no tatami exists or we neeed more time than is left)
+            print(" loads", loads)
+            if len(loads) > 0: print(" loads on tatami no ", remove_tat, " are " , loads[remove_tat])
+           # if len(loads) > 0: min_load_not_zero = min(i for i in loads if i > 0)
+            if len(loads) == 0: #if no tatmis would be created in step a)
+                print("first tatami is created")
+                loads.append(0)  #create loads for tatamiss
+                scheduled_jobs.append([]) #create tatamis
+                print("a) there is ", len(scheduled_jobs), "tatami now")
+            elif i == 0: #extra tatami is needed
+                print(" we need a tatami (first time) ", extra_time_t)
+                scheduled_jobs.append([]) # add empty tatami
+                print("b) there are ", len(scheduled_jobs), "tatamis now")
+                loads.append(extra_time_t+penalty_dis_change) #adds the time to the tatami
+                remove = True
+                remove_tat = len(scheduled_jobs)-1
+            elif len(loads) > 8: #extra tatami is needed
+                print("d) Max num of tatamis reached ", len(scheduled_jobs), "tatamis now")
+            elif loads[remove_tat] > extra_time_t: #extra tatami is needed
+                print(loads[remove_tat] ," minload vs extra_time ", extra_time_t)
+                scheduled_jobs.append([]) # add empty tatami
+                print("c) there are ", len(scheduled_jobs), "tatamis now")
+                loads.append(extra_time_t+penalty_dis_change) #adds the time to the tatami
+                remove = True
+                remove_tat = len(scheduled_jobs)-1
+            else:
+                print("no extra tatami needed ")
+                print("d) there are ", len(scheduled_jobs), "tatamis now")
+            print("tat_need ", tat_need)
+              
+            #Step c) distribute categories
             for job in distr_sor_list[i]:
                 minload_tatami = minloadtatami(loads)
                 scheduled_jobs[minload_tatami].append(job)
                 loads[minload_tatami] += distr_sor_list[i][job].seconds
+            
+        
             if  remove is True:
-                loads[len(loads)-1] -= (extra_time+2000) #removed the time to the tatami.
+                print(loads)
+                print("extra time is removed")
+                loads[remove_tat] -= (extra_time_t) #removed the time to the tatami.
                 remove = False
-
-    endtime_planned = max(loads) + 1800 # for displaying the end_time in plot
-    return scheduled_jobs, loads, endtime_planned , disz_changes
+               # remove_tat = -1
+                print(loads)
+                
+             #add dis change after each distributuion
+            for tat_used in range(0 ,len(loads)):
+                if scheduled_jobs[tat_used][-1] is not dis_cha:
+                    scheduled_jobs[tat_used].append(dis_cha)
+        
+    for tat_used in range(0 ,len(loads)):
+        if scheduled_jobs[tat_used][-1] is dis_cha:
+            scheduled_jobs[tat_used].pop()
+    return scheduled_jobs, loads
 
 def minloadtatami(loads):
     """Find the tatami with the minimum load.
@@ -559,13 +634,13 @@ def autolabel(cat_draw, rects, i, l_x):
                      rect.get_y() + rect.get_height() / 2.,
                      text_sep, ha='center', va='center')
 
-def sumlabel(rects, endtime_planned, loads, l_x):
+def sumlabel(rects, endtime, loads, l_x):
     '''creates lables for each catergory to dosply them in plot'''
     for lab, rect in enumerate(rects):
-        l_x.text(rect.get_x() + rect.get_width() / 2., endtime_planned,
+        l_x.text(rect.get_x() + rect.get_width() / 2., endtime,
                  loads[lab], ha='center', va='center')
 
-def plot_schedule(scheduled_jobs, cat_time_dict, start_time, loads, endtime_planned):
+def plot_schedule(scheduled_jobs, cat_time_dict, start_time, loads, endtime):
     '''creates lables for each catergory to dosply them in plot'''
     max_col = len(scheduled_jobs[0])
     for row in scheduled_jobs:
@@ -582,9 +657,6 @@ def plot_schedule(scheduled_jobs, cat_time_dict, start_time, loads, endtime_plan
                 job = cat_time_dict.get(row[col_index])
                 time_draw[col_index].append(job.seconds/3600)
                 cat_draw[col_index].append(row[col_index])
-               # print("job ", row[col_index], " was appended as job no ",
-                        #col_index , " to tatami ", row , "with ", job)
-                del cat_time_dict[row[col_index]]
             else:
                 time_draw[col_index].append(0)
                 cat_draw[col_index].append(0)
@@ -598,7 +670,7 @@ def plot_schedule(scheduled_jobs, cat_time_dict, start_time, loads, endtime_plan
         if i == 0:
             rect = l_x.bar(labels, time_draw[i], width, yerr=0, bottom=time_draw_helper, label='')
             autolabel(cat_draw, rect, i, l_x)
-            sumlabel(rect, endtime_planned, loads, l_x)
+            sumlabel(rect, endtime, loads, l_x)
         else:
             time_draw_helper = [sum(x) for x in zip(time_draw_helper, time_draw[i-1])]
             #create helper as sum over time_draw n-1
@@ -607,5 +679,15 @@ def plot_schedule(scheduled_jobs, cat_time_dict, start_time, loads, endtime_plan
 
     l_x.set_ylabel('Time [hh:min]')
     plt.show()
+    
+def changes_per_permutation(scheduled_jobs, dis_cha):
+    '''calculates amount of discipline changes per permutation '''
+    disz_changes = [0] * len(scheduled_jobs)
+    for i , tat in enumerate(scheduled_jobs):  #results for each permutaton
+        for cat in tat: #
+            if cat == dis_cha:
+                disz_changes[i] += 1
+    return disz_changes
+
 
 main()
