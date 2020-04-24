@@ -9,14 +9,15 @@ from datetime import timedelta
 import matplotlib.pyplot as plt
 import itertools # for permutations of discipline order
 import statistics # for standard devitation (to desicde which order is the best)
-def main():
+
+
+def calc_start(name = ""):
     """ The main function """
     print("-------------------------")
     print("- Tournament Calculator -")
     print("Part 1 - Create tournament")
     print("-------------------------")
     print("")
-    name = input("Please enter a name for the tournament: ")
     print("")
 
     age_inp = ["U16", "U18", "U21", "Adults"] #the supported age catergories
@@ -25,7 +26,8 @@ def main():
     dis_inp = ["Duo", "Show","Ne-Waza","Fighting"] # crashes...
     ### if you modify this, you will also need to change calculate_fight_time()
 
-    check_tour(name, age_inp, dis_inp) #function to check if the tournament exists
+    # check_tour(name, age_inp, dis_inp) #function to check if the tournament exists
+    new_tour(name, age_inp, dis_inp) #creates a new tournament
     cat_par_inp, final, tatami = read_in_file(name+".txt")
 
     print("")
@@ -36,7 +38,8 @@ def main():
     print("----------------------------")
     print("")
     print("Catergories and Participants")
-    cat_par = check_input(cat_par_inp)
+#    cat_par = check_input(cat_par_inp)
+    cat_par = cat_par_inp    
     cat_fights_dict, cat_finals_dict, cat_time_dict, av_time = calculate_fight_time(cat_par, final, tatami)
     starttime = starttime_calc()
     print("")
@@ -144,7 +147,7 @@ def starttime_calc():
     starttime = timedelta(hours=8, minutes=30)
     print("startime tournament ", starttime)
     print("Change time?")
-    ch_time = check_yes_no()
+    ch_time = False # check_yes_no()
     if ch_time is True:
         h_new = print("Please give NEW startime\nHours: ")
         while(h_new > 24 or h_new < 0):
@@ -179,14 +182,15 @@ def check_input(cat_par):
             print("Catergory", check, "not known. Please try again")
     return cat_par
 
-def new_tour(name, age_inp, dis_inp):
+def new_tour(name, age_inp, dis_inp,
+        tatami, final, age_select, dis_select):
     ''' create a new tournament'''
     tour_file = open(name + ".txt", "w")
     print("How many tatmis will be there: ")
-    tatami = check_num()
+#    tatami = check_num()
     print("")
     print("Will there be a final block")
-    final = check_yes_no()
+#    final = check_yes_no()
 
     print("Tournament:", name, "will be created with ", tatami, " tatamis")
 
@@ -200,9 +204,9 @@ def new_tour(name, age_inp, dis_inp):
         print("Tournament has NO final block")
         tour_file.write("Finallblock: NO \n")
 
-    age_select = age_cat(age_inp) # select age catergories
-    dis_select = dis_cat(dis_inp) # select disxiplines
-    cat_all = cal_cat(age_select, dis_select) # calculate catergories
+    # age_select = age_cat(age_inp) # select age categories
+    # dis_select = dis_cat(dis_inp) # select disciplines
+    cat_all = cal_cat(age_select, dis_select) # calculate categories
 
     print("----------------------------")
     print("- Part 2 - Add Competitors -")
@@ -354,7 +358,7 @@ def dis_cat(dis_inp):
             else:
                 break
         else:
-            print("Diszipline ", add_cat, "not known. Please try again")
+            print("Discipline ", add_cat, "not known. Please try again")
     print("The following disciplines are added:", dis_select)
     return dis_select
 
