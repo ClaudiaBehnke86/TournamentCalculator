@@ -4,11 +4,15 @@ But mostly it is used for me to have a hands on example for python
 import sys
 import os
 import  time
-import pprint # needed for nice prints
+#import pprint # needed for nice prints
 from datetime import timedelta
-import matplotlib.pyplot as plt
 import itertools # for permutations of discipline order
-import statistics # for standard devitation (to desicde which order is the best)
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+
+
 def main():
     """ The main function """
     print("-------------------------")
@@ -20,12 +24,10 @@ def main():
     print("")
 
     age_inp = ["U16", "U18", "U21", "Adults"] #the supported age catergories
-    dis_inp = ["Duo", "Show","Ne-Waza","Fighting"] # order does not matter -> permutations
+    dis_inp = ["Duo", "Show", "Ne-Waza", "Fighting"] # order does not matter -> permutations
     dis_cha = "Discipline change" # indicator of a change of a discipline
-    penalty_dis_check = 60 #add the changeing time for the change betwenn disciplines in minutes
-
-    ### if you modify this, you will also need to change calculate_fight_time()
-
+    pen_dis_chng = 30 #add the changeing time for the change betwenn disciplines in minutes
+   
     check_tour(name, age_inp, dis_inp) #function to check if the tournament exists
     cat_par_inp, final, tatami = read_in_file(name+".txt")
 
@@ -37,76 +39,103 @@ def main():
     print("")
     print("Catergories and Participants")
     cat_par = check_input(cat_par_inp)
-    cat_fights_dict, cat_finals_dict, cat_time_dict, av_time = calculate_fight_time(cat_par, final, tatami)
+    cat_fights_dict, cat_finals_dict, cat_time_dict, \
+        av_time = calculate_fight_time(cat_par, final, tatami)
     starttime = starttime_calc()
+
+    cat_time_dict[dis_cha] = timedelta(minutes=pen_dis_chng)
+    #add a fict entry for penalty time in dict!
     print("")
     print("----------------------------")
     print("----------- Part 3 ---------")
     print("---- distribute matches ----")
+    print("-------& optimize ----------")
     print("----------------------------")
     print("")
     #########################
     #print("Scheduled Jobs: \n {} ".format(pprint.pformat(scheduled_jobs)))
-    
-    #####
-    # run all with permutaitons of dis inp
-    permutations_object = itertools.permutations(dis_inp)
-    permutations_list = list(permutations_object)
-    
-    min_id = []
-   
-    for x in range(0,penalty_dis_check): #make sure that the result is not influences by the chnage of diszipline
-        cat_time_dict[dis_cha] = timedelta(minutes = penalty_dis_check)
-        scheduled_jobs = [None] * len(permutations_list)
-        loads =  [None] * len(permutations_list)
-        loads_dev =  [None] * len(permutations_list)
-        endtime =  [None] * len(permutations_list)
-        disz_changes =  [None] * len(permutations_list)
-        disz_changes_tot =  [0] * len(permutations_list)
-        happyness =  [None] * len(permutations_list)
-        for i, j in enumerate(permutations_list):
-            scheduled_jobs[i], loads[i] = lpt_algorithm(cat_time_dict, av_time, permutations_list[i], x, dis_cha, tatami)
-            endtime[i] = max(loads[i])      # highest value of loads = endtime
-            loads_dev[i] = statistics.stdev(loads[i])
-            disz_changes[i] = changes_per_permutation(scheduled_jobs[i], dis_cha)
-            happyness[i] = endtime[i] + loads_dev[i]
-            disz_changes_tot[i] = sum(disz_changes[i])
-        min_id.append(happyness.index(min(happyness)))
 
-    
-    x = range(0,penalty_dis_check)
-    fig2, ax3 = plt.subplots()  # Create a figure and an axes.
-    plt.errorbar(x,  min_id, label='minid')
-    ax3.set_ylabel('ID ')  # Add an x-label to the axes.
-    ax3.set_xlabel('penalty [min] ')  # Add a y-label to the axes.
+    scheduled_jobs, loads, most_abundand = descition_matrix(
+        cat_time_dict, av_time, dis_inp, tatami, pen_dis_chng, dis_cha)
 
-    x = range(0,len(permutations_list))
-    fig1, ax1 = plt.subplots()  # Create a figure and an axes.
-    plt.errorbar(x,  endtime, yerr=loads_dev, uplims=True, label='endtime')
-    plt.errorbar(x,  happyness, uplims=True, label='happyness')
-    ax1.set_ylabel('seconds ')  # Add an x-label to the axes.
-    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
-    ax2.plot(x, disz_changes_tot, color= 'tab:red', label='disz_changes')  # ... and some more.
-    ax2.set_ylabel('changes ')  # Add an x-label to the axes.
-    ax1.set_xlabel('permutation ')  # Add a y-label to the axes.
-    ax1.legend()  # Add a legend.
+    print("There are ", len(most_abundand), "possible results ")
+    test = {k: v for k, v in sorted(most_abundand.items(), key=lambda item: item[1], reverse=True)}
+    print(test)
 
-    min_id = endtime.index(min(endtime))
-
-    #print("End time: {}".format(pprint.pformat(loads[min_id])))
     print("----------------------------")
     print("----------- Part 4 ---------")
     print("------ draw schedule  ------")
     print("----------------------------")
     print("")
-    endtime[min_id] = endtime[min_id]+ 1800 # add for displaying the end_time in plot
-    loads[min_id] = [x+starttime.seconds for x in loads[min_id]] #add starttime to loads
-    loads[min_id] = [str(timedelta(seconds=x)) for x in loads[min_id]]
-    plot_schedule(scheduled_jobs[min_id], cat_time_dict, starttime.seconds,
-                  loads[min_id], endtime[min_id]/3600+starttime.seconds/3600)
 
+    pen_time = pen_dis_chng//2 #choosen penalty time
+    permut_num = int(list(test)[0]) #chosen permutation
+    endtime = max(loads[pen_time][permut_num]) + 1800 # add for displaying the end_time in plot
+    loads[pen_time][permut_num] = [x+starttime.seconds for x in loads[pen_time][permut_num]] #add starttime to loads
+    loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
+    plot_schedule(scheduled_jobs[pen_time][permut_num],
+                  cat_time_dict, starttime.seconds,
+                  loads[pen_time][permut_num],
+                  endtime/3600+starttime.seconds/3600)
 
+#    pen_time = pen_dis_chng//2 #choosen penalty time
+#    permut_num = int(list(test)[1]) #chosen permutation
+#    endtime = max(loads[pen_time][permut_num]) + 1800 # add for displaying the end_time in plot
+#    loads[pen_time][permut_num] = [x+starttime.seconds for x in loads[pen_time][permut_num]] #add starttime to loads
+#    loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
+#    plot_schedule(scheduled_jobs[pen_time][permut_num], cat_time_dict, starttime.seconds, loads[pen_time][permut_num], endtime/3600+starttime.seconds/3600)
+#    #
     sys.exit()
+
+def descition_matrix(cat_time_dict, av_time, dis_inp, tatami, pen_dis_chng, dis_cha):
+    ''' to find the best solution based on penalty and weighting of the resutls '''
+    # run all with permutaitons of dis inp
+    permutations_object = itertools.permutations(dis_inp)
+    permutations_list = list(permutations_object)
+
+    #array for all possible outcomes
+    scheduled_jobs = np.array([[[None] * tatami] * len(permutations_list)] * pen_dis_chng)
+    loads = np.array([[[None] * tatami] * len(permutations_list)] * pen_dis_chng)
+    pen_time_list = list(range(pen_dis_chng//2, pen_dis_chng+pen_dis_chng//2))
+    happiness = [x / 10.0 for x in range(0, 20)]
+
+    time_max = np.array([[None] * len(pen_time_list)] * len(happiness))
+    time_std = np.array([[None]  * len(pen_time_list)] * len(happiness))
+    score = np.array([[None] * len(permutations_list) * len(pen_time_list)] * len(happiness))
+
+    for x, px in enumerate(pen_time_list): #penalty time
+        for j in range(0, loads.shape[1]): #permutaitons
+            scheduled_jobs[x][j], loads[x][j] = distr_cat_alg(cat_time_dict, av_time, permutations_list[j], px, dis_cha, tatami)
+    min_id = np.array([[0.1] * len(happiness)] * len(pen_time_list))
+    min_score = np.array([[0.1] * len(happiness)] * len(pen_time_list))
+
+    for idx, loads_id in enumerate(loads):
+        time_max = np.array([i.max() for i in loads_id])
+        if tatami > 1:
+            time_std = np.array([i.std(ddof=1) for i in loads_id])
+        else:
+            time_std = 1
+        score = np.array([time_max + i * time_std for i in happiness])
+        min_score[idx] = np.array([i.min() for i in score])
+        min_id[idx] = np.array([i.argmin() for i in score])
+    fig, ax = plt.subplots()
+
+    im, _ = heatmap(min_id, pen_time_list, happiness, ax=ax,
+                    cmap="YlGn", cbarlabel=" min_id")
+    texts = annotate_heatmap(im, valfmt="{x:.0f}")
+    ax.set_title("Happyness_value")
+    plt.ylabel("time to change diszipline [min]")
+
+    fig, ax2 = plt.subplots()
+    im, _ = heatmap(min_score, pen_time_list, happiness, ax=ax2,
+                    cmap="YlGn", cbarlabel=" min_score")
+    texts = annotate_heatmap(im, valfmt="{x:.0f}")
+    ax.set_title("Happyness_value")
+
+    #all unique values of min_id
+    results, counts = np.unique(min_id, return_counts=True)
+    most_abundand = dict(zip(results, counts))
+    return scheduled_jobs, loads, most_abundand
 
 def check_yes_no():
     ''' Function to convert YES NO in a Bool'''
@@ -141,12 +170,14 @@ def starttime_calc():
     print("Change time?")
     ch_time = check_yes_no()
     if ch_time is True:
-        h_new = print("Please give NEW startime\nHours: ")
+        print("Please give NEW startime\nHours: ")
+        h_new = check_num()
         while(h_new > 24 or h_new < 0):
             h_new = check_num()
             if(h_new > 24 or h_new < 0):
                 print("Hours must between 0 and 24")
-        m_new = print("Minutes: ")
+        print("Minutes: ")
+        m_new = check_num()
         while(m_new > 60 or m_new < 0):
             m_new = check_num()
             if(m_new > 60 or m_new < 0):
@@ -177,13 +208,54 @@ def check_input(cat_par):
 def new_tour(name, age_inp, dis_inp):
     ''' create a new tournament'''
     tour_file = open(name + ".txt", "w")
-    print("How many tatmis will be there: ")
-    tatami = check_num()
-    print("")
-    print("Will there be a final block")
-    final = check_yes_no()
+    if name == "random":
+        print("----------------------------")
+        print("- Part 2 - Random number ---")
+        print("- of competitors are entered")
+        print("----------------------------")
+          
+        tatami = np.random.randint(1, 15)
+        print("Tournament:", name, "will be created with ", tatami, " tatamis")
+        nage = np.random.randint(1, len(age_inp))
+        age_select = random.sample(age_inp, nage) # select age catergories
+        ndis = np.random.randint(1, len(dis_inp))
+        dis_select = random.sample(dis_inp, ndis)# select disxiplines
+        final = random.choice(["YES", "NO"])
+        cat_all = cal_cat(age_select, dis_select) # calculate catergories
+        cat_par = {}#number of particpants
 
-    print("Tournament:", name, "will be created with ", tatami, " tatamis")
+        for i in cat_all:
+            _rtmp = round(np.random.normal(8, 5.32))
+            while _rtmp  < 0:
+                _rtmp = round(np.random.normal(8, 5.32))
+            cat_par[i] = _rtmp
+    else:
+        print("How many tatmis will be there: ")
+        tatami = check_num()
+        print("")
+        print("Will there be a final block")
+        final = check_yes_no()
+
+        print("Tournament:", name, "will be created with ", tatami, " tatamis")
+
+        age_select = age_cat(age_inp) # select age catergories
+        dis_select = dis_cat(dis_inp) # select disxiplines
+        cat_all = cal_cat(age_select, dis_select) # calculate catergories
+        cat_par = {}#number of particpants
+
+        print("----------------------------")
+        print("- Part 2 - Add Competitors -")
+        print("----------------------------")
+        
+        print("Please add the number of participants for each category: ")
+        for i in cat_all:
+            print("Number of competitors in", i)
+            inp = check_num()
+            if inp <= 0:
+                continue
+            cat_par[i] = int(inp)
+
+    time.sleep(1)
 
     tour_file.write("Tournament: " + name + "\n")
     tour_file.write("Tatamis: " + str(tatami) + "\n")
@@ -194,24 +266,6 @@ def new_tour(name, age_inp, dis_inp):
     else:
         print("Tournament has NO final block")
         tour_file.write("Finallblock: NO \n")
-
-    age_select = age_cat(age_inp) # select age catergories
-    dis_select = dis_cat(dis_inp) # select disxiplines
-    cat_all = cal_cat(age_select, dis_select) # calculate catergories
-
-    print("----------------------------")
-    print("- Part 2 - Add Competitors -")
-    print("----------------------------")
-    cat_par = {}#number of particpants
-    print("Please add the number of participants for each category: ")
-    for i in cat_all:
-        print("Number of competitors in", i)
-        inp = check_num()
-        if inp <= 0:
-            continue
-        cat_par[i] = int(inp)
-
-    time.sleep(1)
 
     for cat_name, par_num in cat_par.items():
         tour_file.write(str(cat_name) +" "+ str(par_num) + "\n")
@@ -406,14 +460,12 @@ def calculate_fight_time(dict_inp, final, tatami):
 
     tot_time = timedelta()
     final_time = timedelta()
-    low_par_num = {0:0, 1:0, 2:3, 3:3, 4:6, 5:10, 6:9, 7:12} #fights for low numbers of participants
+    low_par_num = {0:0, 1:0, 2:3, 3:3, 4:6, 5:10, 6:9, 7:11} #fights for low numbers of participants
     # 8:11 from 8 on its always +2
-    
-    #fight_num_show
 
     time_inp = {"Fighting":timedelta(minutes=6, seconds=30),
                 "Duo":timedelta(minutes=7),
-                "Show":timedelta(minutes=2),
+                "Show":timedelta(minutes=3),
                 "Ne-Waza":timedelta(minutes=8)}
     #timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)
 
@@ -464,7 +516,13 @@ def calculate_fight_time(dict_inp, final, tatami):
 
     return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time
 
-def lpt_algorithm(jobs, av_time, dis_inp, penalty_dis_change, dis_cha ,tatami):
+def distr_cat_alg(jobs, av_time, dis_inp, pen_dis_chng, dis_cha, tatami):
+    #jobs = list of catergories that need to be distributed (list)
+    # av_time = refernece time for average tatami (float [s])
+    # dis_inp = order of disziplines (dict)
+    # pen_dis_chng = pentaly time for changing a diszipline [fload [s]]
+    # dis_cha = indicate chsange of diszipline (str)
+    # tatami = number of tatamis (int)
     """Run the algorithm:
     1. Create List of dictionaries with, where each diszipline has its own dictionary.
        And fill it with the existing catergories
@@ -489,7 +547,6 @@ def lpt_algorithm(jobs, av_time, dis_inp, penalty_dis_change, dis_cha ,tatami):
     for i, j in enumerate(distr_list): # sort individual list by lenth of catergories
         distr_sor_list[i] = {k: v for k, v in sorted(distr_list[i].items(),
                                                      key=lambda item: item[1], reverse=True)}
-    
     par_tat_need = []
     par_tat_need.clear()
     for i, j in enumerate(distr_sor_list):
@@ -497,68 +554,71 @@ def lpt_algorithm(jobs, av_time, dis_inp, penalty_dis_change, dis_cha ,tatami):
         for (key, value) in distr_list[i].items():
             time_needed[i] += value.seconds
         par_tat_need.append(time_needed[i]/av_time.seconds-time_needed[i]//av_time.seconds)
-        #print("Tatamis needed for", dis_inp[i], " : ",
-        #    "{:.2f}".format(time_needed[i]/av_time.seconds))
-        # print("Time needed for", dis_inp[i], " : ",
-        #     "{:.2f}".format(time_needed[i]/3600))
-    time_needed = list(filter(lambda num: num != 0, time_needed))
-
+       # print("Tatamis needed for", dis_inp[i], " : ",
+       #     "{:.2f}".format(time_needed[i]/av_time.seconds))
+       # print("Time needed for", dis_inp[i], " : ",
+       #      "{:.2f}".format(time_needed[i]/3600))
+   
     remove_tat = 0
     # Step 3
     for i, j in enumerate(distr_sor_list):
-        #print(" --- next diszipline is ---  ",  dis_inp[i] )
-        
+       # print(" --- next diszipline is ---  ",  dis_inp[i] )
         if time_needed[i] != 0: #ignore empty disciplicnes
-            extra_time = par_tat_need[i]*av_time.seconds
             extra_time_t = (1-par_tat_need[i])*av_time.seconds
             remove = False #to check extra time, if added time need to be later removed
-        
+
             #Step a) creates all of "full" tatamis
-            for tat_add in range(0, time_needed[i]//av_time.seconds): #creates number of full tatamis
-                loads.append(0)           #create loads for tatamiss
-                scheduled_jobs.append([]) #create tatamis
-           
-            #if len(loads) > 0: print(" loads on tatami no ", remove_tat, " are " , loads[remove_tat])
-            
-            #Step b) checks if half empty tatami is needed.(eith no tatami exists or we neeed more time than is left)
-            if len(loads) == 0: #if no tatmis would be created in step a)
+            for _ in range(0, time_needed[i]//av_time.seconds): #creates number of full tatamis
+                if len(loads) < tatami:
+                   # print("a) i am creating a new tatami")
+                    loads.append(0)           #create loads for tatamiss
+                    scheduled_jobs.append([]) #create tatamis
+                    
+            #Step b) checks if half empty tatami is needed.
+            #(eith no tatami exists or we neeed more time than is left)
+            #print("len(loads) ", len(loads))
+            if len(loads) >= tatami: #max num of tatamis is reached
+                #print("max num of tatamis is reached")
+                pass
+            elif len(loads) == 0: #if no tatmis would be created in step a)
+                #print("if no tatmis would be created in step a)")
                 loads.append(0)  #create loads for tatamiss
                 scheduled_jobs.append([]) #create tatamis
             elif i == 0: #extra tatami is needed for first rounds
+                #print("iextra tatami is needed for first rounds")
                 scheduled_jobs.append([]) # add empty tatami
-                loads.append(extra_time_t+penalty_dis_change) #adds the time to the tatami
+                loads.append(extra_time_t+pen_dis_chng) #adds the time to the tatami
                 remove = True
                 remove_tat = len(scheduled_jobs)-1
-            elif len(loads) > tatami-1: #max num of tatamis is reached
-                pass
-            elif loads[remove_tat] > extra_time_t: #extra tatami is needed
+            elif loads[remove_tat] > (extra_time_t-pen_dis_chng): #extra tatami is needed
+                #print("extra tatami is needed")
                 scheduled_jobs.append([]) # add empty tatami
                 loads.append(extra_time_t) #adds the time to the tatami
                 remove = True
                 remove_tat = len(scheduled_jobs)-1
             else:
                 pass
-    
+
             #Step c) distribute categories
             for job in distr_sor_list[i]:
                 minload_tatami = minloadtatami(loads)
                 scheduled_jobs[minload_tatami].append(job)
                 loads[minload_tatami] += distr_sor_list[i][job].seconds
-            
             if  remove is True:
                 loads[remove_tat] -= (extra_time_t) #removed the time to the tatami.
                 remove = False
+
             #add dis change after each distributuion
-            for tat_used in range(0 ,len(loads)):
+            for tat_used in range(0, len(loads)):
                 if scheduled_jobs[tat_used][-1] is not dis_cha:
                     scheduled_jobs[tat_used].append(dis_cha)
-                    loads[tat_used] += penalty_dis_change
-                    
-    for tat_used in range(0 ,len(loads)):
+                    #print("i am here ", scheduled_jobs[tat_used][-1])
+                    loads[tat_used] += pen_dis_chng*60
+    
+    for tat_used in range(0, len(loads)):
         if scheduled_jobs[tat_used][-1] is dis_cha:
             scheduled_jobs[tat_used].pop()
-            loads[tat_used] -=penalty_dis_change
-    
+            loads[tat_used] -= pen_dis_chng*60
     return scheduled_jobs, loads
 
 def minloadtatami(loads):
@@ -570,6 +630,8 @@ def minloadtatami(loads):
     for tat_min, load in enumerate(loads):
         if load == minload:
             return tat_min
+        else:
+            pass
 
 def autolabel(cat_draw, rects, i, l_x):
     """ Attach labels with disziplines."""
@@ -625,16 +687,135 @@ def plot_schedule(scheduled_jobs, cat_time_dict, start_time, loads, endtime):
             autolabel(cat_draw, rect, i, l_x)
 
     l_x.set_ylabel('Time [hh:min]')
+    l_x.set_xlabel('Tatami')
     plt.show()
-    
+
 def changes_per_permutation(scheduled_jobs, dis_cha):
     '''calculates amount of discipline changes per permutation '''
     disz_changes = [0] * len(scheduled_jobs)
-    for i , tat in enumerate(scheduled_jobs):  #results for each permutaton
+    for i, tat in enumerate(scheduled_jobs):  #results for each permutaton
         for cat in tat: #
             if cat == dis_cha:
                 disz_changes[i] += 1
     return disz_changes
 
+def heatmap(data, row_labels, col_labels, ax=None,
+            cbar_kw={}, cbarlabel="", **kwargs):
+    """
+    Create a heatmap from a numpy array and two lists of labels.
+
+    Parameters
+    ----------
+    data
+        A 2D numpy array of shape (N, M).
+    row_labels
+        A list or array of length N with the labels for the rows.
+    col_labels
+        A list or array of length M with the labels for the columns.
+    ax
+        A `matplotlib.axes.Axes` instance to which the heatmap is plotted.  If
+        not provided, use current axes or create a new one.  Optional.
+    cbar_kw
+        A dictionary with arguments to `matplotlib.Figure.colorbar`.  Optional.
+    cbarlabel
+        The label for the colorbar.  Optional.
+    **kwargs
+        All other arguments are forwarded to `imshow`.
+    """
+
+    if not ax:
+        ax = plt.gca()
+
+    # Plot the heatmap
+    im = ax.imshow(data, **kwargs)
+
+    # Create colorbar
+    cbar = ax.figure.colorbar(im, ax=ax, **cbar_kw)
+    cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
+
+    # We want to show all ticks...
+    ax.set_xticks(np.arange(data.shape[1]))
+    ax.set_yticks(np.arange(data.shape[0]))
+    # ... and label them with the respective list entries.
+    ax.set_xticklabels(col_labels)
+    ax.set_yticklabels(row_labels)
+
+    # Let the horizontal axes labeling appear on top.
+    ax.tick_params(top=True, bottom=False,
+                   labeltop=True, labelbottom=False)
+
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=-30, ha="right",
+             rotation_mode="anchor")
+
+    # Turn spines off and create white grid.
+    for edge, spine in ax.spines.items():
+        spine.set_visible(False)
+
+    ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
+    ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
+    ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
+    ax.tick_params(which="minor", bottom=False, left=False)
+
+    return im, cbar
+
+
+def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
+                     textcolors=("black", "white"),
+                     threshold=None, **textkw):
+    """
+    A function to annotate a heatmap.
+
+    Parameters
+    ----------
+    im
+        The AxesImage to be labeled.
+    data
+        Data used to annotate.  If None, the image's data is used.  Optional.
+    valfmt
+        The format of the annotations inside the heatmap.  This should either
+        use the string format method, e.g. "$ {x:.2f}", or be a
+        `matplotlib.ticker.Formatter`.  Optional.
+    textcolors
+        A pair of colors.  The first is used for values below a threshold,
+        the second for those above.  Optional.
+    threshold
+        Value in data units according to which the colors from textcolors are
+        applied.  If None (the default) uses the middle of the colormap as
+        separation.  Optional.
+    **kwargs
+        All other arguments are forwarded to each call to `text` used to create
+        the text labels.
+    """
+
+    if not isinstance(data, (list, np.ndarray)):
+        data = im.get_array()
+
+    # Normalize the threshold to the images color range.
+    if threshold is not None:
+        threshold = im.norm(threshold)
+    else:
+        threshold = im.norm(data.max())/2.
+
+    # Set default alignment to center, but allow it to be
+    # overwritten by textkw.
+    kw = dict(horizontalalignment="center",
+              verticalalignment="center")
+    kw.update(textkw)
+
+    # Get the formatter in case a string is supplied
+    if isinstance(valfmt, str):
+        valfmt = matplotlib.ticker.StrMethodFormatter(valfmt)
+
+    # Loop over the data and create a `Text` for each "pixel".
+    # Change the text's color depending on the data.
+    texts = []
+    for i in range(data.shape[0]):
+        for j in range(data.shape[1]):
+            kw.update(color=textcolors[int(im.norm(data[i, j]) > threshold)])
+            text = im.axes.text(j, i, valfmt(data[i, j], None), **kw)
+            texts.append(text)
+
+    return texts
 
 main()
