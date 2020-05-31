@@ -12,9 +12,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
-
-def main():
-    """ The main function """
+def create_input():
+    ''' to ask for the tournament parameters
+    '''
+   
     print("-------------------------")
     print("- Tournament Calculator -")
     print("Part 1 - Create tournament")
@@ -30,19 +31,24 @@ def main():
    
     check_tour(name, age_inp, dis_inp) #function to check if the tournament exists
     cat_par_inp, final, tatami = read_in_file(name+".txt")
-
-    print("")
-    print("----------------------------")
-    print("----------- Part 2 ---------")
-    print("-- Please check your input: -")
-    print("----------------------------")
-    print("")
-    print("Catergories and Participants")
-    cat_par = check_input(cat_par_inp)
+    starttime = starttime_calc()
+#
+#
+#    print("")
+#    print("----------------------------")
+#    print("----------- Part 2 ---------")
+#    print("-- Please check your input: -")
+#    print("----------------------------")
+#    print("")
+#    print("Catergories and Participants")
+    #cat_par = check_input(cat_par_inp) might be intereting as extra page
+    cat_par = cat_par_inp
     cat_fights_dict, cat_finals_dict, cat_time_dict, \
         av_time = calculate_fight_time(cat_par, final, tatami)
-    starttime = starttime_calc()
-
+  
+    return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time
+    
+def main(cat_fights_dict, cat_finals_dict, cat_time_dict, av_time):
     cat_time_dict[dis_cha] = timedelta(minutes=pen_dis_chng)
     #add a fict entry for penalty time in dict!
     print("")
@@ -85,10 +91,27 @@ def main():
 #    loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
 #    plot_schedule(scheduled_jobs[pen_time][permut_num], cat_time_dict, starttime.seconds, loads[pen_time][permut_num], endtime/3600+starttime.seconds/3600)
 #    #
-    sys.exit()
+   # sys.exit()
+
 
 def descition_matrix(cat_time_dict, av_time, dis_inp, tatami, pen_dis_chng, dis_cha):
-    ''' to find the best solution based on penalty and weighting of the resutls '''
+    ''' to find the best solution based on penalty and weighting of the resutls
+    Parameters
+    ----------
+    cat_time_dict
+        dictionary with catergories and time of eath catergory (dict)
+    av_time
+        reference time for average tatami (float [s])
+    dis_inp
+        order of disziplines (dict)
+    pen_dis_chng
+        pentaly time for changing a diszipline [fload [s]]
+    dis_cha
+        indicate chsange of diszipline (str)
+    tatami
+        number of tatamis (int)
+    
+    '''
     # run all with permutaitons of dis inp
     permutations_object = itertools.permutations(dis_inp)
     permutations_list = list(permutations_object)
@@ -138,7 +161,9 @@ def descition_matrix(cat_time_dict, av_time, dis_inp, tatami, pen_dis_chng, dis_
     return scheduled_jobs, loads, most_abundand
 
 def check_yes_no():
-    ''' Function to convert YES NO in a Bool'''
+    ''' Function to convert YES NO in a Bool
+    - HELPER FUNCTION
+    '''
     check = False
     inp1 = input("Please type YES / NO : ")
     while check is False:
@@ -153,7 +178,9 @@ def check_yes_no():
     return inp1
 
 def check_num():
-    ''' Check if the input is an int'''
+    ''' Check if the input is an int
+     - HELPER FUNCTION
+    '''
     user_input = input("Please enter a number ")
     while True:
         try:
@@ -164,7 +191,9 @@ def check_num():
             user_input = input("Please enter a number ")
 
 def starttime_calc():
-    ''' change the startime of the tournament'''
+    ''' change the startime of the tournament
+     - HELPER FUNCTION
+    '''
     starttime = timedelta(hours=8, minutes=30)
     print("startime tournament ", starttime)
     print("Change time?")
@@ -186,7 +215,12 @@ def starttime_calc():
     return starttime
 
 def check_input(cat_par):
-    '''function to correct input file '''
+    '''function to correct input file
+    Parameters
+    ----------
+    cat_par
+        dictionary with catergories number of participants (dict)
+    '''
     i = 0
     while i < 1:
         print_dict(cat_par)
@@ -206,7 +240,12 @@ def check_input(cat_par):
     return cat_par
 
 def new_tour(name, age_inp, dis_inp):
-    ''' create a new tournament'''
+    ''' create a new tournament
+    Parameters
+    ----------
+    age_inp
+        dictionary with catergories number of participants (dict)Parameters
+        '''
     tour_file = open(name + ".txt", "w")
     if name == "random":
         print("----------------------------")
@@ -303,7 +342,9 @@ def check_tour(name, age_inp, dis_inp):
             new_tour(name, age_inp, dis_inp)  #creates a new tournament
 
 def read_in_file(fname):
-    ''' Read in file'''
+    ''' Read in file
+     - HELPER FUNCTION
+    '''
     tour_file = open(fname, "r")
     tour_file.readline() # Read and ignore header lines
     tatamis = tour_file.readline() # read in tatami line
@@ -334,7 +375,9 @@ def read_in_file(fname):
     return cat_par, final, tatami
 
 def print_dict(dict_inp):
-    ''' Helper function to print full dict'''
+    ''' Helper function to print full dict
+     - HELPER FUNCTION
+    '''
     for cat_name, par_num in dict_inp.items():
         print(cat_name, par_num)
 
@@ -517,18 +560,24 @@ def calculate_fight_time(dict_inp, final, tatami):
     return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time
 
 def distr_cat_alg(jobs, av_time, dis_inp, pen_dis_chng, dis_cha, tatami):
-    #jobs = list of catergories that need to be distributed (list)
-    # av_time = refernece time for average tatami (float [s])
-    # dis_inp = order of disziplines (dict)
-    # pen_dis_chng = pentaly time for changing a diszipline [fload [s]]
-    # dis_cha = indicate chsange of diszipline (str)
-    # tatami = number of tatamis (int)
-    """Run the algorithm:
-    1. Create List of dictionaries with, where each diszipline has its own dictionary.
-       And fill it with the existing catergories
-    2. Sort each disctiinary by size (longest competitions in beginning of list)
-    3.
-    """
+    '''
+    Run the algorithm. Create List of dictionaries with, where each diszipline has its own dictionary. And fill it with the existing catergories Sort each disctiinary by size (longest competitions in beginning of list)
+    Parameters
+    ----------
+    jobs
+        list of catergories that need to be distributed (list)
+    av_time
+        reference time for average tatami (float [s])
+    dis_inp
+        order of disziplines (dict)
+    pen_dis_chng
+        pentaly time for changing a diszipline [fload [s]]
+    dis_cha
+        indicate chsange of diszipline (str)
+    tatami
+        number of tatamis (int)
+    '''
+    
     distr_list = [] # List of dictionaries with, where each dsizipline has its own dictionary
     loads = []      # List of list which stores the times per tatami as a list
     scheduled_jobs = [] # List od list which stores the names per tatami as a list
@@ -634,7 +683,9 @@ def minloadtatami(loads):
             pass
 
 def autolabel(cat_draw, rects, i, l_x):
-    """ Attach labels with disziplines."""
+    """ Attach labels with disziplines.
+     - HELPER FUNCTION DRAW
+    """
     for lab, rect in enumerate(rects):
         text = cat_draw[i][lab]
         if text != 0:
@@ -644,13 +695,15 @@ def autolabel(cat_draw, rects, i, l_x):
                      text_sep, ha='center', va='center')
 
 def sumlabel(rects, endtime, loads, l_x):
-    '''creates lables for each catergory to dosply them in plot'''
+    '''creates lables for each catergory to dosply them in plot
+    - HELPER FUNCTION DRAW
+    '''
     for lab, rect in enumerate(rects):
         l_x.text(rect.get_x() + rect.get_width() / 2., endtime,
                  loads[lab], ha='center', va='center')
 
 def plot_schedule(scheduled_jobs, cat_time_dict, start_time, loads, endtime):
-    '''creates lables for each catergory to dosply them in plot'''
+    '''creates lables for each catergory to disply them in plot - HELPER FUNCTION DRAW'''
     max_col = len(scheduled_jobs[0])
     for row in scheduled_jobs:
         row_length = len(row)
@@ -702,7 +755,7 @@ def changes_per_permutation(scheduled_jobs, dis_cha):
 def heatmap(data, row_labels, col_labels, ax=None,
             cbar_kw={}, cbarlabel="", **kwargs):
     """
-    Create a heatmap from a numpy array and two lists of labels.
+    Create a heatmap from a numpy array and two lists of labels. - HELPER FUNCTION DRAW
 
     Parameters
     ----------
@@ -764,7 +817,7 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
                      textcolors=("black", "white"),
                      threshold=None, **textkw):
     """
-    A function to annotate a heatmap.
+    A function to annotate a heatmap. - HELPER FUNCTION DRAW
 
     Parameters
     ----------
@@ -818,4 +871,4 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
 
     return texts
 
-main()
+#main()
