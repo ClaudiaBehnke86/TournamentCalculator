@@ -1,33 +1,40 @@
 Tournament: random
-Tatamis: 6
+Tatamis: 2
 Finallblock: NO 
-U21 Ne-Waza Men 56kg 17
-U21 Ne-Waza Men 62kg 10
-U21 Ne-Waza Men 69kg 3
-U21 Ne-Waza Men 77kg 15
-U21 Ne-Waza Men 85kg 6
-U21 Ne-Waza Men 94kg 9
-U21 Ne-Waza Men 95kg 8
-U21 Ne-Waza Women 45kg 14
-U21 Ne-Waza Women 48kg 8
-U21 Ne-Waza Women 52kg 14
-U21 Ne-Waza Women 57kg 12
-U21 Ne-Waza Women 63kg 8
-U21 Ne-Waza Women 70kg 15
-U21 Ne-Waza Women 71kg 14
-U18 Ne-Waza Men 46kg 3
-U18 Ne-Waza Men 50kg 10
-U18 Ne-Waza Men 55kg 12
-U18 Ne-Waza Men 60kg 9
-U18 Ne-Waza Men 66kg 2
-U18 Ne-Waza Men 73kg 5
-U18 Ne-Waza Men 81kg 3
-U18 Ne-Waza Men 82kg 13
-U18 Ne-Waza Women 40kg 13
-U18 Ne-Waza Women 44kg 9
-U18 Ne-Waza Women 48kg 4
-U18 Ne-Waza Women 52kg 8
-U18 Ne-Waza Women 57kg 7
-U18 Ne-Waza Women 63kg 11
-U18 Ne-Waza Women 70kg 6
-U18 Ne-Waza Women 71kg 18
+Startime: 30600
+U18 Fighting Men 46kg 7
+U18 Fighting Men 50kg 6
+U18 Fighting Men 55kg 8
+U18 Fighting Men 60kg 8
+U18 Fighting Men 66kg 5
+U18 Fighting Men 73kg 2
+U18 Fighting Men 81kg 3
+U18 Fighting Men 82kg 12
+U18 Fighting Women 40kg 23
+U18 Fighting Women 44kg 4
+U18 Fighting Women 48kg 5
+U18 Fighting Women 52kg 11
+U18 Fighting Women 57kg 20
+U18 Fighting Women 63kg 4
+U18 Fighting Women 70kg 12
+U18 Fighting Women 71kg 8
+U18 Show Mixed 6
+U18 Show Women 10
+U18 Show Men 10
+Adults Fighting Men 56kg 7
+Adults Fighting Men 62kg 8
+Adults Fighting Men 69kg 5
+Adults Fighting Men 77kg 3
+Adults Fighting Men 85kg 10
+Adults Fighting Men 94kg 6
+Adults Fighting Men 95kg 11
+Adults Fighting Women 45kg 9
+Adults Fighting Women 48kg 6
+Adults Fighting Women 52kg 19
+Adults Fighting Women 57kg 10
+Adults Fighting Women 63kg 8
+Adults Fighting Women 70kg 15
+Adults Fighting Women 71kg 1
+Adults Show Mixed 3
+Adults Show Women 13
+Adults Show Men 10

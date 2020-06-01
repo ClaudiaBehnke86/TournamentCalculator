@@ -33,9 +33,8 @@ def create_input():
     print("")
 
     check_tour(name, age_inp, dis_inp) #function to check if the tournament exists
-    cat_par_inp, final, tatami = read_in_file(name+".txt")
-    starttime = starttime_calc(name)
-#
+    cat_par_inp, final, tatami, starttime = read_in_file(name+".txt")
+    
 #
 #    print("")
 #    print("----------------------------")
@@ -52,7 +51,7 @@ def create_input():
     return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, tatami, starttime
     
 def main(cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, tatami, starttime):
-    
+    """ the main fuction"""
     cat_time_dict[dis_cha] = timedelta(minutes=pen_dis_chng)
     #add a fict entry for penalty time in dict!
     print("")
@@ -88,15 +87,6 @@ def main(cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, tatami, start
                   cat_time_dict, starttime.seconds,
                   loads[pen_time][permut_num],
                   endtime/3600+starttime.seconds/3600)
-
-#    pen_time = pen_dis_chng//2 #choosen penalty time
-#    permut_num = int(list(test)[1]) #chosen permutation
-#    endtime = max(loads[pen_time][permut_num]) + 1800 # add for displaying the end_time in plot
-#    loads[pen_time][permut_num] = [x+starttime.seconds for x in loads[pen_time][permut_num]] #add starttime to loads
-#    loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
-#    plot_schedule(scheduled_jobs[pen_time][permut_num], cat_time_dict, starttime.seconds, loads[pen_time][permut_num], endtime/3600+starttime.seconds/3600)
-#    #
-   # sys.exit()
 
 
 def descition_matrix(cat_time_dict, av_time, dis_inp, tatami, pen_dis_chng, dis_cha):
@@ -261,7 +251,7 @@ def new_tour(name, age_inp, dis_inp):
         print("- of competitors are entered")
         print("----------------------------")
           
-        tatami = np.random.randint(1, 15)
+        tatami = np.random.randint(1, 10)
         print("Tournament:", name, "will be created with ", tatami, " tatamis")
         nage = np.random.randint(1, len(age_inp))
         age_select = random.sample(age_inp, nage) # select age catergories
@@ -276,6 +266,9 @@ def new_tour(name, age_inp, dis_inp):
             while _rtmp  < 0:
                 _rtmp = round(np.random.normal(8, 5.32))
             cat_par[i] = _rtmp
+        if len(cat_all) < tatami:
+            print("too many tatamis for catergories")
+            tatami = len(cat_all)
     else:
         print("How many tatmis will be there: ")
         tatami = check_num()
@@ -302,8 +295,7 @@ def new_tour(name, age_inp, dis_inp):
                 continue
             cat_par[i] = int(inp)
 
-    time.sleep(1)
-
+    #write the file
     tour_file.write("Tournament: " + name + "\n")
     tour_file.write("Tatamis: " + str(tatami) + "\n")
 
@@ -313,7 +305,10 @@ def new_tour(name, age_inp, dis_inp):
     else:
         print("Tournament has NO final block")
         tour_file.write("Finallblock: NO \n")
-
+    
+    starttime = starttime_calc(name)
+    tour_file.write("Startime: " + str(starttime.seconds) + "\n"  )
+    
     for cat_name, par_num in cat_par.items():
         tour_file.write(str(cat_name) +" "+ str(par_num) + "\n")
 
@@ -373,9 +368,15 @@ def read_in_file(fname):
         final = False
     else:
         print("something is wrong with ", final_inp)
-
+    
+    #read in starttime
+    starttimes = tour_file.readline() # read in tatami line
+    starttime_inp = starttimes.split()
+    starttime_sec = int(starttime_inp[1])
+    starttime = timedelta(seconds=starttime_sec)
+  
+    
     cat_par = {} #number of particpants
-
     for line in tour_file: # Loop over lines and extract variables of interest
         line = line.strip()
         columns = line.split()
@@ -386,7 +387,7 @@ def read_in_file(fname):
             catname = columns[0] + " "+ columns[1] + " " + columns[2] +" " + columns[3]
             j = int(columns[4])
         cat_par[catname] = int(j)
-    return cat_par, final, tatami
+    return cat_par, final, tatami, starttime
 
 def print_dict(dict_inp):
     ''' Helper function to print full dict
