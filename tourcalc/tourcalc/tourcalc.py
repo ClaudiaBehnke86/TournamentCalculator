@@ -12,6 +12,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
+
+#some globar varitables
+age_inp = ["U16", "U18", "U21", "Adults"] #the supported age catergories
+dis_inp = ["Duo", "Show", "Ne-Waza", "Fighting"] # order does not matter -> permutations
+
+dis_cha = "Discipline change" # indicator of a change of a discipline
+pen_dis_chng = 30 #add the changeing time for the change betwenn disciplines in minutes
+
 def create_input():
     ''' to ask for the tournament parameters
     '''
@@ -24,14 +32,9 @@ def create_input():
     name = input("Please enter a name for the tournament: ")
     print("")
 
-    age_inp = ["U16", "U18", "U21", "Adults"] #the supported age catergories
-    dis_inp = ["Duo", "Show", "Ne-Waza", "Fighting"] # order does not matter -> permutations
-    dis_cha = "Discipline change" # indicator of a change of a discipline
-    pen_dis_chng = 30 #add the changeing time for the change betwenn disciplines in minutes
-   
     check_tour(name, age_inp, dis_inp) #function to check if the tournament exists
     cat_par_inp, final, tatami = read_in_file(name+".txt")
-    starttime = starttime_calc()
+    starttime = starttime_calc(name)
 #
 #
 #    print("")
@@ -46,9 +49,10 @@ def create_input():
     cat_fights_dict, cat_finals_dict, cat_time_dict, \
         av_time = calculate_fight_time(cat_par, final, tatami)
   
-    return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time
+    return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, tatami, starttime
     
-def main(cat_fights_dict, cat_finals_dict, cat_time_dict, av_time):
+def main(cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, tatami, starttime):
+    
     cat_time_dict[dis_cha] = timedelta(minutes=pen_dis_chng)
     #add a fict entry for penalty time in dict!
     print("")
@@ -60,10 +64,11 @@ def main(cat_fights_dict, cat_finals_dict, cat_time_dict, av_time):
     print("")
     #########################
     #print("Scheduled Jobs: \n {} ".format(pprint.pformat(scheduled_jobs)))
-
+    
     scheduled_jobs, loads, most_abundand = descition_matrix(
         cat_time_dict, av_time, dis_inp, tatami, pen_dis_chng, dis_cha)
-
+    
+    
     print("There are ", len(most_abundand), "possible results ")
     test = {k: v for k, v in sorted(most_abundand.items(), key=lambda item: item[1], reverse=True)}
     print(test)
@@ -190,29 +195,32 @@ def check_num():
             print("This is not a number. Please enter a valid number")
             user_input = input("Please enter a number ")
 
-def starttime_calc():
+def starttime_calc(name):
     ''' change the startime of the tournament
      - HELPER FUNCTION
     '''
     starttime = timedelta(hours=8, minutes=30)
-    print("startime tournament ", starttime)
-    print("Change time?")
-    ch_time = check_yes_no()
-    if ch_time is True:
-        print("Please give NEW startime\nHours: ")
-        h_new = check_num()
-        while(h_new > 24 or h_new < 0):
+    if name == "random":
+        return starttime
+    else:
+        print("startime tournament ", starttime)
+        print("Change time?")
+        ch_time = check_yes_no()
+        if ch_time is True:
+            print("Please give NEW startime\nHours: ")
             h_new = check_num()
-            if(h_new > 24 or h_new < 0):
-                print("Hours must between 0 and 24")
-        print("Minutes: ")
-        m_new = check_num()
-        while(m_new > 60 or m_new < 0):
+            while(h_new > 24 or h_new < 0):
+                h_new = check_num()
+                if(h_new > 24 or h_new < 0):
+                    print("Hours must between 0 and 24")
+            print("Minutes: ")
             m_new = check_num()
-            if(m_new > 60 or m_new < 0):
-                print("Minutes must between 0 and 60")
-        starttime = timedelta(hours=h_new, minutes=m_new)
-    return starttime
+            while(m_new > 60 or m_new < 0):
+                m_new = check_num()
+                if(m_new > 60 or m_new < 0):
+                    print("Minutes must between 0 and 60")
+            starttime = timedelta(hours=h_new, minutes=m_new)
+        return starttime
 
 def check_input(cat_par):
     '''function to correct input file
@@ -323,19 +331,25 @@ def check_tour(name, age_inp, dis_inp):
             print("!!! Overrinding will delete the exisiting file !!!")
             print("2. Do you want to use the datebase? Type \"USE\"")
             print("3. Do you want to use a different name? Type \"NEW\"")
-            newf = input("Please type: \"OVERRIDE\" , \"USE\" or \"NEW\" : ")
-            if newf == "OVERRIDE":
+            if name == "random":
                 print("New tournament will be created")
                 check = 1
                 new_tour(name, age_inp, dis_inp) #creates a new tournament
                 continue
-            if newf == "NEW":
-                name = input("Please type new name ")
-                fname = name + ".txt"
-            elif newf == "USE":
-                check = 1
             else:
-                newf = input("This is not valid. Please try again. ")
+                newf = input("Please type: \"OVERRIDE\" , \"USE\" or \"NEW\" : ")
+                if newf == "OVERRIDE":
+                    print("New tournament will be created")
+                    check = 1
+                    new_tour(name, age_inp, dis_inp) #creates a new tournament
+                    continue
+                if newf == "NEW":
+                    name = input("Please type new name ")
+                    fname = name + ".txt"
+                elif newf == "USE":
+                    check = 1
+                else:
+                    newf = input("This is not valid. Please try again. ")
         else:
             print("New tournament will be created")
             check = 1
