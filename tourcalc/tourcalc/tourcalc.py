@@ -7,53 +7,55 @@ import  time
 #import pprint # needed for nice prints
 from datetime import timedelta
 import itertools # for permutations of discipline order
+import random
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import random
 
-
-#some globar varitables
-age_inp = ["U16", "U18", "U21", "Adults"] #the supported age catergories
-dis_inp = ["Duo", "Show", "Ne-Waza", "Fighting"] # order does not matter -> permutations
-
-dis_cha = "Discipline change" # indicator of a change of a discipline
-pen_dis_chng = 30 #add the changeing time for the change betwenn disciplines in minutes
+#some global variables
+AGE_INP = ["U16", "U18", "U21", "Adults"] #the supported age catergories
+DIS_INP = ["Duo", "Show", "Ne-Waza", "Fighting"] # order does not matter -> permutations
+#just a name
+DIS_CHA = "Discipline change" # indicator of a change of a discipline
+DIS_CHA_TIME = 30 #add the changeing time for the change betwenn disciplines in minutes
 
 def create_input():
     ''' to ask for the tournament parameters
+    needs ot be called before main
+    will ask user for all needed input
     '''
-   
-    print("-------------------------")
-    print("- Tournament Calculator -")
-    print("Part 1 - Create tournament")
-    print("-------------------------")
-    print("")
-    name = input("Please enter a name for the tournament: ")
-    print("")
 
-    check_tour(name, age_inp, dis_inp) #function to check if the tournament exists
+    name = input("Please enter a name for the tournament: ")
+    check_tour(name) #function to check if the tournament exists
+    #read in file a file (alywas)
     cat_par_inp, final, tatami, starttime = read_in_file(name+".txt")
-    
-#
-#    print("")
-#    print("----------------------------")
-#    print("----------- Part 2 ---------")
-#    print("-- Please check your input: -")
-#    print("----------------------------")
-#    print("")
-#    print("Catergories and Participants")
-    #cat_par = check_input(cat_par_inp) might be intereting as extra page
+
+    # here one can ask for the
     cat_par = cat_par_inp
+    return cat_par, tatami, final, starttime
+
+def main(cat_par, tatami, final, starttime):
+    """ the main fuction which calles the algortihm
+    needs the input from create_input()
+    
+    Parameters
+    ----------
+    cat_par
+        contains the number of athletes per category [dict]
+    tatami
+        number of competitaion areas [int]
+    final
+        doest the event have a final block [bool]
+    stattime
+         starttime of the tournamet (default 08:30) [timedelta]
+    """
+
     cat_fights_dict, cat_finals_dict, cat_time_dict, \
         av_time = calculate_fight_time(cat_par, final, tatami)
-  
-    return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, tatami, starttime
-    
-def main(cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, tatami, starttime):
-    """ the main fuction"""
-    cat_time_dict[dis_cha] = timedelta(minutes=pen_dis_chng)
+
     #add a fict entry for penalty time in dict!
+    cat_time_dict[DIS_CHA] = timedelta(minutes=DIS_CHA_TIME)
+
     print("")
     print("----------------------------")
     print("----------- Part 3 ---------")
@@ -63,11 +65,10 @@ def main(cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, tatami, start
     print("")
     #########################
     #print("Scheduled Jobs: \n {} ".format(pprint.pformat(scheduled_jobs)))
-    
+
     scheduled_jobs, loads, most_abundand = descition_matrix(
-        cat_time_dict, av_time, dis_inp, tatami, pen_dis_chng, dis_cha)
-    
-    
+        cat_time_dict, av_time, tatami)
+
     print("There are ", len(most_abundand), "possible results ")
     test = {k: v for k, v in sorted(most_abundand.items(), key=lambda item: item[1], reverse=True)}
     print(test)
@@ -78,7 +79,7 @@ def main(cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, tatami, start
     print("----------------------------")
     print("")
 
-    pen_time = pen_dis_chng//2 #choosen penalty time
+    pen_time = DIS_CHA_TIME//2 #choosen penalty time
     permut_num = int(list(test)[0]) #chosen permutation
     endtime = max(loads[pen_time][permut_num]) + 1800 # add for displaying the end_time in plot
     loads[pen_time][permut_num] = [x+starttime.seconds for x in loads[pen_time][permut_num]] #add starttime to loads
@@ -89,41 +90,35 @@ def main(cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, tatami, start
                   endtime/3600+starttime.seconds/3600)
 
 
-def descition_matrix(cat_time_dict, av_time, dis_inp, tatami, pen_dis_chng, dis_cha):
+def descition_matrix(cat_time_dict, av_time, tatami):
     ''' to find the best solution based on penalty and weighting of the resutls
+    
     Parameters
     ----------
     cat_time_dict
-        dictionary with catergories and time of eath catergory (dict)
+        dictionary with catergories and time of eath catergory [dict]
     av_time
-        reference time for average tatami (float [s])
-    dis_inp
-        order of disziplines (dict)
-    pen_dis_chng
-        pentaly time for changing a diszipline [fload [s]]
-    dis_cha
-        indicate chsange of diszipline (str)
+        reference time for average tatami [float] (sec)
     tatami
-        number of tatamis (int)
-    
+        number of tatamis [int]
     '''
     # run all with permutaitons of dis inp
-    permutations_object = itertools.permutations(dis_inp)
+    permutations_object = itertools.permutations(DIS_INP)
     permutations_list = list(permutations_object)
 
     #array for all possible outcomes
-    scheduled_jobs = np.array([[[None] * tatami] * len(permutations_list)] * pen_dis_chng)
-    loads = np.array([[[None] * tatami] * len(permutations_list)] * pen_dis_chng)
-    pen_time_list = list(range(pen_dis_chng//2, pen_dis_chng+pen_dis_chng//2))
+    scheduled_jobs = np.array([[[None] * tatami] * len(permutations_list)] * DIS_CHA_TIME)
+    loads = np.array([[[None] * tatami] * len(permutations_list)] * DIS_CHA_TIME)
+    pen_time_list = list(range(DIS_CHA_TIME//2, DIS_CHA_TIME+DIS_CHA_TIME//2))
     happiness = [x / 10.0 for x in range(0, 20)]
 
     time_max = np.array([[None] * len(pen_time_list)] * len(happiness))
     time_std = np.array([[None]  * len(pen_time_list)] * len(happiness))
     score = np.array([[None] * len(permutations_list) * len(pen_time_list)] * len(happiness))
 
-    for x, px in enumerate(pen_time_list): #penalty time
+    for pen_var_num, pen_var_t in enumerate(pen_time_list): #penalty time
         for j in range(0, loads.shape[1]): #permutaitons
-            scheduled_jobs[x][j], loads[x][j] = distr_cat_alg(cat_time_dict, av_time, permutations_list[j], px, dis_cha, tatami)
+            scheduled_jobs[pen_var_num][j], loads[pen_var_num][j] = distr_cat_alg(cat_time_dict, av_time, permutations_list[j], pen_var_t, tatami)
     min_id = np.array([[0.1] * len(happiness)] * len(pen_time_list))
     min_score = np.array([[0.1] * len(happiness)] * len(pen_time_list))
 
@@ -156,7 +151,8 @@ def descition_matrix(cat_time_dict, av_time, dis_inp, tatami, pen_dis_chng, dis_
     return scheduled_jobs, loads, most_abundand
 
 def check_yes_no():
-    ''' Function to convert YES NO in a Bool
+    '''
+    Function to convert STRING (YES / NO) in a Bool
     - HELPER FUNCTION
     '''
     check = False
@@ -173,7 +169,7 @@ def check_yes_no():
     return inp1
 
 def check_num():
-    ''' Check if the input is an int
+    ''' Check if the input is an INT
      - HELPER FUNCTION
     '''
     user_input = input("Please enter a number ")
@@ -188,11 +184,14 @@ def check_num():
 def starttime_calc(name):
     ''' change the startime of the tournament
      - HELPER FUNCTION
+  
+    Parameters
+    ----------
+    name
+        to check if the name is "random" []
     '''
     starttime = timedelta(hours=8, minutes=30)
-    if name == "random":
-        return starttime
-    else:
+    if name != "random":
         print("startime tournament ", starttime)
         print("Change time?")
         ch_time = check_yes_no()
@@ -210,14 +209,15 @@ def starttime_calc(name):
                 if(m_new > 60 or m_new < 0):
                     print("Minutes must between 0 and 60")
             starttime = timedelta(hours=h_new, minutes=m_new)
-        return starttime
+    return starttime
 
 def check_input(cat_par):
     '''function to correct input file
+    
     Parameters
     ----------
     cat_par
-        dictionary with catergories number of participants (dict)
+        catergories and number of participants [dict]
     '''
     i = 0
     while i < 1:
@@ -237,33 +237,28 @@ def check_input(cat_par):
             print("Catergory", check, "not known. Please try again")
     return cat_par
 
-def new_tour(name, age_inp, dis_inp):
+def new_tour(name):
     ''' create a new tournament
+    
     Parameters
     ----------
-    age_inp
-        dictionary with catergories number of participants (dict)Parameters
-        '''
+    name
+        name of the tour nament [str]
+    '''
     tour_file = open(name + ".txt", "w")
     if name == "random":
-        print("----------------------------")
-        print("- Part 2 - Random number ---")
-        print("- of competitors are entered")
-        print("----------------------------")
-          
         tatami = np.random.randint(1, 10)
-        print("Tournament:", name, "will be created with ", tatami, " tatamis")
-        nage = np.random.randint(1, len(age_inp))
-        age_select = random.sample(age_inp, nage) # select age catergories
-        ndis = np.random.randint(1, len(dis_inp))
-        dis_select = random.sample(dis_inp, ndis)# select disxiplines
+        nage = np.random.randint(1, len(AGE_INP))
+        age_select = random.sample(AGE_INP, nage) # select age catergories
+        ndis = np.random.randint(1, len(DIS_INP))
+        dis_select = random.sample(DIS_INP, ndis)# select disxiplines
         final = random.choice(["YES", "NO"])
         cat_all = cal_cat(age_select, dis_select) # calculate catergories
         cat_par = {}#number of particpants
 
         for i in cat_all:
             _rtmp = round(np.random.normal(8, 5.32))
-            while _rtmp  < 0:
+            while _rtmp < 0:
                 _rtmp = round(np.random.normal(8, 5.32))
             cat_par[i] = _rtmp
         if len(cat_all) < tatami:
@@ -278,15 +273,15 @@ def new_tour(name, age_inp, dis_inp):
 
         print("Tournament:", name, "will be created with ", tatami, " tatamis")
 
-        age_select = age_cat(age_inp) # select age catergories
-        dis_select = dis_cat(dis_inp) # select disxiplines
+        age_select = age_cat(AGE_INP) # select age catergories
+        dis_select = dis_cat(DIS_INP) # select disxiplines
         cat_all = cal_cat(age_select, dis_select) # calculate catergories
         cat_par = {}#number of particpants
 
         print("----------------------------")
         print("- Part 2 - Add Competitors -")
         print("----------------------------")
-        
+
         print("Please add the number of participants for each category: ")
         for i in cat_all:
             print("Number of competitors in", i)
@@ -305,17 +300,24 @@ def new_tour(name, age_inp, dis_inp):
     else:
         print("Tournament has NO final block")
         tour_file.write("Finallblock: NO \n")
-    
+
     starttime = starttime_calc(name)
-    tour_file.write("Startime: " + str(starttime.seconds) + "\n"  )
-    
+    tour_file.write("Startime: " + str(starttime.seconds) + "\n")
+
     for cat_name, par_num in cat_par.items():
         tour_file.write(str(cat_name) +" "+ str(par_num) + "\n")
 
     tour_file.close()
 
-def check_tour(name, age_inp, dis_inp):
-    ''' compare test input with existing text files'''
+def check_tour(name):
+    ''' compare test input with existing text files
+    
+    Parameters
+    ----------
+    name
+        name of the tour nament [str]
+    
+    '''
     fname = name + ".txt"
     check = 0
     while check < 1:
@@ -329,14 +331,14 @@ def check_tour(name, age_inp, dis_inp):
             if name == "random":
                 print("New tournament will be created")
                 check = 1
-                new_tour(name, age_inp, dis_inp) #creates a new tournament
+                new_tour(name) #creates a new tournament
                 continue
             else:
                 newf = input("Please type: \"OVERRIDE\" , \"USE\" or \"NEW\" : ")
                 if newf == "OVERRIDE":
                     print("New tournament will be created")
                     check = 1
-                    new_tour(name, age_inp, dis_inp) #creates a new tournament
+                    new_tour(name) #creates a new tournament
                     continue
                 if newf == "NEW":
                     name = input("Please type new name ")
@@ -348,11 +350,17 @@ def check_tour(name, age_inp, dis_inp):
         else:
             print("New tournament will be created")
             check = 1
-            new_tour(name, age_inp, dis_inp)  #creates a new tournament
+            new_tour(name)  #creates a new tournament
 
 def read_in_file(fname):
     ''' Read in file
      - HELPER FUNCTION
+     
+    Parameters
+    ----------
+    fname
+        name of the tour nament [str]
+
     '''
     tour_file = open(fname, "r")
     tour_file.readline() # Read and ignore header lines
@@ -368,14 +376,13 @@ def read_in_file(fname):
         final = False
     else:
         print("something is wrong with ", final_inp)
-    
+
     #read in starttime
     starttimes = tour_file.readline() # read in tatami line
     starttime_inp = starttimes.split()
     starttime_sec = int(starttime_inp[1])
     starttime = timedelta(seconds=starttime_sec)
-  
-    
+
     cat_par = {} #number of particpants
     for line in tour_file: # Loop over lines and extract variables of interest
         line = line.strip()
@@ -392,30 +399,36 @@ def read_in_file(fname):
 def print_dict(dict_inp):
     ''' Helper function to print full dict
      - HELPER FUNCTION
+
+    Parameters
+    ----------
+    dict_inp
+        name of the dict
+
     '''
     for cat_name, par_num in dict_inp.items():
         print(cat_name, par_num)
 
-def age_cat(age_inp):
+def age_cat():
     ''' add age catergories for tournaments'''
     print("------------------------")
     print("--- Age catergories ---")
     print("------------------------")
     print("Which age catergories will compete?")
-    print("Possible catergories ", age_inp)
+    print("Possible catergories ", AGE_INP)
     print()
     print("Type: \"ALL\" to add all categories ")
 
     i = 0
     age_select = []
-    while i < len(age_inp):
+    while i < len(AGE_INP):
         add_cat = input("Please type in name of category or type \
         \"OK\" to continue to next step ")
         if add_cat == "ALL":
-            age_select = age_inp.copy()
+            age_select = AGE_INP.copy()
             print("All categories are added")
             break
-        if add_cat in age_inp:
+        if add_cat in AGE_INP:
             age_select.append(add_cat)
             print(add_cat, "added")
             i += 1
@@ -432,26 +445,26 @@ def age_cat(age_inp):
     time.sleep(2)
     return age_select
 
-def dis_cat(dis_inp):
+def dis_cat():
     ''' add the pariciparting disziplines'''
     print("")
     print("------------------------")
     print("--- Disciplines -------")
     print("------------------------")
     print("Which disciplines will compete?")
-    print("Possible categories:", dis_inp)
+    print("Possible categories:", DIS_INP)
     print("Type: ""ALL"" to add all categories")
 
     i = 0
     dis_select = []
-    while i < len(dis_inp):
+    while i < len(DIS_INP):
         add_cat = input("Please type in name of diszipline or type \
                         \"OK\" to continue to next step ")
         if add_cat == "ALL":
-            dis_select = dis_inp.copy()
+            dis_select = DIS_INP.copy()
             print("All disziplines are added")
             break
-        if add_cat in dis_inp:
+        if add_cat in DIS_INP:
             dis_select.append(add_cat)
             print(add_cat, "added")
             i += 1
@@ -466,7 +479,18 @@ def dis_cat(dis_inp):
     return dis_select
 
 def cal_cat(age_select, dis_select):
-    '''calculation of weight categories'''
+    '''calculation of weight categories
+    
+    Parameters
+    -----------
+    age_select
+         selected age caterogries [list]
+         
+    dis_select
+        selected disciplines [list]
+           
+    '''
+    
     print("------------------------")
     print("calculation of weight categories")
 
@@ -509,7 +533,18 @@ def cal_cat(age_select, dis_select):
     return cat_all
 
 def calculate_fight_time(dict_inp, final, tatami):
-    '''calculate the fight time '''
+    '''calculate the fight time
+    
+    Parameters
+    ----------
+    dict_inp
+        contains the number of athletes per category [dict]
+    tatami
+        number of competitaion areas [int]
+    final
+          does the event have a final block [bool]
+    
+    '''
     fight_num_total = 0
     par_num_total = 0
     cat_fights_dict = {}  #categories & number of fights
@@ -574,37 +609,38 @@ def calculate_fight_time(dict_inp, final, tatami):
 
     return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time
 
-def distr_cat_alg(jobs, av_time, dis_inp, pen_dis_chng, dis_cha, tatami):
+def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami):
     '''
     Run the algorithm. Create List of dictionaries with, where each diszipline has its own dictionary. And fill it with the existing catergories Sort each disctiinary by size (longest competitions in beginning of list)
+    
     Parameters
     ----------
     jobs
         list of catergories that need to be distributed (list)
     av_time
         reference time for average tatami (float [s])
-    dis_inp
-        order of disziplines (dict)
-    pen_dis_chng
+    cur_per
+        current order of disziplines [list]
+    DIS_CHA_TIME
         pentaly time for changing a diszipline [fload [s]]
-    dis_cha
+    DIS_CHA
         indicate chsange of diszipline (str)
     tatami
         number of tatamis (int)
     '''
-    
+
     distr_list = [] # List of dictionaries with, where each dsizipline has its own dictionary
     loads = []      # List of list which stores the times per tatami as a list
     scheduled_jobs = [] # List od list which stores the names per tatami as a list
     time_needed = [] # list for calcuating the total needed times per discipline
     distr_sor_list = distr_list
 
-    #print(" ----- ",dis_inp," ----- ")
+    #print(" ----- ",DIS_INP," ----- ")
     # Step 1
-    for i in dis_inp:
+    for i in  cur_per:
         distr_list.append({}) #add a new list for each diszipline
     for (key, value) in jobs.items():
-        for i, j in enumerate(dis_inp): #loop over all entries in the input
+        for i, j in enumerate(cur_per): #loop over all entries in the input
             if j in key: # Check if key is the same add pair to new dictionary
                 distr_list[i][key] = value
     # Step 2
@@ -618,15 +654,15 @@ def distr_cat_alg(jobs, av_time, dis_inp, pen_dis_chng, dis_cha, tatami):
         for (key, value) in distr_list[i].items():
             time_needed[i] += value.seconds
         par_tat_need.append(time_needed[i]/av_time.seconds-time_needed[i]//av_time.seconds)
-       # print("Tatamis needed for", dis_inp[i], " : ",
+       # print("Tatamis needed for", DIS_INP[i], " : ",
        #     "{:.2f}".format(time_needed[i]/av_time.seconds))
-       # print("Time needed for", dis_inp[i], " : ",
+       # print("Time needed for", DIS_INP[i], " : ",
        #      "{:.2f}".format(time_needed[i]/3600))
-   
+
     remove_tat = 0
     # Step 3
     for i, j in enumerate(distr_sor_list):
-       # print(" --- next diszipline is ---  ",  dis_inp[i] )
+       # print(" --- next diszipline is ---  ",  DIS_INP[i] )
         if time_needed[i] != 0: #ignore empty disciplicnes
             extra_time_t = (1-par_tat_need[i])*av_time.seconds
             remove = False #to check extra time, if added time need to be later removed
@@ -637,7 +673,7 @@ def distr_cat_alg(jobs, av_time, dis_inp, pen_dis_chng, dis_cha, tatami):
                    # print("a) i am creating a new tatami")
                     loads.append(0)           #create loads for tatamiss
                     scheduled_jobs.append([]) #create tatamis
-                    
+
             #Step b) checks if half empty tatami is needed.
             #(eith no tatami exists or we neeed more time than is left)
             #print("len(loads) ", len(loads))
@@ -651,10 +687,10 @@ def distr_cat_alg(jobs, av_time, dis_inp, pen_dis_chng, dis_cha, tatami):
             elif i == 0: #extra tatami is needed for first rounds
                 #print("iextra tatami is needed for first rounds")
                 scheduled_jobs.append([]) # add empty tatami
-                loads.append(extra_time_t+pen_dis_chng) #adds the time to the tatami
+                loads.append(extra_time_t+cur_pen_time) #adds the time to the tatami
                 remove = True
                 remove_tat = len(scheduled_jobs)-1
-            elif loads[remove_tat] > (extra_time_t-pen_dis_chng): #extra tatami is needed
+            elif loads[remove_tat] > (extra_time_t-cur_pen_time): #extra tatami is needed
                 #print("extra tatami is needed")
                 scheduled_jobs.append([]) # add empty tatami
                 loads.append(extra_time_t) #adds the time to the tatami
@@ -674,21 +710,23 @@ def distr_cat_alg(jobs, av_time, dis_inp, pen_dis_chng, dis_cha, tatami):
 
             #add dis change after each distributuion
             for tat_used in range(0, len(loads)):
-                if scheduled_jobs[tat_used][-1] is not dis_cha:
-                    scheduled_jobs[tat_used].append(dis_cha)
+                if scheduled_jobs[tat_used][-1] is not DIS_CHA:
+                    scheduled_jobs[tat_used].append(DIS_CHA)
                     #print("i am here ", scheduled_jobs[tat_used][-1])
-                    loads[tat_used] += pen_dis_chng*60
-    
+                    loads[tat_used] += cur_pen_time*60
+
     for tat_used in range(0, len(loads)):
-        if scheduled_jobs[tat_used][-1] is dis_cha:
+        if scheduled_jobs[tat_used][-1] is DIS_CHA:
             scheduled_jobs[tat_used].pop()
-            loads[tat_used] -= pen_dis_chng*60
+            loads[tat_used] -= cur_pen_time*60
     return scheduled_jobs, loads
 
 def minloadtatami(loads):
     """Find the tatami with the minimum load.
     Break the tie of tatamis having same load on
     first come first serve basis.
+    
+    
     """
     minload = min(loads)
     for tat_min, load in enumerate(loads):
@@ -758,12 +796,12 @@ def plot_schedule(scheduled_jobs, cat_time_dict, start_time, loads, endtime):
     l_x.set_xlabel('Tatami')
     plt.show()
 
-def changes_per_permutation(scheduled_jobs, dis_cha):
+def changes_per_permutation(scheduled_jobs):
     '''calculates amount of discipline changes per permutation '''
     disz_changes = [0] * len(scheduled_jobs)
     for i, tat in enumerate(scheduled_jobs):  #results for each permutaton
         for cat in tat: #
-            if cat == dis_cha:
+            if cat == DIS_CHA:
                 disz_changes[i] += 1
     return disz_changes
 
