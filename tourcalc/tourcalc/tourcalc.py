@@ -1,5 +1,4 @@
 """ This module should be used to create a tournament
-But mostly it is used for me to have a hands on example for python
  """
 import sys
 import os
@@ -11,30 +10,35 @@ import random
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 #some global variables
 AGE_INP = ["U16", "U18", "U21", "Adults"] #the supported age catergories
-DIS_INP = ["Duo", "Show", "Ne-Waza", "Fighting"] # order does not matter -> permutations
+DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"] # order does not matter -> permutations
 #just a name
 DIS_CHA = "Discipline change" # indicator of a change of a discipline
 DIS_CHA_TIME = 30 #add the changeing time for the change betwenn disciplines in minutes
 
-def create_input():
+BREAK = "Break"
+BREAK_TIME = 14400 # 4hrs after start of tournamement
+BREAK_LENGTH = 30 # 30 min
+
+def create_input(tournament_name):
     ''' to ask for the tournament parameters
     needs ot be called before main
     will ask user for all needed input
     '''
 
-    name = input("Please enter a name for the tournament: ")
+    name = tournament_name  # input("Please enter a name for the tournament: ")
     check_tour(name) #function to check if the tournament exists
     #read in file a file (alywas)
-    cat_par_inp, final, tatami, starttime = read_in_file(name+".txt")
+    cat_par_inp, final, tatami, starttime, break_t = read_in_file(name+".txt")
 
     # here one can ask for the
     cat_par = cat_par_inp
-    return cat_par, tatami, final, starttime
+    return cat_par, tatami, final, starttime, break_t
 
-def main(cat_par, tatami, final, starttime):
+def main(cat_par, tatami, final, starttime, break_t):
     """ the main fuction which calles the algortihm
     needs the input from create_input()
     
@@ -53,28 +57,29 @@ def main(cat_par, tatami, final, starttime):
     cat_fights_dict, cat_finals_dict, cat_time_dict, \
         av_time = calculate_fight_time(cat_par, final, tatami)
 
-    #add a fict entry for penalty time in dict!
+    #add an entry for penalty time in dict!
     cat_time_dict[DIS_CHA] = timedelta(minutes=DIS_CHA_TIME)
 
+    #add an entry for the break time in dict!
+    cat_time_dict[BREAK] = timedelta(minutes=BREAK_LENGTH)
+
+    
     print("")
     print("----------------------------")
-    print("----------- Part 3 ---------")
     print("---- distribute matches ----")
     print("-------& optimize ----------")
     print("----------------------------")
     print("")
     #########################
     #print("Scheduled Jobs: \n {} ".format(pprint.pformat(scheduled_jobs)))
-
     scheduled_jobs, loads, most_abundand = descition_matrix(
-        cat_time_dict, av_time, tatami)
+        cat_time_dict, av_time, tatami, break_t)
 
     print("There are ", len(most_abundand), "possible results ")
     test = {k: v for k, v in sorted(most_abundand.items(), key=lambda item: item[1], reverse=True)}
     print(test)
 
     print("----------------------------")
-    print("----------- Part 4 ---------")
     print("------ draw schedule  ------")
     print("----------------------------")
     print("")
@@ -84,13 +89,13 @@ def main(cat_par, tatami, final, starttime):
     endtime = max(loads[pen_time][permut_num]) + 1800 # add for displaying the end_time in plot
     loads[pen_time][permut_num] = [x+starttime.seconds for x in loads[pen_time][permut_num]] #add starttime to loads
     loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
-    plot_schedule(scheduled_jobs[pen_time][permut_num],
+    return plot_schedule(scheduled_jobs[pen_time][permut_num],
                   cat_time_dict, starttime.seconds,
                   loads[pen_time][permut_num],
                   endtime/3600+starttime.seconds/3600)
 
 
-def descition_matrix(cat_time_dict, av_time, tatami):
+def descition_matrix(cat_time_dict, av_time, tatami, break_t):
     ''' to find the best solution based on penalty and weighting of the resutls
     
     Parameters
@@ -118,7 +123,7 @@ def descition_matrix(cat_time_dict, av_time, tatami):
 
     for pen_var_num, pen_var_t in enumerate(pen_time_list): #penalty time
         for j in range(0, loads.shape[1]): #permutaitons
-            scheduled_jobs[pen_var_num][j], loads[pen_var_num][j] = distr_cat_alg(cat_time_dict, av_time, permutations_list[j], pen_var_t, tatami)
+            scheduled_jobs[pen_var_num][j], loads[pen_var_num][j] = distr_cat_alg(cat_time_dict, av_time, permutations_list[j], pen_var_t, tatami, break_t)
     min_id = np.array([[0.1] * len(happiness)] * len(pen_time_list))
     min_score = np.array([[0.1] * len(happiness)] * len(pen_time_list))
 
@@ -180,6 +185,27 @@ def check_num():
         except ValueError:
             print("This is not a number. Please enter a valid number")
             user_input = input("Please enter a number ")
+
+def break_type():
+    '''
+    Ask for the type of break
+    - HELPER FUNCTION
+    '''
+    check = False
+    inp1 = input("Please enter break type [no ; block ; individual ]")
+    while check is False:
+        if inp1 == "no":
+            inp1 = no_break
+            check = True
+        elif inp1 == "block":
+            inp1 = block
+            check = True
+        elif inp1 == "individual":
+            inp1 = indi
+            check = True
+        else:
+            inp1 = input("Invaid! Please enter break type [no ; block ; individual ] ")
+    return inp1
 
 def starttime_calc(name):
     ''' change the startime of the tournament
@@ -255,7 +281,7 @@ def new_tour(name):
         final = random.choice(["YES", "NO"])
         cat_all = cal_cat(age_select, dis_select) # calculate catergories
         cat_par = {}#number of particpants
-
+        break_t = random.choice(["no_break" ,"indi", "block"])
         for i in cat_all:
             _rtmp = round(np.random.normal(8, 5.32))
             while _rtmp < 0:
@@ -270,7 +296,9 @@ def new_tour(name):
         print("")
         print("Will there be a final block")
         final = check_yes_no()
-
+        print("Please select the type of breaks")
+        break_t = break_type()
+        
         print("Tournament:", name, "will be created with ", tatami, " tatamis")
 
         age_select = age_cat(AGE_INP) # select age catergories
@@ -293,14 +321,13 @@ def new_tour(name):
     #write the file
     tour_file.write("Tournament: " + name + "\n")
     tour_file.write("Tatamis: " + str(tatami) + "\n")
-
     if final is True:
         print("Tournament has a final block")
         tour_file.write("Finalblock: YES \n")
     else:
         print("Tournament has NO final block")
         tour_file.write("Finallblock: NO \n")
-
+    tour_file.write("Breaktype: " + str(break_t) + "\n")
     starttime = starttime_calc(name)
     tour_file.write("Startime: " + str(starttime.seconds) + "\n")
 
@@ -376,7 +403,10 @@ def read_in_file(fname):
         final = False
     else:
         print("something is wrong with ", final_inp)
-
+    
+    break_t_in = tour_file.readline() # read in break line
+    break_tt = break_t_in.split()
+    break_t = break_tt[1]
     #read in starttime
     starttimes = tour_file.readline() # read in tatami line
     starttime_inp = starttimes.split()
@@ -394,7 +424,7 @@ def read_in_file(fname):
             catname = columns[0] + " "+ columns[1] + " " + columns[2] +" " + columns[3]
             j = int(columns[4])
         cat_par[catname] = int(j)
-    return cat_par, final, tatami, starttime
+    return cat_par, final, tatami, starttime, break_t
 
 def print_dict(dict_inp):
     ''' Helper function to print full dict
@@ -559,7 +589,7 @@ def calculate_fight_time(dict_inp, final, tatami):
     time_inp = {"Fighting":timedelta(minutes=6, seconds=30),
                 "Duo":timedelta(minutes=7),
                 "Show":timedelta(minutes=3),
-                "Ne-Waza":timedelta(minutes=8)}
+                "Jiu-Jitsu":timedelta(minutes=8)}
     #timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)
 
     for cat_name in dict_inp: #loop over dictionary
@@ -609,7 +639,7 @@ def calculate_fight_time(dict_inp, final, tatami):
 
     return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time
 
-def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami):
+def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami, break_t):
     '''
     Run the algorithm. Create List of dictionaries with, where each diszipline has its own dictionary. And fill it with the existing catergories Sort each disctiinary by size (longest competitions in beginning of list)
     
@@ -624,9 +654,11 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami):
     DIS_CHA_TIME
         pentaly time for changing a diszipline [fload [s]]
     DIS_CHA
-        indicate chsange of diszipline (str)
+        indicate change of diszipline [str]
     tatami
-        number of tatamis (int)
+        number of tatamis [int]
+    break_type
+        "block" ; "indi" [str]
     '''
 
     distr_list = [] # List of dictionaries with, where each dsizipline has its own dictionary
@@ -635,7 +667,8 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami):
     time_needed = [] # list for calcuating the total needed times per discipline
     distr_sor_list = distr_list
 
-    #print(" ----- ",DIS_INP," ----- ")
+    #
+    #print(" ----- ",cur_per," ----- ")
     # Step 1
     for i in  cur_per:
         distr_list.append({}) #add a new list for each diszipline
@@ -654,10 +687,10 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami):
         for (key, value) in distr_list[i].items():
             time_needed[i] += value.seconds
         par_tat_need.append(time_needed[i]/av_time.seconds-time_needed[i]//av_time.seconds)
-       # print("Tatamis needed for", DIS_INP[i], " : ",
-       #     "{:.2f}".format(time_needed[i]/av_time.seconds))
-       # print("Time needed for", DIS_INP[i], " : ",
-       #      "{:.2f}".format(time_needed[i]/3600))
+      #  print("Tatamis needed for", cur_per[i], " : ",
+      #      "{:.2f}".format(time_needed[i]/av_time.seconds))
+      #  print("Time needed for", cur_per[i], " : ",
+      #       "{:.2f}".format(time_needed[i]/3600))
 
     remove_tat = 0
     # Step 3
@@ -693,7 +726,7 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami):
             elif loads[remove_tat] > (extra_time_t-cur_pen_time): #extra tatami is needed
                 #print("extra tatami is needed")
                 scheduled_jobs.append([]) # add empty tatami
-                loads.append(extra_time_t) #adds the time to the tatami
+                loads.append(extra_time_t+cur_pen_time) #adds the time to the tatami
                 remove = True
                 remove_tat = len(scheduled_jobs)-1
             else:
@@ -702,17 +735,46 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami):
             #Step c) distribute categories
             for job in distr_sor_list[i]:
                 minload_tatami = minloadtatami(loads)
-                scheduled_jobs[minload_tatami].append(job)
-                loads[minload_tatami] += distr_sor_list[i][job].seconds
+                
+                if break_t == "indi":
+                    if loads[minload_tatami] > BREAK_TIME and BREAK not in scheduled_jobs[minload_tatami] and len(scheduled_jobs[minload_tatami]) > 0 and scheduled_jobs[minload_tatami][-1] is not DIS_CHA:
+                        if remove == True and minload_tatami is remove_tat and ((loads[minload_tatami] - extra_time_t )< BREAK_TIME):
+                            pass # ignore extra time
+                        else:
+                            scheduled_jobs[minload_tatami].append(BREAK)
+                            loads[minload_tatami] += BREAK_LENGTH
+                    scheduled_jobs[minload_tatami].append(job)
+                    loads[minload_tatami] += distr_sor_list[i][job].seconds
+                elif break_t == "block":
+                     if loads[minload_tatami] + distr_sor_list[i][job].seconds > BREAK_TIME and BREAK not in scheduled_jobs[minload_tatami]:
+                        if remove == True and minload_tatami is remove_tat and ((loads[minload_tatami] - extra_time_t )< BREAK_TIME):
+                            pass # ignore extra time
+                        else:
+                            job1 = job + "part 1 "
+                            job2 = job + "part 2 "
+                            time1 =  loads[minload_tatami] + distr_sor_list[i][job].seconds - BREAK_TIME
+                            time2 = loads[minload_tatami] + distr_sor_list[i][job].seconds - BREAK_TIME
+                            if(cur_pen_time == 25 and cur_per == ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu') ):
+                                print(job1," ", job2, " ", time1 , " " , time2)
+
+                            scheduled_jobs[minload_tatami].append(job1)
+                            scheduled_jobs[minload_tatami].append(BREAK)
+                            scheduled_jobs[minload_tatami].append(job2)
+                            
+                            if(cur_pen_time == 25 and cur_per == ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu') ):
+                                print(scheduled_jobs[minload_tatami])
+                else:
+                    scheduled_jobs[minload_tatami].append(job)
+                    loads[minload_tatami] += distr_sor_list[i][job].seconds
             if  remove is True:
                 loads[remove_tat] -= (extra_time_t) #removed the time to the tatami.
+                # if(cur_pen_time == 25 and cur_per == ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu') ): print(remove_tat ," break removed ", scheduled_jobs[remove_tat] )
                 remove = False
 
             #add dis change after each distributuion
             for tat_used in range(0, len(loads)):
-                if scheduled_jobs[tat_used][-1] is not DIS_CHA:
+                if scheduled_jobs[tat_used][-1] is not DIS_CHA and scheduled_jobs[tat_used][-1] is not BREAK:
                     scheduled_jobs[tat_used].append(DIS_CHA)
-                    #print("i am here ", scheduled_jobs[tat_used][-1])
                     loads[tat_used] += cur_pen_time*60
 
     for tat_used in range(0, len(loads)):
@@ -725,8 +787,6 @@ def minloadtatami(loads):
     """Find the tatami with the minimum load.
     Break the tie of tatamis having same load on
     first come first serve basis.
-    
-    
     """
     minload = min(loads)
     for tat_min, load in enumerate(loads):
@@ -794,7 +854,8 @@ def plot_schedule(scheduled_jobs, cat_time_dict, start_time, loads, endtime):
 
     l_x.set_ylabel('Time [hh:min]')
     l_x.set_xlabel('Tatami')
-    plt.show()
+    #  plt.show()
+    return fig
 
 def changes_per_permutation(scheduled_jobs):
     '''calculates amount of discipline changes per permutation '''
@@ -924,4 +985,5 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
 
     return texts
 
-#main()
+#a,b,c,d,e = create_input()
+#main(a,b,c,d,e)

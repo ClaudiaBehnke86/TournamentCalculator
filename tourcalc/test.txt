@@ -1,6 +1,7 @@
 Tournament: random
 Tatamis: 9
-Finallblock: NO 
+Finallblock: NO
+Breaktype: block 
 Startime: 30600
 U16 Fighting Men 38kg 16
 U16 Fighting Men 42kg 18

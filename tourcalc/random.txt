@@ -1,35 +1,53 @@
 Tournament: random
-Tatamis: 2
+Tatamis: 3
 Finallblock: NO 
+Breaktype: no_break
 Startime: 30600
-Adults Fighting Men 56kg 6
-Adults Fighting Men 62kg 9
-Adults Fighting Men 69kg 10
-Adults Fighting Men 77kg 13
-Adults Fighting Men 85kg 16
-Adults Fighting Men 94kg 5
-Adults Fighting Men 95kg 13
-Adults Fighting Women 45kg 2
-Adults Fighting Women 48kg 7
-Adults Fighting Women 52kg 9
-Adults Fighting Women 57kg 8
-Adults Fighting Women 63kg 7
-Adults Fighting Women 70kg 10
-Adults Fighting Women 71kg 11
-Adults Ne-Waza Men 56kg 11
-Adults Ne-Waza Men 62kg 12
-Adults Ne-Waza Men 69kg 12
-Adults Ne-Waza Men 77kg 1
-Adults Ne-Waza Men 85kg 1
-Adults Ne-Waza Men 94kg 13
-Adults Ne-Waza Men 95kg 6
-Adults Ne-Waza Women 45kg 9
-Adults Ne-Waza Women 48kg 8
-Adults Ne-Waza Women 52kg 6
-Adults Ne-Waza Women 57kg 6
-Adults Ne-Waza Women 63kg 8
-Adults Ne-Waza Women 70kg 8
-Adults Ne-Waza Women 71kg 10
-Adults Duo Women 17
-Adults Duo Men 14
-Adults Duo Mixed 18
+U16 Fighting Men 38kg 5
+U16 Fighting Men 42kg 4
+U16 Fighting Men 46kg 5
+U16 Fighting Men 50kg 14
+U16 Fighting Men 55kg 5
+U16 Fighting Men 60kg 0
+U16 Fighting Men 66kg 16
+U16 Fighting Men 73kg 10
+U16 Fighting Men 74kg 14
+U16 Fighting Women 32kg 7
+U16 Fighting Women 36kg 7
+U16 Fighting Women 40kg 3
+U16 Fighting Women 44kg 4
+U16 Fighting Women 48kg 7
+U16 Fighting Women 52kg 12
+U16 Fighting Women 57kg 16
+U16 Fighting Women 63kg 6
+U16 Fighting Women 61kg 8
+Adults Fighting Men 56kg 2
+Adults Fighting Men 62kg 19
+Adults Fighting Men 69kg 0
+Adults Fighting Men 77kg 18
+Adults Fighting Men 85kg 10
+Adults Fighting Men 94kg 0
+Adults Fighting Men 95kg 9
+Adults Fighting Women 45kg 7
+Adults Fighting Women 48kg 16
+Adults Fighting Women 52kg 13
+Adults Fighting Women 57kg 16
+Adults Fighting Women 63kg 19
+Adults Fighting Women 70kg 15
+Adults Fighting Women 71kg 2
+U18 Fighting Men 46kg 10
+U18 Fighting Men 50kg 14
+U18 Fighting Men 55kg 13
+U18 Fighting Men 60kg 14
+U18 Fighting Men 66kg 11
+U18 Fighting Men 73kg 4
+U18 Fighting Men 81kg 19
+U18 Fighting Men 82kg 20
+U18 Fighting Women 40kg 9
+U18 Fighting Women 44kg 9
+U18 Fighting Women 48kg 7
+U18 Fighting Women 52kg 0
+U18 Fighting Women 57kg 4
+U18 Fighting Women 63kg 13
+U18 Fighting Women 70kg 3
+U18 Fighting Women 71kg 6
