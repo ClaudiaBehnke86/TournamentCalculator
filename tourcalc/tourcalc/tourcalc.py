@@ -63,13 +63,6 @@ def main(cat_par, tatami, final, starttime, break_t):
     #add an entry for the break time in dict!
     cat_time_dict[BREAK] = timedelta(minutes=BREAK_LENGTH)
 
-    
-    print("")
-    print("----------------------------")
-    print("---- distribute matches ----")
-    print("-------& optimize ----------")
-    print("----------------------------")
-    print("")
     #########################
     #print("Scheduled Jobs: \n {} ".format(pprint.pformat(scheduled_jobs)))
     scheduled_jobs, loads, most_abundand = descition_matrix(
@@ -78,11 +71,6 @@ def main(cat_par, tatami, final, starttime, break_t):
     print("There are ", len(most_abundand), "possible results ")
     test = {k: v for k, v in sorted(most_abundand.items(), key=lambda item: item[1], reverse=True)}
     print(test)
-
-    print("----------------------------")
-    print("------ draw schedule  ------")
-    print("----------------------------")
-    print("")
 
     pen_time = DIS_CHA_TIME//2 #choosen penalty time
     permut_num = int(list(test)[0]) #chosen permutation
@@ -520,9 +508,6 @@ def cal_cat(age_select, dis_select):
         selected disciplines [list]
            
     '''
-    
-    print("------------------------")
-    print("calculation of weight categories")
 
     weight_w = [45, 48, 52, 57, 63, 70, 71]
     weight_w18 = [40, 44, 48, 52, 57, 63, 70, 71]
@@ -555,11 +540,7 @@ def cal_cat(age_select, dis_select):
                     cat_all.append(i +" "+ j + " Men "+ str(k)+"kg")
                 for k in weight_w:
                     cat_all.append(i +" "+ j + " Women "+ str(k)+"kg")
-    print(" ")
-    print("You have created the following categories")
-    print(cat_all)
-    print("In total ", len(cat_all), "catergories have been created for Tournament")
-    print()
+    
     return cat_all
 
 def calculate_fight_time(dict_inp, final, tatami):
@@ -624,10 +605,6 @@ def calculate_fight_time(dict_inp, final, tatami):
 
     fight_num_total += len(cat_finals_dict)
 
-    print("")
-    print("----------------------------")
-    print("--------- Summary ----------")
-    print("----------------------------")
 
     av_time = tot_time/int(tatami)
     print("You have", par_num_total, "participants, which will fight ",

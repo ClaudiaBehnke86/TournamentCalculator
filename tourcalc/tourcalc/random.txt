@@ -1,14 +1,41 @@
 Tournament: random
-Tatamis: 1
+Tatamis: 5
 Finallblock: NO 
 Breaktype: no_break
 Startime: 30600
-U21 Duo Men 12
-U21 Duo Mixed 11
-U21 Duo Women 5
-Adults Duo Men 15
-Adults Duo Mixed 5
-Adults Duo Women 8
-U16 Duo Men 20
-U16 Duo Mixed 6
-U16 Duo Women 5
+U18 Fighting Men 46kg 8
+U18 Fighting Men 50kg 9
+U18 Fighting Men 55kg 4
+U18 Fighting Men 60kg 0
+U18 Fighting Men 66kg 6
+U18 Fighting Men 73kg 9
+U18 Fighting Men 81kg 14
+U18 Fighting Men 82kg 11
+U18 Fighting Women 40kg 13
+U18 Fighting Women 44kg 7
+U18 Fighting Women 48kg 12
+U18 Fighting Women 52kg 11
+U18 Fighting Women 57kg 7
+U18 Fighting Women 63kg 14
+U18 Fighting Women 70kg 14
+U18 Fighting Women 71kg 13
+U18 Show Mixed 5
+U18 Show Men 10
+U18 Show Women 4
+Adults Fighting Men 56kg 16
+Adults Fighting Men 62kg 14
+Adults Fighting Men 69kg 13
+Adults Fighting Men 77kg 18
+Adults Fighting Men 85kg 10
+Adults Fighting Men 94kg 4
+Adults Fighting Men 95kg 13
+Adults Fighting Women 45kg 10
+Adults Fighting Women 48kg 12
+Adults Fighting Women 52kg 13
+Adults Fighting Women 57kg 11
+Adults Fighting Women 63kg 7
+Adults Fighting Women 70kg 12
+Adults Fighting Women 71kg 11
+Adults Show Mixed 11
+Adults Show Men 13
+Adults Show Women 6
