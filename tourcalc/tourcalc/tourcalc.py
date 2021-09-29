@@ -55,7 +55,8 @@ def main(cat_par, tatami, final, starttime, break_t):
     """
 
     cat_fights_dict, cat_finals_dict, cat_time_dict, \
-        av_time = calculate_fight_time(cat_par, final, tatami)
+        av_time, par_num_total, fight_num_total, \
+        tot_time, final_time = calculate_fight_time(cat_par, final, tatami)
 
     #add an entry for penalty time in dict!
     cat_time_dict[DIS_CHA] = timedelta(minutes=DIS_CHA_TIME)
@@ -72,16 +73,20 @@ def main(cat_par, tatami, final, starttime, break_t):
     test = {k: v for k, v in sorted(most_abundand.items(), key=lambda item: item[1], reverse=True)}
     print(test)
 
+
     pen_time = DIS_CHA_TIME//2 #choosen penalty time
     permut_num = int(list(test)[0]) #chosen permutation
     endtime = max(loads[pen_time][permut_num]) + 1800 # add for displaying the end_time in plot
     loads[pen_time][permut_num] = [x+starttime.seconds for x in loads[pen_time][permut_num]] #add starttime to loads
     loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
-    return plot_schedule(scheduled_jobs[pen_time][permut_num],
+    
+
+    plot_schedule(scheduled_jobs[pen_time][permut_num],
                   cat_time_dict, starttime.seconds,
                   loads[pen_time][permut_num],
                   endtime/3600+starttime.seconds/3600)
 
+    return scheduled_jobs[pen_time][permut_num],cat_time_dict,endtime,loads[pen_time][permut_num]
 
 def descition_matrix(cat_time_dict, av_time, tatami, break_t):
     ''' to find the best solution based on penalty and weighting of the resutls
@@ -143,37 +148,6 @@ def descition_matrix(cat_time_dict, av_time, tatami, break_t):
     most_abundand = dict(zip(results, counts))
     return scheduled_jobs, loads, most_abundand
 
-def check_yes_no():
-    '''
-    Function to convert STRING (YES / NO) in a Bool
-    - HELPER FUNCTION
-    '''
-    check = False
-    inp1 = input("Please type YES / NO : ")
-    while check is False:
-        if inp1 == "YES":
-            inp1 = True
-            check = True
-        elif inp1 == "NO":
-            inp1 = False
-            check = True
-        else:
-            inp1 = input("Invaid! Please enter YES or NO ")
-    return inp1
-
-def check_num():
-    ''' Check if the input is an INT
-     - HELPER FUNCTION
-    '''
-    user_input = input("Please enter a number ")
-    while True:
-        try:
-            val = int(user_input)
-            return val
-        except ValueError:
-            print("This is not a number. Please enter a valid number")
-            user_input = input("Please enter a number ")
-
 def break_type():
     '''
     Ask for the type of break
@@ -194,36 +168,6 @@ def break_type():
         else:
             inp1 = input("Invaid! Please enter break type [no ; block ; individual ] ")
     return inp1
-
-def starttime_calc(name):
-    ''' change the startime of the tournament
-     - HELPER FUNCTION
-  
-    Parameters
-    ----------
-    name
-        to check if the name is "random" []
-    '''
-    starttime = timedelta(hours=8, minutes=30)
-    if name != "random":
-        print("startime tournament ", starttime)
-        print("Change time?")
-        ch_time = check_yes_no()
-        if ch_time is True:
-            print("Please give NEW startime\nHours: ")
-            h_new = check_num()
-            while(h_new > 24 or h_new < 0):
-                h_new = check_num()
-                if(h_new > 24 or h_new < 0):
-                    print("Hours must between 0 and 24")
-            print("Minutes: ")
-            m_new = check_num()
-            while(m_new > 60 or m_new < 0):
-                m_new = check_num()
-                if(m_new > 60 or m_new < 0):
-                    print("Minutes must between 0 and 60")
-            starttime = timedelta(hours=h_new, minutes=m_new)
-    return starttime
 
 def check_input(cat_par):
     '''function to correct input file
@@ -251,73 +195,25 @@ def check_input(cat_par):
             print("Catergory", check, "not known. Please try again")
     return cat_par
 
-def new_tour(name):
-    ''' create a new tournament
+def new_tour(tour_name,cat_par,i_tatami,final,start_time,breaktype):
+    ''' create a new tournament file
     
     Parameters
     ----------
     name
         name of the tour nament [str]
     '''
-    tour_file = open(name + ".txt", "w")
-    if name == "random":
-        tatami = np.random.randint(1, 10)
-        nage = np.random.randint(1, len(AGE_INP))
-        age_select = random.sample(AGE_INP, nage) # select age catergories
-        ndis = np.random.randint(1, len(DIS_INP))
-        dis_select = random.sample(DIS_INP, ndis)# select disxiplines
-        final = random.choice(["YES", "NO"])
-        cat_all = cal_cat(age_select, dis_select) # calculate catergories
-        cat_par = {}#number of particpants
-        break_t = random.choice(["no_break" ,"indi", "block"])
-        for i in cat_all:
-            _rtmp = round(np.random.normal(8, 5.32))
-            while _rtmp < 0:
-                _rtmp = round(np.random.normal(8, 5.32))
-            cat_par[i] = _rtmp
-        if len(cat_all) < tatami:
-            print("too many tatamis for catergories")
-            tatami = len(cat_all)
-    else:
-        print("How many tatmis will be there: ")
-        tatami = check_num()
-        print("")
-        print("Will there be a final block")
-        final = check_yes_no()
-        print("Please select the type of breaks")
-        break_t = break_type()
-        
-        print("Tournament:", name, "will be created with ", tatami, " tatamis")
-
-        age_select = age_cat(AGE_INP) # select age catergories
-        dis_select = dis_cat(DIS_INP) # select disxiplines
-        cat_all = cal_cat(age_select, dis_select) # calculate catergories
-        cat_par = {}#number of particpants
-
-        print("----------------------------")
-        print("- Part 2 - Add Competitors -")
-        print("----------------------------")
-
-        print("Please add the number of participants for each category: ")
-        for i in cat_all:
-            print("Number of competitors in", i)
-            inp = check_num()
-            if inp <= 0:
-                continue
-            cat_par[i] = int(inp)
+    tour_file = open(tour_name + ".txt", "w")
 
     #write the file
-    tour_file.write("Tournament: " + name + "\n")
-    tour_file.write("Tatamis: " + str(tatami) + "\n")
+    tour_file.write("Tournament: " + tour_name + "\n")
+    tour_file.write("Tatamis: " + str(i_tatami) + "\n")
     if final is True:
-        print("Tournament has a final block")
         tour_file.write("Finalblock: YES \n")
     else:
-        print("Tournament has NO final block")
         tour_file.write("Finallblock: NO \n")
-    tour_file.write("Breaktype: " + str(break_t) + "\n")
-    starttime = starttime_calc(name)
-    tour_file.write("Startime: " + str(starttime.seconds) + "\n")
+    tour_file.write("Breaktype: " + str(breaktype) + "\n")
+    tour_file.write("Startime: " + str(start_time.seconds) + "\n")
 
     for cat_name, par_num in cat_par.items():
         tour_file.write(str(cat_name) +" "+ str(par_num) + "\n")
@@ -400,7 +296,6 @@ def read_in_file(fname):
     starttime_inp = starttimes.split()
     starttime_sec = int(starttime_inp[1])
     starttime = timedelta(seconds=starttime_sec)
-
     cat_par = {} #number of particpants
     for line in tour_file: # Loop over lines and extract variables of interest
         line = line.strip()
@@ -614,7 +509,7 @@ def calculate_fight_time(dict_inp, final, tatami):
     print("You have", len(cat_finals_dict), "finals which will take", final_time)
     print("Optimal solution time per tatami will be", av_time, "with", tatami, "tatamis")
 
-    return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time
+    return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, par_num_total, fight_num_total, tot_time, final_time
 
 def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami, break_t):
     '''
