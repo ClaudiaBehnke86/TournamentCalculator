@@ -79,14 +79,13 @@ def main(cat_par, tatami, final, starttime, break_t):
     endtime = max(loads[pen_time][permut_num]) + 1800 # add for displaying the end_time in plot
     loads[pen_time][permut_num] = [x+starttime.seconds for x in loads[pen_time][permut_num]] #add starttime to loads
     loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
-    
 
-    plot_schedule(scheduled_jobs[pen_time][permut_num],
-                  cat_time_dict, starttime.seconds,
-                  loads[pen_time][permut_num],
-                  endtime/3600+starttime.seconds/3600)
+    # plot_schedule(scheduled_jobs[pen_time][permut_num],
+    #               cat_time_dict, starttime.seconds,
+    #               loads[pen_time][permut_num],
+    #               endtime/3600+starttime.seconds/3600)
 
-    return scheduled_jobs[pen_time][permut_num],cat_time_dict,endtime,loads[pen_time][permut_num]
+    return scheduled_jobs[pen_time][permut_num],cat_time_dict,endtime,loads[pen_time][permut_num],pen_time
 
 def descition_matrix(cat_time_dict, av_time, tatami, break_t):
     ''' to find the best solution based on penalty and weighting of the resutls
@@ -147,53 +146,6 @@ def descition_matrix(cat_time_dict, av_time, tatami, break_t):
     results, counts = np.unique(min_id, return_counts=True)
     most_abundand = dict(zip(results, counts))
     return scheduled_jobs, loads, most_abundand
-
-def break_type():
-    '''
-    Ask for the type of break
-    - HELPER FUNCTION
-    '''
-    check = False
-    inp1 = input("Please enter break type [no ; block ; individual ]")
-    while check is False:
-        if inp1 == "no":
-            inp1 = no_break
-            check = True
-        elif inp1 == "block":
-            inp1 = block
-            check = True
-        elif inp1 == "individual":
-            inp1 = indi
-            check = True
-        else:
-            inp1 = input("Invaid! Please enter break type [no ; block ; individual ] ")
-    return inp1
-
-def check_input(cat_par):
-    '''function to correct input file
-    
-    Parameters
-    ----------
-    cat_par
-        catergories and number of participants [dict]
-    '''
-    i = 0
-    while i < 1:
-        print_dict(cat_par)
-        print("Please type in name of category you want to correct")
-        check = input(" or \"OK\" to continue to next step ")
-        if check in cat_par:
-            print("Change catergory", check)
-            new_val = int(check_num())
-            cat_par[check] = new_val
-            print("Updated\nTo show list again type \"SHOW ALL\" ")
-        elif check == "SHOW ALL":
-            print_dict(cat_par)
-        elif check == "OK":
-            i = 1
-        else:
-            print("Catergory", check, "not known. Please try again")
-    return cat_par
 
 def new_tour(tour_name,cat_par,i_tatami,final,start_time,breaktype):
     ''' create a new tournament file
@@ -309,87 +261,6 @@ def read_in_file(fname):
         cat_par[catname] = int(j)
     return cat_par, final, tatami, starttime, break_t
 
-def print_dict(dict_inp):
-    ''' Helper function to print full dict
-     - HELPER FUNCTION
-
-    Parameters
-    ----------
-    dict_inp
-        name of the dict
-
-    '''
-    for cat_name, par_num in dict_inp.items():
-        print(cat_name, par_num)
-
-def age_cat():
-    ''' add age catergories for tournaments'''
-    print("------------------------")
-    print("--- Age catergories ---")
-    print("------------------------")
-    print("Which age catergories will compete?")
-    print("Possible catergories ", AGE_INP)
-    print()
-    print("Type: \"ALL\" to add all categories ")
-
-    i = 0
-    age_select = []
-    while i < len(AGE_INP):
-        add_cat = input("Please type in name of category or type \
-        \"OK\" to continue to next step ")
-        if add_cat == "ALL":
-            age_select = AGE_INP.copy()
-            print("All categories are added")
-            break
-        if add_cat in AGE_INP:
-            age_select.append(add_cat)
-            print(add_cat, "added")
-            i += 1
-        elif add_cat == "OK":
-            if i == 0:
-                print("You must add minimum ONE Age category")
-            else:
-                break
-        else:
-            print("Categorie ", add_cat, "not known. Please try again")
-    print("")
-    print("The following age categories are added")
-    print(age_select)
-    time.sleep(2)
-    return age_select
-
-def dis_cat():
-    ''' add the pariciparting disziplines'''
-    print("")
-    print("------------------------")
-    print("--- Disciplines -------")
-    print("------------------------")
-    print("Which disciplines will compete?")
-    print("Possible categories:", DIS_INP)
-    print("Type: ""ALL"" to add all categories")
-
-    i = 0
-    dis_select = []
-    while i < len(DIS_INP):
-        add_cat = input("Please type in name of diszipline or type \
-                        \"OK\" to continue to next step ")
-        if add_cat == "ALL":
-            dis_select = DIS_INP.copy()
-            print("All disziplines are added")
-            break
-        if add_cat in DIS_INP:
-            dis_select.append(add_cat)
-            print(add_cat, "added")
-            i += 1
-        elif add_cat == "OK":
-            if i == 0:
-                print("You must add minimum ONE discipline")
-            else:
-                break
-        else:
-            print("Diszipline ", add_cat, "not known. Please try again")
-    print("The following disciplines are added:", dis_select)
-    return dis_select
 
 def cal_cat(age_select, dis_select):
     '''calculation of weight categories
@@ -462,10 +333,22 @@ def calculate_fight_time(dict_inp, final, tatami):
     low_par_num = {0:0, 1:0, 2:3, 3:3, 4:6, 5:10, 6:9, 7:11} #fights for low numbers of participants
     # 8:11 from 8 on its always +2
 
-    time_inp = {"Fighting":timedelta(minutes=6, seconds=30),
-                "Duo":timedelta(minutes=7),
-                "Show":timedelta(minutes=3),
-                "Jiu-Jitsu":timedelta(minutes=8)}
+    time_inp = {"U16 Fighting":timedelta(minutes=5, seconds=30),
+                "U18 Fighting":timedelta(minutes=6, seconds=30),
+                "U21 Fighting":timedelta(minutes=6, seconds=30),
+                "Adults Fighting":timedelta(minutes=6, seconds=30),
+                "U16 Duo":timedelta(minutes=5),
+                "U18 Duo":timedelta(minutes=7),
+                "U21 Duo":timedelta(minutes=7),
+                "Adults Duo":timedelta(minutes=7),
+                "U16 Show":timedelta(minutes=3),
+                "U18 Show":timedelta(minutes=3),
+                "U21 Show":timedelta(minutes=3),
+                "Adults Show":timedelta(minutes=3),
+                "U16 Jiu-Jitsu":timedelta(minutes=5),
+                "U18 Jiu-Jitsu":timedelta(minutes=6),
+                "U21 Jiu-Jitsu":timedelta(minutes=7),
+                "Adults Jiu-Jitsu":timedelta(minutes=8)}
     #timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)
 
     for cat_name in dict_inp: #loop over dictionary
@@ -473,15 +356,16 @@ def calculate_fight_time(dict_inp, final, tatami):
         fight_num = 0 # reset counter
         if "Show" in cat_name:
             if final is True and par_num > 5:
-                if keys in cat_name: #if name of Discipline is in string of categoroy:
-                    cat_finals_dict[cat_name] = time_inp[keys]
-                    final_time += time_inp[keys]*par_num
-            fight_num = par_num
+                for keys in time_inp:
+                    if keys in cat_name: #if name of Discipline is in string of categoroy:
+                        cat_finals_dict[cat_name] = time_inp[keys]
+                        final_time += time_inp[keys]*par_num
+                fight_num = par_num
         else:
             if final is True and par_num > 5:
                 fight_num = -1 #remove final
                 for keys in time_inp:
-                    if keys in cat_name: #if name of Discipline is in string of categoroy:
+                    if keys in cat_name: #if name of Discipline is in string of category:
                         cat_finals_dict[cat_name] = time_inp[keys]
                         final_time += time_inp[keys]
             if par_num < 8:
@@ -502,12 +386,12 @@ def calculate_fight_time(dict_inp, final, tatami):
 
 
     av_time = tot_time/int(tatami)
-    print("You have", par_num_total, "participants, which will fight ",
-          fight_num_total, " matches in ",
-          len(dict_inp), "categories with a total time fight time of (HH:MM:SS)",
-          tot_time+final_time)
-    print("You have", len(cat_finals_dict), "finals which will take", final_time)
-    print("Optimal solution time per tatami will be", av_time, "with", tatami, "tatamis")
+    # print("You have", par_num_total, "participants, which will fight ",
+    #       fight_num_total, " matches in ",
+    #       len(dict_inp), "categories with a total time fight time of (HH:MM:SS)",
+    #       tot_time+final_time)
+    # print("You have", len(cat_finals_dict), "finals which will take", final_time)
+    # print("Optimal solution time per tatami will be", av_time, "with", tatami, "tatamis")
 
     return cat_fights_dict, cat_finals_dict, cat_time_dict, av_time, par_num_total, fight_num_total, tot_time, final_time
 
