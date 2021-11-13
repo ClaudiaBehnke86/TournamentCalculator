@@ -1,4 +1,10 @@
-""" my gui"""
+""" This module created the GUI 
+
+It can be run with streamlit run theapp.py
+
+It needs streamlit to be installed
+
+"""
 import os
 from datetime import time, datetime, date, timedelta
 import numpy as np
@@ -6,17 +12,23 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-from tourcalc import write_tour_file
-from tourcalc import descition_matrix
-from tourcalc import cal_cat
-from tourcalc import read_in_file
-from tourcalc import calculate_fight_time
+import itertools # for permutations of discipline order
+from tourcalc.tourcalc import write_tour_file
+from tourcalc.tourcalc import descition_matrix
+from tourcalc.tourcalc import cal_cat
+from tourcalc.tourcalc import read_in_file
+from tourcalc.tourcalc import calculate_fight_time
+# from tourcalc import write_tour_file
+# from tourcalc import descition_matrix
+# from tourcalc import cal_cat
+# from tourcalc import read_in_file
+# from tourcalc import calculate_fight_time
 
 AGE_INP = ["U16", "U18", "U21", "Adults"] #the supported age catergories
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"] # order does not matter -> permutations
 
-AGE_SEL = []
-DIS_SEL = []
+AGE_SEL = [] #an empty list to select th age catergories
+DIS_SEL = [] #an empty list to select th age catergories
 
 DIS_CHA = "Discipline change" # indicator of a change of a discipline
 DIS_CHA_TIME = 30 #add the changeing time for the change betwenn disciplines in minutes
@@ -92,11 +104,13 @@ def heatmap(data, row_labels, col_labels, strtitle):
     Parameters
     ----------
     data
-        A 2D numpy array of shape (N, M).
+        A 2D pandes data frame array of shape (N, M). [df]
     row_labels
-        A list or array of length N with the labels for the rows.
+        A list or array of length N with the labels for the rows. [list]
     col_labels
-        A list or array of length M with the labels for the columns.
+        A list or array of length M with the labels for the columns. [list]
+    strtitle
+        A string that contains the tittle    [string]
     """
 
     df1 = pd.DataFrame(data)
@@ -111,7 +125,7 @@ def heatmap(data, row_labels, col_labels, strtitle):
 
     fig1.update_layout(legend_title_text = strtitle)
     fig1.update_layout(title= strtitle)
-    fig1.update_xaxes(title_text="Happyness value")
+    fig1.update_xaxes(title_text="Happiness value [a.u]")
     fig1.update_yaxes(title_text="Diszipline Change [min]")
 
     return fig1
@@ -125,6 +139,10 @@ final = 'NO'
 
 tour_name = st.text_input("Name of the tournament")
 fname = tour_name + ".txt"
+
+permutations_object = itertools.permutations(DIS_INP)
+permutations_list = list(permutations_object)
+
 
 if len(tour_name) > 0 and os.path.isfile(fname) and tour_name != "random":
     st.write("Tournament with name ", tour_name, "already exist")
@@ -286,7 +304,7 @@ if st.button('all info is correct'):
             loads[pen_time][permut_num] = [x+start_time.seconds for x in loads[pen_time][permut_num]] #add start_time to loads
             loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
             #st.write(scheduled_jobs[pen_time][permut_num]) 
-            st.write(plot_schedule(scheduled_jobs[pen_time][permut_num],
+            st.write(plot_schedule_go(scheduled_jobs[pen_time][permut_num],
                 cat_time_dict_new, start_time.seconds,
                 loads[pen_time][permut_num],
                 endtime/3600+start_time.seconds/3600))
@@ -301,17 +319,17 @@ if st.button('all info is correct'):
                     endtime = max(loads[pen_time][permut_num]) + 1800 # add for displaying the end_time in plot
                     loads[pen_time][permut_num] = [x+start_time.seconds for x in loads[pen_time][permut_num]] #add start_time to loads
                     loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
-                    st.write(plot_schedule(scheduled_jobs[pen_time][permut_num],
+                    st.write(plot_schedule_go(scheduled_jobs[pen_time][permut_num],
                         cat_time_dict_new, start_time.seconds,
                         loads[pen_time][permut_num],
                         endtime/3600+start_time.seconds/3600))
                     k += 1
 
                 st.write("matrix")
-                fig1 = heatmap(min_id, pen_time_list, happiness, "permutation")
+                fig1 = heatmap(min_id, pen_time_list, happiness, "Which permutation gives the right time")
                 st.write(fig1)
-                fig2 = heatmap(min_score, pen_time_list, happiness, "endtime")
-                st.write(fig2)
+                #fig2 = heatmap(min_score, pen_time_list, happiness, "endtime")
+                #st.write(fig2)
                 
 
             cat_par_day.clear()

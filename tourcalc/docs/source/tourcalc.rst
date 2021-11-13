@@ -13,4 +13,5 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   tourcalc.theapp
    tourcalc.tourcalc

@@ -143,9 +143,30 @@ To avoid this, we will add adn :term:`placeholder time block` at the partically 
 .. figure:: pictures/with_parTat.gif
 
 
---------------------------------
-Referee commuting time - 
---------------------------------
+------------------------------------------------------------------
+Diszipline Change - penalty factor for changeing a discipline 
+------------------------------------------------------------------
+
+Changeing the discipline will possible need adjustment of the referees and the setup of the field of play. Therefore a pentaly factor called diszipline change in introduced.
+After the distribtuon of a discipline this penalty factor is added. 
+
+.. _pent:
+.. figure:: pictures/pent.gif
+
+
+================
+Free parameters 
+================
+
+The algorithm has three free and and abitraty parameters which need to be varied to find the optimal solution.
+
+-------------------------
+Order of the disciplines 
+-------------------------
+
+
+
+[('Duo', 'Show', 'Jiu-Jitsu', 'Fighting'), ('Duo', 'Show', 'Fighting', 'Jiu-Jitsu'), ('Duo', 'Jiu-Jitsu', 'Show', 'Fighting'), ('Duo', 'Jiu-Jitsu', 'Fighting', 'Show'), ('Duo', 'Fighting', 'Show', 'Jiu-Jitsu'), ('Duo', 'Fighting', 'Jiu-Jitsu', 'Show'), ('Show', 'Duo', 'Jiu-Jitsu', 'Fighting'), ('Show', 'Duo', 'Fighting', 'Jiu-Jitsu'), ('Show', 'Jiu-Jitsu', 'Duo', 'Fighting'), ('Show', 'Jiu-Jitsu', 'Fighting', 'Duo'), ('Show', 'Fighting', 'Duo', 'Jiu-Jitsu'), ('Show', 'Fighting', 'Jiu-Jitsu', 'Duo'), ('Jiu-Jitsu', 'Duo', 'Show', 'Fighting'), ('Jiu-Jitsu', 'Duo', 'Fighting', 'Show'), ('Jiu-Jitsu', 'Show', 'Duo', 'Fighting'), ('Jiu-Jitsu', 'Show', 'Fighting', 'Duo'), ('Jiu-Jitsu', 'Fighting', 'Duo', 'Show'), ('Jiu-Jitsu', 'Fighting', 'Show', 'Duo'), ('Fighting', 'Duo', 'Show', 'Jiu-Jitsu'), ('Fighting', 'Duo', 'Jiu-Jitsu', 'Show'), ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu'), ('Fighting', 'Show', 'Jiu-Jitsu', 'Duo'), ('Fighting', 'Jiu-Jitsu', 'Duo', 'Show'), ('Fighting', 'Jiu-Jitsu', 'Show', 'Duo')]
 
 
 .. _OSC: http://www.jjif.org/fileadmin/documents/Competition-Ranking/Organization_and_sporting_code_2020.pdf
