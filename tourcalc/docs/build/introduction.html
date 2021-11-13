@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction &mdash; TourCalc 0.0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Welcome to TourCalc’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html">
+            <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.0.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#creation-of-input-data">Creation of input data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#longest-processing-time-algorithm-approximate-solution">Longest Processing Time algorithm – Approximate solution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#splitting-of-disciplines-with-dynamic-creation-of-competition-areas">Splitting of disciplines with dynamic creation of competition areas</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#partially-used-competition-areas">Partially used competition areas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diszipline-change-penalty-factor-for-changeing-a-discipline">Diszipline Change - penalty factor for changeing a discipline</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#free-parameters">Free parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#order-of-the-disciplines">Order of the disciplines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#gloassay">Gloassay</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">tourcalc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="versions.html">Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TourCalc</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/introduction.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Scheduling of sports tournaments can be approximated with the so-called multiprocessor scheduling, which is a known NP-hard problem of computer science.  With this, the goal is to find a <a class="reference internal" href="#term-minimum-end-time"><span class="xref std std-term">minimum end-time</span></a> <span class="math notranslate nohighlight">\(ET_{min}\)</span> of the tournament with distribution the different categories on a given number of <a class="reference internal" href="#term-competition-area"><span class="xref std std-term">competition area</span></a> s <span class="math notranslate nohighlight">\(T\)</span>. A <a class="reference internal" href="#term-category"><span class="xref std std-term">category</span></a> here is defined in agreement with the Organization and Sporting Code (Version 3.1)  <a class="reference external" href="http://www.jjif.org/fileadmin/documents/Competition-Ranking/Organization_and_sporting_code_2020.pdf">OSC</a> of the Ju-Jitsu International Federation (JJIF) under paragraph 1.3 (Disciplines, Divisions and Categories). However, the program shall also provide a base for integration of more disciplines or even of other sports.</p>
+</section>
+<section id="creation-of-input-data">
+<h1>Creation of input data<a class="headerlink" href="#creation-of-input-data" title="Permalink to this headline">¶</a></h1>
+<p>The first step is the creation of the input data. Since the names of categories in the tournament calculator are based on 1.3.3 of the OSC the user only needs to select one or more <a class="reference internal" href="#term-age-category"><span class="xref std std-term">age category</span></a> <a class="footnote-reference brackets" href="#id3" id="id1">1</a>  and <a class="reference internal" href="#term-discipline"><span class="xref std std-term">discipline</span></a> <a class="footnote-reference brackets" href="#id4" id="id2">2</a>. All categories are created, and the user is asked to add the number of <a class="reference internal" href="#term-athletes-couples"><span class="xref std std-term">athletes/couples</span></a> for each category. Based on the competition systems (as defined in the OSC under 4.4) the <a class="reference internal" href="#term-number-of-matches"><span class="xref std std-term">number of matches</span></a> <span class="math notranslate nohighlight">\(N_{m}(n_{a})\)</span> for each category is known and can be described the following.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}N_{m}(n_{a})= \begin{cases}
+  d(n_{a}) , &amp;n_{a} &lt; 7\\
+  2 \cdot n_a - 5, &amp; n_{a} \geq 7 \\
+\end{cases}
+\\ \text{ with } d(n_{a} \to N_{m}; 0 \to 0, 1 \to 0, 2 \to 3, 3\to 3, 4 \to 6, 5 \to 10, 6 \to 9)\end{split}\]</div>
+<p>c`NmNa` shows the number of matches <span class="math notranslate nohighlight">\(N_{m}\)</span> as a function of the number of athletes <span class="math notranslate nohighlight">\(n_{a}\)</span>.</p>
+<figure class="align-default" id="id5">
+<span id="nmna"></span><img alt="_images/Nm_Na.png" src="_images/Nm_Na.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">Number of matches <span class="math notranslate nohighlight">\(N_{m}\)</span> as a function of the number of athletes <span class="math notranslate nohighlight">\(n_{a}\)</span>.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The <a class="reference internal" href="#term-individual-time"><span class="xref std std-term">individual time</span></a> <span class="math notranslate nohighlight">\(l\)</span> for each category can be calculated as on the number of matches <span class="math notranslate nohighlight">\(N_{m}\)</span> times the <a class="reference internal" href="#term-average-match-time-per-discipline"><span class="xref std std-term">average match time per discipline</span></a> <span class="math notranslate nohighlight">\(&lt;t_{x}&gt;\)</span> (See <a class="reference internal" href="#avtime"><span class="std std-numref">Table 1</span></a> average match time per discipline). The average match time covers the span between the starting of one match and the starting of the next match, including interruptions of the fight and the change of the fighters. This value is based on the experience and used as well in [SD, JJW, SM]. It may vary based on the place and the time of the tournament and can be individually adjusted in the software.</p>
+<span id="avtime"></span><table class="docutils align-center" id="id6">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">average match time per discipline</span><a class="headerlink" href="#id6" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Discipline</p></th>
+<th class="head"><p>Average match time <span class="math notranslate nohighlight">\(&lt;t_{x}&gt;\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Jiu-Jitsu</p></td>
+<td><p>8 min</p></td>
+</tr>
+<tr class="row-odd"><td><p>Fighting</p></td>
+<td><p>6 min 30 sec</p></td>
+</tr>
+<tr class="row-even"><td><p>Duo</p></td>
+<td><p>7 min</p></td>
+</tr>
+<tr class="row-odd"><td><p>Show</p></td>
+<td><p>3 min</p></td>
+</tr>
+</tbody>
+</table>
+<p>The individual time <span class="math notranslate nohighlight">\(l_{xy}\)</span> is calculated as the following:</p>
+<div class="math notranslate nohighlight">
+\[l_{yx}= N_{m} (n_{a} ) &lt;t_{x}&gt;\]</div>
+<p>In total the input data can be described the following:
+There are <span class="math notranslate nohighlight">\(X\)</span> disciplines. Each discipline has <span class="math notranslate nohighlight">\(Y\)</span> individual categories with each category an individual time of <span class="math notranslate nohighlight">\(l_{xy}\)</span>. Hereby is:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}L_{X} = \sum_{y=1}^Y l_{xy} \text{ and } \\
+L_{tot} = \sum_{x=A}^X L_{x} = \sum_{x=A}^X \sum_{y=1}^Yl_{xy} ,\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(L_{x}\)</span> is the total discipline time, and <span class="math notranslate nohighlight">\(L_{tot}\)</span> is the total time for the full tournament. For a better understanding, see <a class="reference internal" href="#input"><span class="std std-numref">Fig. 2</span></a> Visualization of an example input dataset.</p>
+<figure class="align-default" id="id7">
+<span id="input"></span><img alt="_images/input.png" src="_images/input.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text">Visualization of an example input dataset. Here, the discipline <span class="math notranslate nohighlight">\(A\)</span> (in red) has <span class="math notranslate nohighlight">\(M\)</span> individual categories with each an induvial duration of <span class="math notranslate nohighlight">\(l_{AM}\)</span>. The total time of this discipline is <span class="math notranslate nohighlight">\(L_A\)</span></span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Based on <span class="math notranslate nohighlight">\(L_{tot}\)</span> and the number of competition areas <span class="math notranslate nohighlight">\(T\)</span> an (artificial) <a class="reference internal" href="#term-perfect-end-time"><span class="xref std std-term">perfect end-time</span></a> <span class="math notranslate nohighlight">\(ET_{perf}\)</span> can be calculated the following:</p>
+<div class="math notranslate nohighlight">
+\[ET_{perf}=\frac{L_{tot}}{T}\]</div>
+<dl class="footnote brackets">
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Adults, U21, U18 and U16 are supported in the version 0.1.0</p>
+</dd>
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Jiu-Jitsu, Fighting, Duo and Show system are supported in the version 0.1.0</p>
+</dd>
+</dl>
+</section>
+<section id="longest-processing-time-algorithm-approximate-solution">
+<h1>Longest Processing Time algorithm – Approximate solution<a class="headerlink" href="#longest-processing-time-algorithm-approximate-solution" title="Permalink to this headline">¶</a></h1>
+<p>The above-described problem can be approximately solved with the <a class="reference external" href="https://en.wikipedia.org/wiki/Multiprocessor_scheduling">LPT</a> algorithm (Longest Processing Time). It sorts the categories by their time <span class="math notranslate nohighlight">\(l\)</span>, from longest to shortest.  Then assigns them one after annother to competition area <span class="math notranslate nohighlight">\(T\)</span> with the earliest end time so far. The logical assumption is made that only one category can be run per competition area at the same moment in time.
+Since the number of categories is usually very small (&lt;&lt;1000), this straightforward algorithm seems to be a good starting point. However, it needs to be modified to full fill the requirements of multi-discipline tournaments. Here not all referees can work on all competition areas due to individual qualifications.</p>
+<section id="splitting-of-disciplines-with-dynamic-creation-of-competition-areas">
+<h2>Splitting of disciplines with dynamic creation of competition areas<a class="headerlink" href="#splitting-of-disciplines-with-dynamic-creation-of-competition-areas" title="Permalink to this headline">¶</a></h2>
+<p>In the JJIF referees are specialized per discipline <a class="reference external" href="http://jjif.org/fileadmin/JJIF/minutes/board/_MINUTES_5th_JJIF_Board_Abu_Dhabi__.4.2017.pdf">Referee</a>. Therefore, it is crutial to minimize the change of disciplines for the individual competition areas <span class="math notranslate nohighlight">\(T\)</span> to avoid time-consuming commuting of qualified referees. To realize this, we choose to individually distribute the categories based on the above described LPT algorithm.
+This requires, that for a given discipline, only needed competition areas are created.
+Hereby we used a so-called <a class="reference external" href="https://en.wikipedia.org/wiki/Euclidean_division">Euclidean</a> Division:</p>
+<blockquote>
+<div><p>“Given two integers <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span>, with <span class="math notranslate nohighlight">\(b \neq 0\)</span>, there exist unique integers <span class="math notranslate nohighlight">\(q\)</span> and <span class="math notranslate nohighlight">\(r \)</span> and <span class="math notranslate nohighlight">\(0 ≤ r &lt; |b|\)</span> where <span class="math notranslate nohighlight">\(|b|\)</span> denotes the absolute value of <span class="math notranslate nohighlight">\(b\)</span>. In the above theorem, each of the four integers has a name of its own: <span class="math notranslate nohighlight">\(a\)</span> is called the dividend, <span class="math notranslate nohighlight">\(b\)</span> is called the divisor, <span class="math notranslate nohighlight">\(q\)</span> is called the quotient and <span class="math notranslate nohighlight">\(r\)</span> is called the remainder.”</p>
+</div></blockquote>
+<p>In the case of the described data, we can define analogous a Euclidean Division with the following components:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>dividend =   total time of this discipline <span class="math notranslate nohighlight">\(L_{a}\)</span></p></li>
+<li><p>divisor =    perfect end-time <span class="math notranslate nohighlight">\(ET_{perf}\)</span></p></li>
+<li><p>quotient =   <a class="reference internal" href="#term-fully-used"><span class="xref std std-term">fully-used</span></a> competition area <span class="math notranslate nohighlight">\(N_{Ta}\)</span></p></li>
+<li><p>remainder =  <a class="reference internal" href="#term-remainder-time"><span class="xref std std-term">remainder time</span></a> <span class="math notranslate nohighlight">\(t_{r}\)</span></p></li>
+</ul>
+</div></blockquote>
+<p>This converts the above-mentioned relation to:</p>
+<div class="math notranslate nohighlight">
+\[L_{a} = ET_{perf} \cdot N_{Ta}  + t_{r} : a \in \{A, B, ⋯, X\}\]</div>
+<p>Where <span class="math notranslate nohighlight">\(a\)</span> is the name of the discipline. In our case the dividend (total time of this discipline <span class="math notranslate nohighlight">\(L_{a}\)</span>) and the divisor (perfect end-time <span class="math notranslate nohighlight">\(ET_{perf}\)</span>) are known, and we want to compute the total number of tatamis.</p>
+<p>The name fully competition areas used shall also imply that the end time of this competition area <span class="math notranslate nohighlight">\(ET_{T}\)</span> is as close as possible to perfect end-time <span class="math notranslate nohighlight">\(ET_perf.\)</span> To calculate the number of fully-used competition areas per discipline for the above relation one can use the well-known integer division in computer science:</p>
+<div class="math notranslate nohighlight">
+\[N_{Ta}=INT \frac{L_{a}}{E_{perf}} : a  \in ]\{A, B, ⋯, X\}\]</div>
+<p>The remainder of the Euclidean Division is the remainder time <span class="math notranslate nohighlight">\(t_r\)</span> and might be used to create a new competition area it is called <a class="reference internal" href="#term-partially-used"><span class="xref std std-term">partially-used</span></a>.</p>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p>Since these mathematical expressions might not be familiar to many readers, we would like to give the following example:</p>
+<p>Assuming we have a discipline A with a total discipline time of <span class="math notranslate nohighlight">\(L_{A}\)</span>: 22:30 (=22 hrs and 30 min). The perfect end-time <span class="math notranslate nohighlight">\(ET_{perf}\)</span>: of the tournament is 7:00 (7 hrs and 0 min).</p>
+<p>The amount of fully used tatamis is</p>
+<div class="math notranslate nohighlight">
+\[N_{Ta}=INT \frac{L_{a}}{E_{perf}} =INT \frac{22:30}{7:00} =INT(3.21)=3\]</div>
+<p>The remainder time <span class="math notranslate nohighlight">\(t_{r}\)</span> is 1h and 30 min, which might need to be added either to existing partially used competition area or created a new one.</p>
+</section>
+</section>
+<section id="partially-used-competition-areas">
+<h2>Partially used competition areas<a class="headerlink" href="#partially-used-competition-areas" title="Permalink to this headline">¶</a></h2>
+<p>If fully used or partially used competition areas are created strongly depends on the total discipline time <span class="math notranslate nohighlight">\(L_{x}\)</span>, the perfect end-time <span class="math notranslate nohighlight">\(ET_{perf}\)</span> and the amount of already created competition areas. We will discuss all distinct possibilities in dedicated examples below to make them better understandable.</p>
+<p>In this first example, we want to explain the way the algorithm reacts when first called.
+We assume that <span class="math notranslate nohighlight">\(L_{x}Lx  &lt; ET_{perf}\)</span>. In the first step, the amount of fully used competition area is calculated, and those are created. Since <span class="math notranslate nohighlight">\(L_{x}Lx  &lt; ET_{perf}\)</span>, the remainder time must be larger than zero. Since no further competition area exists an additional partially-used competition area is created. This scenario is shown in <a class="reference internal" href="#nopar"><span class="std std-numref">Fig. 3</span></a>.</p>
+<figure class="align-default" id="id8">
+<span id="nopar"></span><img alt="_images/no_parTat.gif" src="_images/no_parTat.gif" />
+<figcaption>
+<p><span class="caption-number">Fig. 3 </span><span class="caption-text">Visualization of expexted behaviour with three identical competition areas and two disciplines</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The LPT algorithm would tread all created competition areas the same, which would lead to an even distribution of end times <span class="math notranslate nohighlight">\(ET_{T}\)</span> for all 3 competition areas. However, is <span class="math notranslate nohighlight">\(ET_{T}\)</span> rather far away from the perfect end time,  meaning we cannot consider these competition areas full used. If the next discipline is distributed, categories might be added to all the competition area introducing a change of the discipline which is not desired.
+To avoid this, we will add adn <a class="reference internal" href="#term-placeholder-time-block"><span class="xref std std-term">placeholder time block</span></a> at the partically used tatamis. The lenth of this placeholder time block is <span class="math notranslate nohighlight">\(ET_{perf}-t_{r}\)</span>. It will be removed after the dicscipline allocation, leaving a very uneven distribtution. This will allow the next discipline to be added on the partially-used competition area. This behaviour is visualized in <code class="xref std std-numref docutils literal notranslate"><span class="pre">withPar</span></code>.</p>
+<figure class="align-default" id="withpar">
+<img alt="_images/with_parTat.gif" src="_images/with_parTat.gif" />
+</figure>
+</section>
+<section id="diszipline-change-penalty-factor-for-changeing-a-discipline">
+<h2>Diszipline Change - penalty factor for changeing a discipline<a class="headerlink" href="#diszipline-change-penalty-factor-for-changeing-a-discipline" title="Permalink to this headline">¶</a></h2>
+<p>Changeing the discipline will possible need adjustment of the referees and the setup of the field of play. Therefore a pentaly factor called diszipline change in introduced.
+After the distribtuon of a discipline this penalty factor is added.</p>
+<figure class="align-default" id="pent">
+<img alt="_images/pent.gif" src="_images/pent.gif" />
+</figure>
+</section>
+</section>
+<section id="free-parameters">
+<h1>Free parameters<a class="headerlink" href="#free-parameters" title="Permalink to this headline">¶</a></h1>
+<p>The algorithm has three free and and abitraty parameters which need to be varied to find the optimal solution.</p>
+<section id="order-of-the-disciplines">
+<h2>Order of the disciplines<a class="headerlink" href="#order-of-the-disciplines" title="Permalink to this headline">¶</a></h2>
+<p>[(‘Duo’, ‘Show’, ‘Jiu-Jitsu’, ‘Fighting’), (‘Duo’, ‘Show’, ‘Fighting’, ‘Jiu-Jitsu’), (‘Duo’, ‘Jiu-Jitsu’, ‘Show’, ‘Fighting’), (‘Duo’, ‘Jiu-Jitsu’, ‘Fighting’, ‘Show’), (‘Duo’, ‘Fighting’, ‘Show’, ‘Jiu-Jitsu’), (‘Duo’, ‘Fighting’, ‘Jiu-Jitsu’, ‘Show’), (‘Show’, ‘Duo’, ‘Jiu-Jitsu’, ‘Fighting’), (‘Show’, ‘Duo’, ‘Fighting’, ‘Jiu-Jitsu’), (‘Show’, ‘Jiu-Jitsu’, ‘Duo’, ‘Fighting’), (‘Show’, ‘Jiu-Jitsu’, ‘Fighting’, ‘Duo’), (‘Show’, ‘Fighting’, ‘Duo’, ‘Jiu-Jitsu’), (‘Show’, ‘Fighting’, ‘Jiu-Jitsu’, ‘Duo’), (‘Jiu-Jitsu’, ‘Duo’, ‘Show’, ‘Fighting’), (‘Jiu-Jitsu’, ‘Duo’, ‘Fighting’, ‘Show’), (‘Jiu-Jitsu’, ‘Show’, ‘Duo’, ‘Fighting’), (‘Jiu-Jitsu’, ‘Show’, ‘Fighting’, ‘Duo’), (‘Jiu-Jitsu’, ‘Fighting’, ‘Duo’, ‘Show’), (‘Jiu-Jitsu’, ‘Fighting’, ‘Show’, ‘Duo’), (‘Fighting’, ‘Duo’, ‘Show’, ‘Jiu-Jitsu’), (‘Fighting’, ‘Duo’, ‘Jiu-Jitsu’, ‘Show’), (‘Fighting’, ‘Show’, ‘Duo’, ‘Jiu-Jitsu’), (‘Fighting’, ‘Show’, ‘Jiu-Jitsu’, ‘Duo’), (‘Fighting’, ‘Jiu-Jitsu’, ‘Duo’, ‘Show’), (‘Fighting’, ‘Jiu-Jitsu’, ‘Show’, ‘Duo’)]</p>
+</section>
+</section>
+<section id="gloassay">
+<h1>Gloassay<a class="headerlink" href="#gloassay" title="Permalink to this headline">¶</a></h1>
+<dl class="glossary simple">
+<dt id="term-age-category">age category<a class="headerlink" href="#term-age-category" title="Permalink to this term">¶</a></dt><dd><p>An age categorie defines the minumim and maximum age of a participant</p>
+</dd>
+<dt id="term-minimum-end-time">minimum end-time<a class="headerlink" href="#term-minimum-end-time" title="Permalink to this term">¶</a></dt><dd><p>The time after the last match has finished; <span class="math notranslate nohighlight">\(ET_{min}\)</span></p>
+</dd>
+<dt id="term-discipline">discipline<a class="headerlink" href="#term-discipline" title="Permalink to this term">¶</a></dt><dd><p>A discipline is a branch of a sport which has a set of rules. For this program disciplines might have a different time and different referees</p>
+</dd>
+<dt id="term-category">category<a class="headerlink" href="#term-category" title="Permalink to this term">¶</a></dt><dd><p>A category is a</p>
+</dd>
+<dt id="term-competition-area">competition area<a class="headerlink" href="#term-competition-area" title="Permalink to this term">¶</a></dt><dd><p>A competition area can hold one match at the same time</p>
+</dd>
+<dt id="term-number-of-matches">number of matches<a class="headerlink" href="#term-number-of-matches" title="Permalink to this term">¶</a></dt><dd><p>Number of individual matches per category. It depens on the number of athletes/couples in this category</p>
+</dd>
+<dt id="term-athletes-couples">athletes/couples<a class="headerlink" href="#term-athletes-couples" title="Permalink to this term">¶</a></dt><dd><p>Paricipants in a category</p>
+</dd>
+<dt id="term-individual-time">individual time<a class="headerlink" href="#term-individual-time" title="Permalink to this term">¶</a></dt><dd><p>For</p>
+</dd>
+<dt id="term-average-match-time-per-discipline">average match time per discipline<a class="headerlink" href="#term-average-match-time-per-discipline" title="Permalink to this term">¶</a></dt><dd><p>fdg</p>
+</dd>
+<dt id="term-perfect-end-time">perfect end-time<a class="headerlink" href="#term-perfect-end-time" title="Permalink to this term">¶</a></dt><dd><p>Total fight time divided by the number of competition area</p>
+</dd>
+<dt id="term-fully-used">fully-used<a class="headerlink" href="#term-fully-used" title="Permalink to this term">¶</a></dt><dd><p>fully used competition area</p>
+</dd>
+<dt id="term-partially-used">partially-used<a class="headerlink" href="#term-partially-used" title="Permalink to this term">¶</a></dt><dd><p>paritally-used competition area</p>
+</dd>
+<dt id="term-remainder-time">remainder time<a class="headerlink" href="#term-remainder-time" title="Permalink to this term">¶</a></dt><dd><p>remainder time</p>
+</dd>
+<dt id="term-placeholder-time-block">placeholder time block<a class="headerlink" href="#term-placeholder-time-block" title="Permalink to this term">¶</a></dt><dd><p>time bloc at partially used tatamis</p>
+</dd>
+</dl>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to TourCalc’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, Claudia Behnke.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
