@@ -9,10 +9,10 @@ Fork the repository and save it at a place where you like it.
 
 The package consist of two files:
 
-tourcalc.py and theapp.py.
+calculator.py and theapp.py.
 
 
-To create the module type:
+To create the module type
 .. code-block::
 
     pip install tourcalc
@@ -20,6 +20,7 @@ To create the module type:
 To run the gui you need to open the app using streamlit
 
 .. code-block::
+    
     streamlit run tourcalc/theapp.py
 
 
