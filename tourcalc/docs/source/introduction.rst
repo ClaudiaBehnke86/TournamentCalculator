@@ -143,12 +143,13 @@ To avoid this, we will add adn :term:`placeholder time block` at the partically 
 .. figure:: pictures/with_parTat.gif
 
 
-------------------------------------------------------------------
+--------------------------------------------------------------
 Diszipline Change - penalty factor for changeing a discipline 
-------------------------------------------------------------------
+--------------------------------------------------------------
 
 Changeing the discipline will possible need adjustment of the referees and the setup of the field of play. Therefore a pentaly factor called diszipline change in introduced.
 After the distribtuon of a discipline this penalty factor is added. 
+This parameter is :math:`T_{pen}` and will be later varied.
 
 .. _pent:
 .. figure:: pictures/pent.gif
@@ -158,11 +159,12 @@ After the distribtuon of a discipline this penalty factor is added.
 Free parameters 
 ================
 
-The algorithm has three free and and abitraty parameters which need to be varied to find the optimal solution.
+The algorithm has three free and and abitraty parameters () which need to be varied to find the optimal solution.
 
 -------------------------
 Order of the disciplines 
 -------------------------
+
 
 
 
