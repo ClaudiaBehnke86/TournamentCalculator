@@ -13,11 +13,11 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 import itertools # for permutations of discipline order
-from tourcalc.tourcalc import write_tour_file
-from tourcalc.tourcalc import descition_matrix
-from tourcalc.tourcalc import cal_cat
-from tourcalc.tourcalc import read_in_file
-from tourcalc.tourcalc import calculate_fight_time
+from tourcalc.calculator import write_tour_file
+from tourcalc.calculator import descition_matrix
+from tourcalc.calculator import cal_cat
+from tourcalc.calculator import read_in_file
+from tourcalc.calculator import calculate_fight_time
 # from tourcalc import write_tour_file
 # from tourcalc import descition_matrix
 # from tourcalc import cal_cat

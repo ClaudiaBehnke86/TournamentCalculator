@@ -1,0 +1,35 @@
+Tournament: WCH_2019_U21U18Jiu
+Tatamis: 10
+Finalblock: YES 
+Breaktype: Individual
+Startime: 32400
+U18 Jiu-Jitsu Men 46kg 4
+U18 Jiu-Jitsu Men 50kg 7
+U18 Jiu-Jitsu Men 55kg 14
+U18 Jiu-Jitsu Men 60kg 14
+U18 Jiu-Jitsu Men 66kg 11
+U18 Jiu-Jitsu Men 73kg 12
+U18 Jiu-Jitsu Men 81kg 0
+U18 Jiu-Jitsu Men 82kg 0
+U18 Jiu-Jitsu Women 40kg 3
+U18 Jiu-Jitsu Women 44kg 3
+U18 Jiu-Jitsu Women 48kg 0
+U18 Jiu-Jitsu Women 52kg 0
+U18 Jiu-Jitsu Women 57kg 10
+U18 Jiu-Jitsu Women 63kg 8
+U18 Jiu-Jitsu Women 70kg 2
+U18 Jiu-Jitsu Women 71kg 3
+U21 Jiu-Jitsu Men 56kg 7
+U21 Jiu-Jitsu Men 62kg 7
+U21 Jiu-Jitsu Men 69kg 13
+U21 Jiu-Jitsu Men 77kg 13
+U21 Jiu-Jitsu Men 85kg 3
+U21 Jiu-Jitsu Men 94kg 4
+U21 Jiu-Jitsu Men 95kg 3
+U21 Jiu-Jitsu Women 45kg 0
+U21 Jiu-Jitsu Women 48kg 2
+U21 Jiu-Jitsu Women 52kg 6
+U21 Jiu-Jitsu Women 57kg 6
+U21 Jiu-Jitsu Women 63kg 4
+U21 Jiu-Jitsu Women 70kg 2
+U21 Jiu-Jitsu Women 71kg 6
