@@ -22,7 +22,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
-import tourcalc
+#import tourcalc
 # -- General configuration ---------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
