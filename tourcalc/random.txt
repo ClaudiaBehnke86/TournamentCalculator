@@ -1,53 +1,74 @@
 Tournament: random
 Tatamis: 3
-Finallblock: NO 
-Breaktype: no_break
-Startime: 30600
-U16 Fighting Men 38kg 5
-U16 Fighting Men 42kg 4
-U16 Fighting Men 46kg 5
-U16 Fighting Men 50kg 14
-U16 Fighting Men 55kg 5
-U16 Fighting Men 60kg 0
-U16 Fighting Men 66kg 16
-U16 Fighting Men 73kg 10
-U16 Fighting Men 74kg 14
-U16 Fighting Women 32kg 7
-U16 Fighting Women 36kg 7
-U16 Fighting Women 40kg 3
-U16 Fighting Women 44kg 4
-U16 Fighting Women 48kg 7
-U16 Fighting Women 52kg 12
-U16 Fighting Women 57kg 16
-U16 Fighting Women 63kg 6
-U16 Fighting Women 61kg 8
-Adults Fighting Men 56kg 2
-Adults Fighting Men 62kg 19
-Adults Fighting Men 69kg 0
-Adults Fighting Men 77kg 18
-Adults Fighting Men 85kg 10
-Adults Fighting Men 94kg 0
-Adults Fighting Men 95kg 9
-Adults Fighting Women 45kg 7
-Adults Fighting Women 48kg 16
-Adults Fighting Women 52kg 13
-Adults Fighting Women 57kg 16
-Adults Fighting Women 63kg 19
-Adults Fighting Women 70kg 15
-Adults Fighting Women 71kg 2
-U18 Fighting Men 46kg 10
-U18 Fighting Men 50kg 14
-U18 Fighting Men 55kg 13
-U18 Fighting Men 60kg 14
-U18 Fighting Men 66kg 11
-U18 Fighting Men 73kg 4
-U18 Fighting Men 81kg 19
-U18 Fighting Men 82kg 20
-U18 Fighting Women 40kg 9
-U18 Fighting Women 44kg 9
-U18 Fighting Women 48kg 7
-U18 Fighting Women 52kg 0
-U18 Fighting Women 57kg 4
-U18 Fighting Women 63kg 13
-U18 Fighting Women 70kg 3
-U18 Fighting Women 71kg 6
+Days: 1
+Finalblock: YES 
+Breaktype: Individual
+Startime: 32400
+U21 Duo Female 6 1
+U21 Duo Mixed 17 1
+U21 Duo Male 0 1
+U21 Jiu-Jitsu Male 56kg 5 1
+U21 Jiu-Jitsu Male 62kg 8 1
+U21 Jiu-Jitsu Male 69kg 4 1
+U21 Jiu-Jitsu Male 77kg 11 1
+U21 Jiu-Jitsu Male 85kg 10 1
+U21 Jiu-Jitsu Male 94kg 9 1
+U21 Jiu-Jitsu Male 95kg 5 1
+U21 Jiu-Jitsu Female 45kg 9 1
+U21 Jiu-Jitsu Female 48kg 14 1
+U21 Jiu-Jitsu Female 52kg 7 1
+U21 Jiu-Jitsu Female 57kg 5 1
+U21 Jiu-Jitsu Female 63kg 15 1
+U21 Jiu-Jitsu Female 70kg 12 1
+U21 Jiu-Jitsu Female 71kg 7 1
+U21 Show Female 6 1
+U21 Show Mixed 1 1
+U21 Show Male 8 1
+U21 Fighting Male 56kg 14 1
+U21 Fighting Male 62kg 16 1
+U21 Fighting Male 69kg 9 1
+U21 Fighting Male 77kg 12 1
+U21 Fighting Male 85kg 13 1
+U21 Fighting Male 94kg 5 1
+U21 Fighting Male 95kg 6 1
+U21 Fighting Female 45kg 13 1
+U21 Fighting Female 48kg 4 1
+U21 Fighting Female 52kg 12 1
+U21 Fighting Female 57kg 7 1
+U21 Fighting Female 63kg 5 1
+U21 Fighting Female 70kg 10 1
+U21 Fighting Female 71kg 2 1
+Adults Duo Female 3 1
+Adults Duo Mixed 19 1
+Adults Duo Male 5 1
+Adults Jiu-Jitsu Male 56kg 7 1
+Adults Jiu-Jitsu Male 62kg 6 1
+Adults Jiu-Jitsu Male 69kg 1 1
+Adults Jiu-Jitsu Male 77kg 13 1
+Adults Jiu-Jitsu Male 85kg 6 1
+Adults Jiu-Jitsu Male 94kg 6 1
+Adults Jiu-Jitsu Male 95kg 7 1
+Adults Jiu-Jitsu Female 45kg 9 1
+Adults Jiu-Jitsu Female 48kg 10 1
+Adults Jiu-Jitsu Female 52kg 7 1
+Adults Jiu-Jitsu Female 57kg 9 1
+Adults Jiu-Jitsu Female 63kg 10 1
+Adults Jiu-Jitsu Female 70kg 8 1
+Adults Jiu-Jitsu Female 71kg 13 1
+Adults Show Female 15 1
+Adults Show Mixed 10 1
+Adults Show Male 11 1
+Adults Fighting Male 56kg 12 1
+Adults Fighting Male 62kg 16 1
+Adults Fighting Male 69kg 2 1
+Adults Fighting Male 77kg 13 1
+Adults Fighting Male 85kg 7 1
+Adults Fighting Male 94kg 13 1
+Adults Fighting Male 95kg 7 1
+Adults Fighting Female 45kg 4 1
+Adults Fighting Female 48kg 1 1
+Adults Fighting Female 52kg 2 1
+Adults Fighting Female 57kg 16 1
+Adults Fighting Female 63kg 4 1
+Adults Fighting Female 70kg 4 1
+Adults Fighting Female 71kg 3 1

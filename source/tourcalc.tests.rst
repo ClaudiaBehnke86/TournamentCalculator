@@ -1,7 +1,7 @@
-tourcalc package
-================
+tourcalc.tests package
+======================
 
-.. automodule:: tourcalc
+.. automodule:: tourcalc.tests
    :members:
    :undoc-members:
    :show-inheritance:
@@ -13,4 +13,4 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   tourcalc.tourcalc
+   tourcalc.tests.test_tourcalc

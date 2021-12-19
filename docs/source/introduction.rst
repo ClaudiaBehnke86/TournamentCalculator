@@ -106,6 +106,7 @@ The name fully competition areas used shall also imply that the end time of this
 
 The remainder of the Euclidean Division is the remainder time :math:`t_r` and might be used to create a new competition area it is called :term:`partially-used`.
 
+=======
 Example
 =======
 Since these mathematical expressions might not be familiar to many readers, we would like to give the following example:
@@ -126,7 +127,7 @@ Partially used competition areas
 If fully used or partially used, competition areas are created strongly depends on the total discipline time :math:`L_{x}`, the perfect end-time :math:`ET_{perf}` and the amount of already created competition areas. We will discuss all distinct possibilities in dedicated examples below to make them better understandable.
 
 Possibility 1: No competition areas exists. :math:`L_{x}Lx  < ET_{perf}`
-------------------------------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In this first example, we want to explain the way the algorithm reacts when first called.
 We assume that :math:`L_{x}Lx  < ET_{perf}`. The amount of fully used competition area is calculated in the first step, and those are created. Since :math:`L_{x}Lx  < ET_{perf}`, the remainder time must be larger than zero. Since no other competition area exists, an additional partially-used competition area is created. This scenario is shown in :numref:`noPar`.
 
