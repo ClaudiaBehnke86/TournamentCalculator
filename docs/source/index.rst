@@ -11,7 +11,7 @@ Welcome to TourCalc's documentation!
    modules
    versions
    authors
-   
+   readme   
 
 .. include:: introduction.rst
 

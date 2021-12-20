@@ -1,12 +1,12 @@
-=============
+*************
 Introduction
-=============
+*************
 
 Scheduling of sports tournaments can be approximated with the so-called multiprocessor scheduling, a known NP-hard problem of computer science.  With this, the goal is to find a :term:`minimum end-time` :math:`ET_{min}` of the tournament with the distribution of the different categories on a given number of :term:`competition area` s :math:`T`. A :term:`category` here is defined in agreement with the Organization and Sporting Code (Version 3.1)  OSC_ of the Ju-Jitsu International Federation (JJIF) under paragraph 1.3 (Disciplines, Divisions and Categories). However, the program shall also provide a base for integrating more disciplines or other sports.
 
-=======================
+***********************
 Creation of input data
-=======================
+***********************
 The first step is the creation of the input data. Since the names of categories in the tournament calculator are based on 1.3.3 of the OSC, the user only needs to select one or more :term:`age category` [#]_  and :term:`discipline` [#]_. All categories are created, and the user is asked to add the number of :term:`athletes/couples` for each category. Based on the competition systems (as defined in the OSC under 4.4) the :term:`number of matches` :math:`N_{m}(n_{a})` for each category is known and can be described the following.
 
 .. math::
@@ -16,7 +16,7 @@ The first step is the creation of the input data. Since the names of categories 
     \end{cases}
     \\ \text{ with } d(n_{a} \to N_{m}; 0 \to 0, 1 \to 0, 2 \to 3, 3\to 3, 4 \to 6, 5 \to 10, 6 \to 9)
  
-c`NmNa` shows the number of matches :math:`N_{m}` as a function of the number of athletes :math:`n_{a}`.
+:numref:`NmNa` shows the number of matches :math:`N_{m}` as a function of the number of athletes :math:`n_{a}`.
 
 .. _NmNa:
 .. figure:: pictures/Nm_Na.png
@@ -53,12 +53,12 @@ There are :math:`X` disciplines. Each discipline has :math:`Y` individual catego
     L_{X} = \sum_{y=1}^Y l_{xy} \text{ and } \\
     L_{tot} = \sum_{x=A}^X L_{x} = \sum_{x=A}^X \sum_{y=1}^Yl_{xy} ,
 
-where :math:`L_{x}` is the total discipline time, and :math:`L_{tot}` is the total time for the full tournament. For a better understanding, see :numref:`input` Visualization of an example input dataset.
+where :math:`L_{x}` is the total discipline time, and :math:`L_{tot}` is the total time for the full tournament. For a better understanding, see :numref:`input` Visualization of an example input data set.
 
 .. _input:
 .. figure:: pictures/input.png
 
-    Visualization of an example input dataset. Here, the discipline :math:`A` (in red) has :math:`M` individual categories with each an induvial duration of :math:`l_{AM}`. The total time of this discipline is :math:`L_A`
+    Visualization of an example input data set. Here, the discipline :math:`A` (in red) has :math:`M` individual categories with each an individual duration of :math:`l_{AM}`. The total time of this discipline is :math:`L_A`
     
 Based on :math:`L_{tot}` and the number of competition areas :math:`T` an (artificial) :term:`perfect end-time` :math:`ET_{perf}` can be calculated the following:
 
@@ -68,16 +68,16 @@ Based on :math:`L_{tot}` and the number of competition areas :math:`T` an (artif
 .. [#] Adults, U21, U18 and U16 are supported in version 0.1.0
 .. [#] Jiu-Jitsu, Fighting, Duo and Show system are supported in version 0.1.0
 
-========================================================
+********************************************************
 Longest Processing Time algorithm – Approximate solution
-========================================================
+********************************************************
 
 The above-described problem can be approximately solved with the LPT_ algorithm (Longest Processing Time). It sorts the categories by their time :math:`l`, from longest to shortest.  Then assigns them one after another to competition area :math:`T` with the earliest end time so far. The logical assumption is made that only one category can be run per competition area at the same moment in time.
-Since the number of categories is usually minimal (<<1000), this straightforward algorithm seems to be a good starting point. However, it needs to be modified to fulfil the requirements of multi-discipline tournaments where not all referees can work on all competition areas due to individual qualifications.
+Since the number of categories is usually minimal (<<1000), this straightforward algorithm seems to be a good starting point. However, it needs to be modified to fulfill the requirements of multi-discipline tournaments where not all referees can work on all competition areas due to individual qualifications.
 
--------------------------------------------------------------------
+
 Splitting of disciplines with dynamic creation of competition areas
--------------------------------------------------------------------
+###################################################################
 
 In the JJIF, referees are specialized per discipline Referee_. Therefore, it is crucial to minimize the change of disciplines for the individual competition areas :math:`T` to avoid time-consuming commuting of qualified referees. To realize this, we choose to individually distribute the categories based on the above described LPT algorithm.
 This requires that for a given discipline, only needed competition areas are created.
@@ -106,9 +106,9 @@ The name fully competition areas used shall also imply that the end time of this
 
 The remainder of the Euclidean Division is the remainder time :math:`t_r` and might be used to create a new competition area it is called :term:`partially-used`.
 
-=======
 Example
-=======
+*******
+
 Since these mathematical expressions might not be familiar to many readers, we would like to give the following example:
 
 Assuming we have a discipline A with a total discipline time of :math:`L_{A}`: 22:30 (=22 hrs and 30 min). The perfect end-time :math:`ET_{perf}`: of the tournament is 7:00 (7 hrs and 0 min).
@@ -118,53 +118,73 @@ The amount of fully used tatamis is
 .. math::
     N_{Ta}=INT \frac{L_{a}}{E_{perf}} =INT \frac{22:30}{7:00} =INT(3.21)=3
 
-The remainder time :math:`t_{r}` is 1h and 30 min, which might need to be added either to the existing partially used competition area or created a new one.
+The remainder time :math:`t_{r}` is 1 hours and 30 minutes, which might need to be added either to the existing partially used competition area or created a new one.
 
---------------------------------
+
 Partially used competition areas
---------------------------------
+################################
 
 If fully used or partially used, competition areas are created strongly depends on the total discipline time :math:`L_{x}`, the perfect end-time :math:`ET_{perf}` and the amount of already created competition areas. We will discuss all distinct possibilities in dedicated examples below to make them better understandable.
 
 Possibility 1: No competition areas exists. :math:`L_{x}Lx  < ET_{perf}`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+************************************************************************
+
 In this first example, we want to explain the way the algorithm reacts when first called.
 We assume that :math:`L_{x}Lx  < ET_{perf}`. The amount of fully used competition area is calculated in the first step, and those are created. Since :math:`L_{x}Lx  < ET_{perf}`, the remainder time must be larger than zero. Since no other competition area exists, an additional partially-used competition area is created. This scenario is shown in :numref:`noPar`.
 
 .. _noPar:
 .. figure:: pictures/no_parTat.gif
 
-    Visualization of expected behaviour with three identical competition areas and two disciplines
+    Visualization of expected behavior with three identical competition areas, two disciplines and no placeholder time block
 
 The LPT algorithm would tread all created competition areas the same, which would lead to an even distribution of end times :math:`ET_{T}` for all three competition areas. However, is :math:`ET_{T}` rather far away from the perfect end time,  meaning we cannot consider these competition areas full used. If the next discipline is distributed, categories might be added to all the competition areas, introducing a change of the discipline that is not desired.
-To avoid this, we will add a :term:`placeholder time block` at the partially used tatamis. The length of this placeholder time block is :math:`ET_{perf}-t_{r}`. It will be removed after the discipline allocation, leaving a very uneven distribution. This will allow the next discipline to be added on the partially-used competition area. This behaviour is visualized in :numref:`withPar`.
+To avoid this, we will add a :term:`placeholder time block` at the partially used tatamis. The length of this placeholder time block is :math:`ET_{perf}-t_{r}`. It will be removed after the discipline allocation, leaving a very uneven distribution. This will allow the next discipline to be added on the partially-used competition area. This behavior is visualized in :numref:`withPar`.
 
 .. _withPar:
 .. figure:: pictures/with_parTat.gif
+    
+    Visualization of expected behavior with three identical competition areas, two disciplines and a placeholder time block
 
 
-------------------------------------------------------------
 Discipline Change - penalty factor for changing a discipline 
-------------------------------------------------------------
+############################################################
 
 Changing the discipline will possibly need adjustment of the referees and the setup of the field of play. Therefore a penalty factor called discipline change is introduced.
 After the distribution of a discipline, this penalty factor is added. 
-This parameter is :math:`T_{pen}` and will be later varied.
+This parameter is :math:`T_{pen}` and will be later varied. The animation in :numref:`pent` shows the process. 
 
 .. _pent:
 .. figure:: pictures/pent.gif
 
+    Visualization of expected behavior with three identical competition areas, two disciplines and a placeholder time block and a penalty factor
 
-================
+
+***************
 Free parameters 
-================
+***************
 
-The algorithm has three free and arbitrary parameters () which need to be varied to find the optimal solution.
+The algorithm has three free and arbitrary parameters which need to be varied to find the optimal solution.
 
--------------------------
+
+Discipline Change - penalty factor for changing a discipline 
+############################################################
+
+
+
 Order of the disciplines 
--------------------------
+########################
 
+The answer of the algorithm depends on the order of the disciplines.  Like shown in picture  
+
+.. _AB:
+.. figure:: pictures/AB.png
+
+    Visualization of expected behavior with three identical competition areas, two disciplines, a placeholder time block, a penalty factor, starting with discipline A
+
+.. _BA:
+.. figure:: pictures/BA.png
+
+    Visualization of expected behavior with three identical competition areas, two disciplines, a placeholder time block, a penalty factor, starting with discipline B
 
 
 
@@ -183,9 +203,9 @@ Order of the disciplines
     https://en.wikipedia.org/wiki/Euclidean_division
 
 
-========
+********
 Glossary
-========
+********
 .. glossary::
     age category
         An age category defines the minimum and maximum age of a participant
@@ -212,7 +232,7 @@ Glossary
         For
         
     average match time per discipline
-        fdg
+        This is the average time between the start if one match and the start of the next match
         
     perfect end-time
         Total fight time divided by the number of the competition area

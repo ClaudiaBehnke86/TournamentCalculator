@@ -1,11 +1,11 @@
 .. highlight:: shell
 
-============
+************
 Installation
-============
+************
 
 How to install
---------------
+
 
 Easy! Clone the git repository and use pip to install the package
 
@@ -15,5 +15,6 @@ Easy! Clone the git repository and use pip to install the package
 
 Run the GUI via
 
-.. code-block:: console 
+.. code-block:: console
+
     $ streamlit run theapp.py
