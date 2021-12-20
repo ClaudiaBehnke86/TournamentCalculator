@@ -1,8 +1,11 @@
 """ This module created the GUI 
 
-It can be run with streamlit run theapp.py
+It can be run with 
 
-It needs streamlit to be installed
+streamlit run theapp.py
+
+
+more detals see installation
 
 """
 import os
@@ -137,7 +140,7 @@ tatami = 1
 days = 1
 final = 'NO'
 
-tour_name = st.text_input("Name of the tournament")
+tour_name = st.text_input("Name of the tournament", key = 1)
 fname = tour_name + ".txt"
 
 permutations_object = itertools.permutations(DIS_INP)

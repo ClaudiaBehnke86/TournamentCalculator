@@ -2,7 +2,7 @@ Tournament: WCh21
 Tatamis: 5
 Days: 9
 Finalblock: YES 
-Breaktype: Individual
+Breaktype: One Block
 Startime: 32400
 Adults Jiu-Jitsu Female 45kg 8 9
 Adults Jiu-Jitsu Female 48kg 14 9

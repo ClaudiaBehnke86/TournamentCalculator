@@ -1,5 +1,6 @@
 """ This module should be used to create a tournament
 
+it does all the mathematics and return the right order of the categories
 """
 import os
 from datetime import timedelta
@@ -27,6 +28,13 @@ def descition_matrix(cat_time_dict, av_time, tatami, break_t, breaktime, breakle
         reference time for average tatami [float] (sec)
     tatami
         number of tatamis [int]
+    break_t
+        type of the break that is used as a switch [individual, block, no break]
+    breaktime
+        time when the break should happen [dateime]     
+    breaklength
+        lengh of the break [datetime]
+
     '''
     # run all with permutaitons of dis inp
     permutations_object = itertools.permutations(DIS_INP)
@@ -72,8 +80,22 @@ def write_tour_file(tour_name,cat_par,cat_dict_day,i_tatami, days, final,start_t
 
     Parameters
     ----------
-    name
+    tour_name
         name of the tour nament [str]
+    cat_par
+        dict that links the category to a number of participants [dict (string -> int)    
+    cat_dict_day
+        dict that links the category to a day [dict (string -> int)
+    i_tatami
+        number of tatamis [int]
+    days
+        number of days [int]
+    final
+        does the event have a final block [bool]
+    start_time
+        time when the event should happen [dateime]
+    break_t
+        type of the break that is used as a switch [individual, block, no break]
     '''
     tour_file = open(tour_name + ".txt", "w")
 
