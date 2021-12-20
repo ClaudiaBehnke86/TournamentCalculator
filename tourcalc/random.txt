@@ -1,50 +1,40 @@
 Tournament: random
-Tatamis: 3
-Days: 2
+Tatamis: 6
+Days: 1
 Finalblock: YES 
 Breaktype: Individual
 Startime: 32400
-U16 Jiu-Jitsu Male 38kg 17 2
-U16 Jiu-Jitsu Male 42kg 11 2
-U16 Jiu-Jitsu Male 46kg 9 2
-U16 Jiu-Jitsu Male 50kg 8 1
-U16 Jiu-Jitsu Male 55kg 11 1
-U16 Jiu-Jitsu Male 60kg 11 2
-U16 Jiu-Jitsu Male 66kg 18 1
-U16 Jiu-Jitsu Male 73kg 8 1
-U16 Jiu-Jitsu Male 74kg 6 2
-U16 Jiu-Jitsu Female 32kg 10 1
-U16 Jiu-Jitsu Female 36kg 16 1
-U16 Jiu-Jitsu Female 40kg 19 2
-U16 Jiu-Jitsu Female 44kg 8 1
-U16 Jiu-Jitsu Female 48kg 10 1
-U16 Jiu-Jitsu Female 52kg 9 2
-U16 Jiu-Jitsu Female 57kg 17 2
-U16 Jiu-Jitsu Female 63kg 5 2
-U16 Jiu-Jitsu Female 64kg 8 1
-U16 Show Mixed 14 1
-U16 Show Female 3 1
-U16 Show Male 7 2
-U16 Duo Mixed 0 2
-U16 Duo Female 16 1
-U16 Duo Male 1 2
-U21 Jiu-Jitsu Male 56kg 7 2
-U21 Jiu-Jitsu Male 62kg 14 1
-U21 Jiu-Jitsu Male 69kg 2 2
-U21 Jiu-Jitsu Male 77kg 10 2
-U21 Jiu-Jitsu Male 85kg 11 2
-U21 Jiu-Jitsu Male 94kg 15 1
-U21 Jiu-Jitsu Male 95kg 11 2
-U21 Jiu-Jitsu Female 45kg 10 1
-U21 Jiu-Jitsu Female 48kg 9 1
-U21 Jiu-Jitsu Female 52kg 13 1
-U21 Jiu-Jitsu Female 57kg 5 1
-U21 Jiu-Jitsu Female 63kg 0 1
-U21 Jiu-Jitsu Female 70kg 7 1
-U21 Jiu-Jitsu Female 71kg 4 2
-U21 Show Mixed 2 2
-U21 Show Female 6 2
-U21 Show Male 5 2
-U21 Duo Mixed 25 2
-U21 Duo Female 10 1
-U21 Duo Male 15 1
+Adults Show Female 11 1
+Adults Show Mixed 16 1
+Adults Show Male 10 1
+Adults Duo Female 12 1
+Adults Duo Mixed 7 1
+Adults Duo Male 0 1
+Adults Jiu-Jitsu Male 56kg 20 1
+Adults Jiu-Jitsu Male 62kg 14 1
+Adults Jiu-Jitsu Male 69kg 12 1
+Adults Jiu-Jitsu Male 77kg 11 1
+Adults Jiu-Jitsu Male 85kg 3 1
+Adults Jiu-Jitsu Male 94kg 15 1
+Adults Jiu-Jitsu Male 95kg 9 1
+Adults Jiu-Jitsu Female 45kg 3 1
+Adults Jiu-Jitsu Female 48kg 2 1
+Adults Jiu-Jitsu Female 52kg 8 1
+Adults Jiu-Jitsu Female 57kg 9 1
+Adults Jiu-Jitsu Female 63kg 4 1
+Adults Jiu-Jitsu Female 70kg 6 1
+Adults Jiu-Jitsu Female 71kg 7 1
+Adults Fighting Male 56kg 4 1
+Adults Fighting Male 62kg 1 1
+Adults Fighting Male 69kg 8 1
+Adults Fighting Male 77kg 7 1
+Adults Fighting Male 85kg 6 1
+Adults Fighting Male 94kg 3 1
+Adults Fighting Male 95kg 10 1
+Adults Fighting Female 45kg 9 1
+Adults Fighting Female 48kg 2 1
+Adults Fighting Female 52kg 10 1
+Adults Fighting Female 57kg 10 1
+Adults Fighting Female 63kg 7 1
+Adults Fighting Female 70kg 3 1
+Adults Fighting Female 71kg 14 1

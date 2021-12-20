@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.figure_factory as ff
 import streamlit as st
 import itertools # for permutations of discipline order
 from tourcalc.calculator import write_tour_file
@@ -21,11 +22,6 @@ from tourcalc.calculator import descition_matrix
 from tourcalc.calculator import cal_cat
 from tourcalc.calculator import read_in_file
 from tourcalc.calculator import calculate_fight_time
-# from tourcalc import write_tour_file
-# from tourcalc import descition_matrix
-# from tourcalc import cal_cat
-# from tourcalc import read_in_file
-# from tourcalc import calculate_fight_time
 
 AGE_INP = ["U16", "U18", "U21", "Adults"] #the supported age catergories
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"] # order does not matter -> permutations
@@ -116,20 +112,37 @@ def heatmap(data, row_labels, col_labels, strtitle):
         A string that contains the tittle    [string]
     """
 
-    df1 = pd.DataFrame(data)
-    df1.rows = row_labels
-    df1.columns = col_labels
+    #df1 = pd.DataFrame(data)
+    #df1.rows = row_labels
+    #df1.columns = col_labels
 
-    fig1 = go.Figure(data=go.Heatmap(
-        z=data,
+    antext = data
+
+
+    perm_map = {
+        i: permutations_list[i] for i in range(
+            0, len(permutations_list)
+        )
+    }
+    _x = len(col_labels)
+    _y = len(row_labels)
+    _hover = []
+    for i in range(0, _y):
+        _hover.append(
+            [str(perm_map[int(data[i][j])]) for j in range(0, _x)]
+            )
+    fig1 = ff.create_annotated_heatmap(
+        data,
         x=col_labels,
         y=row_labels ,
-        colorscale='Viridis'))
-
+        colorscale='Viridis',
+        text=_hover, 
+        hoverinfo='text'
+    ) 
     fig1.update_layout(legend_title_text = strtitle)
     fig1.update_layout(title= strtitle)
     fig1.update_xaxes(title_text="Happiness value [a.u]")
-    fig1.update_yaxes(title_text="Diszipline Change [min]")
+    fig1.update_yaxes(title_text="Discipline Change [min]")
 
     return fig1
 
@@ -227,7 +240,7 @@ while j < days:
 age_select = st.multiselect('Select the participating age categories', AGE_INP, AGE_SEL)
 dis_select = st.multiselect('Select the participating disciplines', DIS_INP, DIS_SEL)
 
-cat_all = cal_cat(age_select, dis_select) # calculate catergories
+cat_all = cal_cat(age_select, dis_select) # calculate categories
 
 tot_par = 0
 with st.expander("Hide categories"):
@@ -328,12 +341,14 @@ if st.button('all info is correct'):
                         endtime/3600+start_time.seconds/3600))
                     k += 1
 
-                st.write("matrix")
+                
+                #st.write("matrix")
                 fig1 = heatmap(min_id, pen_time_list, happiness, "Which permutation gives the right time")
                 st.write(fig1)
-                #fig2 = heatmap(min_score, pen_time_list, happiness, "endtime")
+                #fig2 = heatmap(min_score, pen_time_list, happiness, "end time")
                 #st.write(fig2)
                 
+
 
             cat_par_day.clear()
             st.markdown("---")
