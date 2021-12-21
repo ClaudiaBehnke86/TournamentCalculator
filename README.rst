@@ -30,8 +30,12 @@ To create the documentation use:
 
     ./docs/build_docs.sh
 
-Needed software modules
------------------------
-
-- Steamlit
-- Plotly
+Needed software 
+---------------
+   
+numpy==1.21.2
+pandas==1.3.3
+plotly==5.3.1
+setuptools==57.4.0
+sphinx_rtd_theme==1.0.0
+streamlit==1.2.0
