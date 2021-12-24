@@ -8,22 +8,22 @@ import itertools # for permutations of discipline order
 import numpy as np
 
 #some global variables
-AGE_INP = ["U16", "U18", "U21", "Adults"] #the supported age catergories
+AGE_INP = ["U16", "U18", "U21", "Adults"] #the supported age categories
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"] # order does not matter -> permutations
 #just a name
 DIS_CHA = "Discipline change" # indicator of a change of a discipline
-DIS_CHA_TIME = 30 #add the changeing time for the change betwenn disciplines in minutes
+DIS_CHA_TIME = 30 #add the changing time for the change between disciplines in minutes
 
 BREAK = "Break"
 #BREAK_LENGTH = 30 # 30 min
 
 def descition_matrix(cat_time_dict, av_time, tatami, break_t, breaktime, breaklength):
-    ''' to find the best solution based on penalty and weighting of the resutls
+    ''' to find the best solution based on penalty and weighting of the results
 
     Parameters
     ----------
     cat_time_dict
-        dictionary with catergories and time of eath catergory [dict]
+        dictionary with categories and time of each category [dict]
     av_time
         reference time for average tatami [float] (sec)
     tatami
@@ -31,12 +31,12 @@ def descition_matrix(cat_time_dict, av_time, tatami, break_t, breaktime, breakle
     break_t
         type of the break that is used as a switch [individual, block, no break]
     breaktime
-        time when the break should happen [dateime]     
+        time when the break should happen [dateime]
     breaklength
-        lengh of the break [datetime]
+        length of the break [datetime]
 
     '''
-    # run all with permutaitons of dis inp
+    # run all with permutations of dis_inp
     permutations_object = itertools.permutations(DIS_INP)
     permutations_list = list(permutations_object)
 
@@ -52,7 +52,7 @@ def descition_matrix(cat_time_dict, av_time, tatami, break_t, breaktime, breakle
     score = np.array([[None] * len(permutations_list) * len(pen_time_list)] * len(happiness))
 
     for pen_var_num, pen_var_t in enumerate(pen_time_list): #penalty time
-        for j in range(0, loads.shape[1]): #permutaitons
+        for j in range(0, loads.shape[1]): #permutations
             scheduled_jobs[pen_var_num][j], loads[pen_var_num][j], \
                 cat_time_dict_new = distr_cat_alg(cat_time_dict, av_time, \
                     permutations_list[j], pen_var_t, tatami, break_t, breaktime, breaklength)
@@ -75,17 +75,17 @@ def descition_matrix(cat_time_dict, av_time, tatami, break_t, breaktime, breakle
     return scheduled_jobs, loads, most_abundand, min_id, \
         pen_time_list, happiness, min_score, cat_time_dict_new
 
-def write_tour_file(tour_name,cat_par,cat_dict_day,i_tatami, days, final,start_time,breaktype):
+def write_tour_file(tour_name,cat_par,cat_dict_day,i_tatami, days, final,start_time,break_t):
     ''' create a new tournament file
 
     Parameters
     ----------
     tour_name
-        name of the tour nament [str]
+        name of the tournament [str]
     cat_par
-        dict that links the category to a number of participants [dict (string -> int)    
+        dict that links the category to a number of participants [dict (string -> int)]
     cat_dict_day
-        dict that links the category to a day [dict (string -> int)
+        dict that links the category to a day [dict (string -> int)]
     i_tatami
         number of tatamis [int]
     days
@@ -107,7 +107,7 @@ def write_tour_file(tour_name,cat_par,cat_dict_day,i_tatami, days, final,start_t
         tour_file.write("Finalblock: YES \n")
     else:
         tour_file.write("Finallblock: NO \n")
-    tour_file.write("Breaktype: " + str(breaktype) + "\n")
+    tour_file.write("Breaktype: " + str(break_t) + "\n")
     tour_file.write("Startime: " + str(start_time.seconds) + "\n")
 
     for cat_name, par_num in cat_par.items():
@@ -118,12 +118,12 @@ def write_tour_file(tour_name,cat_par,cat_dict_day,i_tatami, days, final,start_t
 
 def read_in_file(fname):
     ''' Read in file
-     - HELPER FUNCTION
+     - HELPER FUNCTION TO READ IN THE TXT FILE
 
     Parameters
     ----------
     fname
-        name of the tour nament [str]
+        name of the tournament [str]
 
     '''
     tour_file = open(fname, "r")
@@ -152,7 +152,7 @@ def read_in_file(fname):
     starttime_inp = starttimes.split()
     starttime_sec = int(starttime_inp[1])
     starttime = timedelta(seconds=starttime_sec)
-    cat_par = {} #number of particpants
+    cat_par = {} #number of participants
     cat_dict_day = {} #stores day of each dict
     for line in tour_file: # Loop over lines and extract variables of interest
         line = line.strip()
@@ -177,7 +177,7 @@ def cal_cat(age_select, dis_select):
     Parameters
     -----------
     age_select
-         selected age caterogries [list]
+         selected age categories [list]
     dis_select
         selected disciplines [list]
     '''
@@ -192,11 +192,9 @@ def cal_cat(age_select, dis_select):
 
     cat_team = {"Female", "Male", "Mixed"}
 
- 
-
     cat_all = []
     for i in age_select: #Looping AgeCategories
-        for j in dis_select: #Looping Disziplines
+        for j in dis_select: #Looping Disciplines
             if j in ("Duo", "Show"):
                 for k in cat_team:
                     cat_all.append(i +" "+ j + " " + k)
@@ -226,14 +224,14 @@ def calculate_fight_time(dict_inp, final, tatami):
     dict_inp
         contains the number of athletes per category [dict]
     tatami
-        number of competitaion areas [int]
+        number of competition areas [int]
     final
         does the event have a final block [bool]
     '''
     fight_num_total = 0
     par_num_total = 0
     cat_fights_dict = {}  #categories & number of fights
-    cat_finals_dict = {} #catergories of finale block & time
+    cat_finals_dict = {} #categories of finale block & time
     cat_time_dict = {}  #categories & time
 
     tot_time = timedelta()
@@ -260,12 +258,12 @@ def calculate_fight_time(dict_inp, final, tatami):
     #timedelta(days=0, seconds=0, microseconds=0, milliseconds=0, minutes=0, hours=0, weeks=0)
 
     for cat_name in dict_inp: #loop over dictionary
-        par_num = int(dict_inp.get(cat_name)) #number of fights per catergory
+        par_num = int(dict_inp.get(cat_name)) #number of fights per category
         fight_num = 0 # reset counter
         if "Show" in cat_name:
             if final is True and par_num > 5:
                 for keys in time_inp:
-                    if keys in cat_name: #if name of Discipline is in string of categoroy:
+                    if keys in cat_name: #if name of Discipline is in string of category:
                         cat_finals_dict[cat_name] = time_inp[keys]
                         final_time += time_inp[keys]*par_num
                 fight_num = par_num
@@ -285,7 +283,7 @@ def calculate_fight_time(dict_inp, final, tatami):
         par_num_total += par_num #add all participants
 
         for keys in time_inp:
-            if keys in cat_name: #if name of Discipline is in string of categoroy:
+            if keys in cat_name: #if name of Discipline is in string of category:
                 cat_time_dict[cat_name] = time_inp[keys] * fight_num
                 tot_time += time_inp[keys] * fight_num
                 cat_fights_dict[cat_name] = fight_num
@@ -299,51 +297,54 @@ def calculate_fight_time(dict_inp, final, tatami):
 def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami, break_t, breaktime, breaklength):
     '''
     Run the algorithm. Create List of dictionaries with,
-    where each diszipline has its own dictionary. And fill
-    it with the existing catergories Sort each disctiinary
+    where each discipline has its own dictionary. And fill
+    it with the existing categories. Sort each dictionary
     by size (longest competitions in beginning of list)
 
     Parameters
     ----------
     jobs
-        dict of catergories that need to be distributed (dict)
+        dict of categories that need to be distributed (dict)
     av_time
         reference time for average tatami (float [s])
     cur_per
-        current order of disziplines [list]
+        current order of disciplines [list]
     DIS_CHA_TIME
-        pentaly time for changing a diszipline [fload [s]]
+        penalty time for changing a discipline [fload [s]]
     DIS_CHA
-        indicate change of diszipline [str]
+        indicate change of discipline [str]
     tatami
         number of tatamis [int]
     break_type
         "block" ; "Individual" [str]
+    breaktime
+        time when the break should happen [dateime]
+    breaklength
+        length of the break [datetime]
     '''
     jobs_new  = jobs.copy() #dict to have the parts entries
-    distr_list = [] # List of dictionaries with, where each dizipline has its own dictionary
+    distr_list = [] # List of dictionaries with, where each discipline has its own dictionary
     loads = []      # List of list which stores the times per tatami as a list
     scheduled_jobs = [] # List of list which stores the names per tatami as a list
-    time_needed = [] # list for calcuating the total needed times per discipline
+    time_needed = [] # list for calculating the total needed times per discipline
     distr_sor_list = distr_list
-    #import pdb; pdb.set_trace()
-    #
+
     #print(" ----- ",cur_per," ----- ")
     # Step 1
     for i in  cur_per:
-        distr_list.append({}) #add a new list for each diszipline
+        distr_list.append({}) #add a new list for each discipline
     for (key, value) in jobs.items():
         for i, j in enumerate(cur_per): #loop over all entries in the input
             if j in key: # Check if key is the same add pair to new dictionary
                 distr_list[i][key] = value
     # Step 2
-    for i, j in enumerate(distr_list): # sort individual list by lenth of catergories
+    for i, j in enumerate(distr_list): # sort individual list by length of categories
         distr_sor_list[i] = {k: v for k, v in sorted(distr_list[i].items(),
                                                      key=lambda item: item[1], reverse=True)}
     par_tat_need = []
     par_tat_need.clear()
     for i, j in enumerate(distr_sor_list):
-        time_needed.append(0)                 #add 0 as starting time for diszipline
+        time_needed.append(0)                 #add 0 as starting time for discipline
         for (key, value) in distr_list[i].items():
             time_needed[i] += value.seconds
         par_tat_need.append(time_needed[i]/av_time.seconds-time_needed[i]//av_time.seconds)
@@ -355,8 +356,8 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami, break_t, breakti
     remove_tat = 0
     # Step 3
     for i, j in enumerate(distr_sor_list):
-       # print(" --- next diszipline is ---  ",  DIS_INP[i] )
-        if time_needed[i] != 0: #ignore empty disciplicnes
+       # print(" --- next discipline is ---  ",  DIS_INP[i] )
+        if time_needed[i] != 0: #ignore empty disciplines
             extra_time_t = (1-par_tat_need[i])*av_time.seconds
             remove = False #to check extra time, if added time need to be later removed
 
@@ -364,21 +365,17 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami, break_t, breakti
             for _ in range(0, time_needed[i]//av_time.seconds): #creates number of full tatamis
                 if len(loads) < tatami:
                    # print("a) i am creating a new tatami")
-                    loads.append(0)           #create loads for tatamiss
+                    loads.append(0)           #create loads for tatamis
                     scheduled_jobs.append([]) #create tatamis
 
             #Step b) checks if half empty tatami is needed.
-            #(eith no tatami exists or we neeed more time than is left)
-            #print("len(loads) ", len(loads))
-            if len(loads) >= tatami: #max num of tatamis is reached
-                #print("max num of tatamis is reached")
+            #(with no tatami exists or we need more time than is left)
+            if len(loads) >= tatami: #max number of tatamis is reached
                 pass
-            elif len(loads) == 0: #if no tatmis would be created in step a)
-                #print("if no tatmis would be created in step a)")
-                loads.append(0)  #create loads for tatamiss
+            elif len(loads) == 0: #if no tatamis would be created in step a)
+                loads.append(0)  #create loads for tatamis
                 scheduled_jobs.append([]) #create tatamis
             elif i == 0: #extra tatami is needed for first rounds
-                #print("iextra tatami is needed for first rounds")
                 scheduled_jobs.append([]) # add empty tatami
                 loads.append(extra_time_t+cur_pen_time) #adds the time to the tatami
                 remove = True
@@ -447,7 +444,6 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time, tatami, break_t, breakti
             scheduled_jobs[tat_used].pop()
             loads[tat_used] -= cur_pen_time*60
     #if(cur_pen_time == 25 and cur_per == ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu') ):
-    #   print("--- breaktime --- ",breaktime.seconds)
 
     return scheduled_jobs, loads, jobs_new
 
@@ -455,6 +451,12 @@ def minloadtatami(loads):
     """Find the tatami with the minimum load.
     Break the tie of tatamis having same load on
     first come first serve basis.
+
+    Parameters
+    ----------
+    loads
+        list of loads [float]
+
     """
     minload = min(loads)
     for tat_min, load in enumerate(loads):
@@ -462,12 +464,3 @@ def minloadtatami(loads):
             return tat_min
         else:
             pass
-
-def changes_per_permutation(scheduled_jobs):
-    '''calculates amount of discipline changes per permutation '''
-    disz_changes = [0] * len(scheduled_jobs)
-    for i, tat in enumerate(scheduled_jobs):  #results for each permutaton
-        for cat in tat: #
-            if cat == DIS_CHA:
-                disz_changes[i] += 1
-    return disz_changes

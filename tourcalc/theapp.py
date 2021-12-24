@@ -1,11 +1,11 @@
-""" This module created the GUI 
+""" This module created the GUI
 
-It can be run with 
+It can be run with
 
 streamlit run theapp.py
 
 
-more detals see installation
+more details see installation
 
 """
 import os
@@ -17,23 +17,23 @@ import plotly.graph_objects as go
 import plotly.figure_factory as ff
 import streamlit as st
 import itertools # for permutations of discipline order
-from tourcalc.calculator import write_tour_file
-from tourcalc.calculator import descition_matrix
-from tourcalc.calculator import cal_cat
-from tourcalc.calculator import read_in_file
-from tourcalc.calculator import calculate_fight_time
+from calculator import write_tour_file
+from calculator import descition_matrix
+from calculator import cal_cat
+from calculator import read_in_file
+from calculator import calculate_fight_time
 
-AGE_INP = ["U16", "U18", "U21", "Adults"] #the supported age catergories
+AGE_INP = ["U16", "U18", "U21", "Adults"] #the supported age categories
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"] # order does not matter -> permutations
 
-AGE_SEL = [] #an empty list to select th age catergories
-DIS_SEL = [] #an empty list to select th age catergories
+AGE_SEL = [] #an empty list to select the age categories
+DIS_SEL = [] #an empty list to select the age categories
 
 DIS_CHA = "Discipline change" # indicator of a change of a discipline
-DIS_CHA_TIME = 30 #add the changeing time for the change betwenn disciplines in minutes
+DIS_CHA_TIME = 30 #add the changing time for the change between disciplines in minutes
 
 BREAK = "Break"
-#BREAK_TIME = 14400 # 4hrs after start of tournamement
+#BREAK_TIME = 14400 # 4hrs after start of tournament
 BREAK_LENGTH = 30 # 30 min
 
 def plot_schedule(scheduled_jobs, cat_time_dict, start_time, loads, endtime):
@@ -76,49 +76,50 @@ def plot_schedule_go(scheduled_jobs, cat_time_dict, start_time, loads, endtime):
 
     fig = go.Figure()
 
+  #str.contains("Fighting"))
+
+   # color_map = {
+   #     f: 'red'
     x = ["Tatami"]*len(scheduled_jobs)
     t = 0
     for tatami in scheduled_jobs:
         y = []
         for cat in tatami:
             y.append(cat_time_dict[cat].seconds)
-        fig.add_trace(go.Bar(x=x, y=y, text=tatami,textposition='auto' ))
+        fig.add_trace(go.Bar(x=x, y=y, text=tatami,
+            textposition='auto',hovertext =cat + '\n Time: ' + str(cat_time_dict[cat])))
         #fig.add_annotation(x=x, y= 150000,
         #    text=str(loads[t]),
         #    showarrow=False,
         #    yshift=10)
         t +=1
 
-    fig.update_layout(legend_title_text = "Catergory")
+    fig.update_layout(legend_title_text = "Category")
+
     fig.update_xaxes(title_text="Tatami")
     fig.update_yaxes(title_text="Time")
+    #fig.update_yaxes(tickformat= "%H:%M")
         #fig.update_yaxes(range=(start_time, endtime))
 
     return fig
 
-def heatmap(data, row_labels, col_labels, strtitle):
+def heatmap(data, row_labels, col_labels, str_title):
     """
     Create a heatmap from a numpy array and two lists of labels. - HELPER FUNCTION DRAW
 
     Parameters
     ----------
     data
-        A 2D pandes data frame array of shape (N, M). [df]
+        A 2D pandas data frame array of shape (N = row_labels, M = col_labels). [df]
     row_labels
         A list or array of length N with the labels for the rows. [list]
     col_labels
         A list or array of length M with the labels for the columns. [list]
-    strtitle
+    str_title
         A string that contains the tittle    [string]
     """
 
-    #df1 = pd.DataFrame(data)
-    #df1.rows = row_labels
-    #df1.columns = col_labels
-
-    antext = data
-
-
+    #create the hover text
     perm_map = {
         i: permutations_list[i] for i in range(
             0, len(permutations_list)
@@ -131,23 +132,25 @@ def heatmap(data, row_labels, col_labels, strtitle):
         _hover.append(
             [str(perm_map[int(data[i][j])]) for j in range(0, _x)]
             )
+
+
     fig1 = ff.create_annotated_heatmap(
         data,
         x=col_labels,
-        y=row_labels ,
+        y=row_labels,
         colorscale='Viridis',
-        text=_hover, 
+        text=_hover,
         hoverinfo='text'
-    ) 
-    fig1.update_layout(legend_title_text = strtitle)
-    fig1.update_layout(title= strtitle)
+    )
+    fig1.update_layout(legend_title_text = str_title)
+    fig1.update_layout(title= str_title)
     fig1.update_xaxes(title_text="Happiness value [a.u]")
     fig1.update_yaxes(title_text="Discipline Change [min]")
 
     return fig1
 
-cat_par = {}#number of particpants
-cat_dict_day = {}#day per catergory
+cat_par = {}#number of participants
+cat_dict_day = {}#day per category
 
 tatami = 1
 days = 1
@@ -209,9 +212,9 @@ if final == 'YES':
 else: final = False
 
 with st.expander("Advanced settings"):
-    st.write("with this settings you can finetune your event ")
-    breaklength_wid = st.time_input('Legth of the break', time(0, 30))
-    breaktime_wid = st.time_input('Startime of the break', time(13, 00))
+    st.write("with this settings you can fine tune your event ")
+    breaklength_wid = st.time_input('Length of the break', time(0, 30))
+    breaktime_wid = st.time_input('Start time of the break', time(13, 00))
     start_time_wid = st.time_input('Start time of the event', time(9, 00))
 
 start_time = datetime.combine(date.min, start_time_wid) - datetime.min
@@ -226,9 +229,9 @@ breaklength_day = [breaklength] * days
 j = 0
 while j < days:
     with st.expander("Change settings for day" + str(j+1)):
-        st.write("with this settings you can finetune your event ")
-        breakl_wid_day = st.time_input('Legth of the break', time(0, 30), key = j)
-        bt_wid_day = st.time_input('Startime of the break', time(13, 00), key = j)
+        st.write("with this settings you can fine tune your event ")
+        breakl_wid_day = st.time_input('Length of the break', time(0, 30), key = j)
+        bt_wid_day = st.time_input('Start time of the break', time(13, 00), key = j)
         start_time_wid_day = st.time_input('Start time of the event', time(9, 00), key = j)
         tatami_day[j] = int(st.number_input("Number of tatamis", value = tatami, key = j))
 
@@ -251,10 +254,12 @@ with st.expander("Hide categories"):
             while _rtmp < 0:
                 _rtmp = round(np.random.normal(8, 5.32))
             with left_column1:
-                inp = st.number_input("Number of athletes " + i, min_value= 0, value = _rtmp, key = i )
+                inp = st.number_input("Number of athletes " + i,  \
+                    min_value= 0, value = _rtmp, key = i )
             day_rtmp = np.random.randint(1,days+1)
             with right_column2:
-                day = st.number_input("Competition day " + i, min_value= 0, value = day_rtmp, key = i)
+                day = st.number_input("Competition day " + i,  \
+                    min_value= 0, value = day_rtmp, key = i)
         else:
             val = cat_par.get(i)
             val1 = cat_dict_day.get(i)
@@ -283,7 +288,8 @@ if st.button('all info is correct'):
         cat_fights_dict, cat_finals_dict, cat_time_dict, \
             av_time, par_num_total, fight_num_total, \
             tot_time, final_time = calculate_fight_time(cat_par, final, tatami)
-        st.write("There are",tot_par, "participants, which will fight", fight_num_total, " matches in ", \
+        st.write("There are",tot_par, "participants, which will fight", \
+            fight_num_total, " matches in ", \
         len(cat_all), "categories with a total time fight time of (HH:MM:SS)", tot_time+final_time)
         st.markdown("---")
 
@@ -297,58 +303,66 @@ if st.button('all info is correct'):
                 av_time, par_num_total, fight_num_total, \
                 tot_time, final_time = calculate_fight_time(cat_par_day, final, int(tatami_day[j]))
 
-            st.write("Day: " , str(j+3)  , " Nov.  There are",par_num_total, "participants, which will fight", fight_num_total, " matches in ", \
-            len(cat_time_dict), "categories with a total time fight time of (HH:MM:SS)", tot_time+final_time)
+            st.write("Day: " , str(j+3)  , " Nov.  There are",par_num_total, \
+                "participants, which will fight", fight_num_total, " matches in ", \
+            len(cat_time_dict), "categories with a total time fight time of (HH:MM:SS)",\
+                tot_time+final_time)
             st.write("You have", len(cat_finals_dict), "finals which will take", final_time)
-            st.write("Optimal solution time per tatami will be", av_time, "with", tatami_day[j], "tatamis")
-            st.write("Start time day:",start_time_day[j] ,"Final can start at: ", av_time+start_time_day[j])
+            st.write("Optimal solution time per tatami will be", av_time, \
+                "with", tatami_day[j], "tatamis")
+            st.write("Start time day:",start_time_day[j] ,"Final can start at: ",\
+                av_time+start_time_day[j])
 
             #add an entry for penalty time in dict!
             cat_time_dict[DIS_CHA] = timedelta(minutes=DIS_CHA_TIME)
             #add an entry for the break time in dict!
             cat_time_dict[BREAK] = breaklength
 
-            scheduled_jobs, loads, most_abundand, min_id, pen_time_list, happiness, min_score, cat_time_dict_new= descition_matrix(
-                cat_time_dict, av_time, int(tatami_day[j]), breaktype, bt_day[j], breaklength_day[j])
+            scheduled_jobs, loads, most_abundand, min_id, pen_time_list, happiness, \
+            min_score, cat_time_dict_new= descition_matrix(cat_time_dict, av_time, \
+                 int(tatami_day[j]), breaktype, bt_day[j], breaklength_day[j])
 
             #st.write(cat_time_dict_new)
-            best_res = {k: v for k, v in sorted(most_abundand.items(), key=lambda item: item[1], reverse=True)}
+            best_res = {k: v for k, v in sorted(most_abundand.items(), \
+                key=lambda item: item[1], reverse=True)}
 
-            pen_time = DIS_CHA_TIME//2 #choosen penalty time
+            pen_time = DIS_CHA_TIME//2 #chosen penalty time
             permut_num = int(list(best_res)[0]) #chosen permutation
-            endtime = max(loads[pen_time][permut_num]) + 1800 # add for displaying the end_time in plot
-            loads[pen_time][permut_num] = [x+start_time.seconds for x in loads[pen_time][permut_num]] #add start_time to loads
-            loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
-            #st.write(scheduled_jobs[pen_time][permut_num]) 
+            # add for displaying the end_time in plot
+            endtime = max(loads[pen_time][permut_num]) + 1800
+
+            #add start_time to loads
+            #loads[pen_time][permut_num] = [x+start_time.seconds for x in loads[pen_time][permut_num]]
+            #loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
+            #st.write(scheduled_jobs[pen_time][permut_num])
+            st.write("Permutation ",permut_num, " ", permutations_list[permut_num], \
+                "gives best result ", best_res[permut_num], "times")
             st.write(plot_schedule_go(scheduled_jobs[pen_time][permut_num],
                 cat_time_dict_new, start_time.seconds,
                 loads[pen_time][permut_num],
                 endtime/3600+start_time.seconds/3600))
 
-            label = "There are " + str(len(most_abundand)) + " possible results for day "+ str(j+1)+". Open Details "
+            label = "There are " + str(len(most_abundand)) + " possible results for day "\
+                + str(j+1)+". Open Details"
 
             with st.expander(label):
                 k = 1
                 st.write("other options")
                 while k < len(best_res):
                     permut_num = int(list(best_res)[k]) #chosen permutation
-                    endtime = max(loads[pen_time][permut_num]) + 1800 # add for displaying the end_time in plot
-                    loads[pen_time][permut_num] = [x+start_time.seconds for x in loads[pen_time][permut_num]] #add start_time to loads
-                    loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
+                    st.write("Permutation number",permut_num, " ", permutations_list[permut_num],\
+                        "gives best result ", best_res[permut_num], "times")
+                    # add for displaying the end_time in plot
+                    endtime = max(loads[pen_time][permut_num]) + 1800
                     st.write(plot_schedule_go(scheduled_jobs[pen_time][permut_num],
                         cat_time_dict_new, start_time.seconds,
                         loads[pen_time][permut_num],
                         endtime/3600+start_time.seconds/3600))
                     k += 1
 
-                
-                #st.write("matrix")
-                fig1 = heatmap(min_id, pen_time_list, happiness, "Which permutation gives the right time")
+                st.write("Matrix with the results")
+                fig1 = heatmap(min_id, pen_time_list, happiness, "Which permutation gives the best result")
                 st.write(fig1)
-                #fig2 = heatmap(min_score, pen_time_list, happiness, "end time")
-                #st.write(fig2)
-                
-
 
             cat_par_day.clear()
             st.markdown("---")
