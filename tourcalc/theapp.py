@@ -76,22 +76,55 @@ def plot_schedule_go(scheduled_jobs, cat_time_dict, start_time, loads, endtime):
 
     fig = go.Figure()
 
-  #str.contains("Fighting"))
-
-   # color_map = {
-   #     f: 'red'
-    x = ["Tatami"]*len(scheduled_jobs)
     t = 0
+    x = ["Tatami "]*len(scheduled_jobs)
     for tatami in scheduled_jobs:
         y = []
+        n = []
+        c = []
+        p = []
         for cat in tatami:
+
             y.append(cat_time_dict[cat].seconds)
-        fig.add_trace(go.Bar(x=x, y=y, text=tatami,
-            textposition='auto',hovertext =cat + '\n Time: ' + str(cat_time_dict[cat])))
-        #fig.add_annotation(x=x, y= 150000,
-        #    text=str(loads[t]),
-        #    showarrow=False,
-        #    yshift=10)
+            n.append(str(cat_time_dict[cat]))
+            
+            if "Fighting" in cat:
+                c.append('rgb(243, 28, 43)')
+            elif "Duo" in cat:
+                c.append('rgb(105,105,105)')
+            elif "Show" in cat:
+                c.append('rgb(211,211,211)')
+            elif "Jiu-Jitsu" in cat:
+                c.append('rgb(0,144,206)')
+            else:
+                c.append('rgb(255,255,255)')
+
+            if "U16" in cat:
+                p.append("/")
+            elif "U18" in cat:
+                p.append("+")
+            elif "U21" in cat:
+                p.append("x")
+            elif "Adults" in cat:
+                p.append("")
+            else:
+                p.append(".")     
+
+                 
+        fig.add_trace(go.Bar(x=x, y=y, text=tatami, \
+            textposition='auto',hovertext = n, marker_color=c, \
+            name= "Tatami" + str(t+1),\
+            marker_pattern_shape=p))
+        
+        fig.add_annotation(x=t*(1/len(scheduled_jobs))-0.4, y=y,
+            text=str(loads[t]),
+            showarrow=False)
+        fig.update_layout(showlegend=False)
+
+        y.clear()
+        n.clear()
+        c.clear()
+        p.clear()
         t +=1
 
     fig.update_layout(legend_title_text = "Category")
@@ -105,7 +138,7 @@ def plot_schedule_go(scheduled_jobs, cat_time_dict, start_time, loads, endtime):
 
 def heatmap(data, row_labels, col_labels, str_title):
     """
-    Create a heatmap from a numpy array and two lists of labels. - HELPER FUNCTION DRAW
+    Create a heat map from a numpy array and two lists of labels. - HELPER FUNCTION DRAW
 
     Parameters
     ----------
@@ -332,8 +365,8 @@ if st.button('all info is correct'):
             endtime = max(loads[pen_time][permut_num]) + 1800
 
             #add start_time to loads
-            #loads[pen_time][permut_num] = [x+start_time.seconds for x in loads[pen_time][permut_num]]
-            #loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
+            loads[pen_time][permut_num] = [x+start_time.seconds for x in loads[pen_time][permut_num]]
+            loads[pen_time][permut_num] = [str(timedelta(seconds=x)) for x in loads[pen_time][permut_num]]
             #st.write(scheduled_jobs[pen_time][permut_num])
             st.write("Permutation ",permut_num, " ", permutations_list[permut_num], \
                 "gives best result ", best_res[permut_num], "times")
