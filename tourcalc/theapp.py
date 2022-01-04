@@ -79,9 +79,9 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i):
                          other="Show", inplace=True)
 
     df['end_time'] = str(date_i) + ' ' + \
-                     df['end_time'].apply(lambda x: str(x)[-8:])
+        df['end_time'].apply(lambda x: str(x)[-8:])
     df['start_time'] = str(date_i) + ' ' + \
-                       df['start_time'].apply(lambda x: str(x)[-8:])
+        df['start_time'].apply(lambda x: str(x)[-8:])
 
     fig = px.timeline(
         df,
@@ -99,6 +99,15 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i):
         hover_name='category',
         text='category'
     )
+    
+    # see bug https://github.com/plotly/plotly.py/issues/3065
+    max_value = datetime.strptime(df['end_time'].max(),"%Y-%m-%d %H:%M:%S").timestamp() * 1000
+    fig.add_vline(x= max_value,
+                  line_width=3,
+                  line_dash="dash",
+                  line_color="white",
+                  annotation_text=str(df['end_time'].max())[-8:],
+                  annotation_position="top right")
 
     return fig
 
