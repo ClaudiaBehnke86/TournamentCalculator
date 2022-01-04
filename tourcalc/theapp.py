@@ -51,11 +51,10 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i):
     '''
 
     l_master = [pd.DataFrame([l, [i+1]*len(l)]).T for i, l in enumerate(scheduled_jobs_i)]
-
+ 
     for df_tatami in l_master:
         df_tatami.columns = ['category', 'tatami']
         df_tatami['time'] = df_tatami['category'].replace(cat_time_dict_i)
-
         df_tatami['end_time'] = np.cumsum(df_tatami['time']).values.astype('datetime64[ns]')
         df_tatami['end_time'] += timedelta(seconds=start_time_i)
         df_tatami['start_time'] = df_tatami['end_time'].shift(
@@ -434,7 +433,7 @@ if st.button('all info is correct'):
                                                      bt_day[j],
                                                      breaklength_day[j])
 
-            # st.write(cat_time_dict_new)
+            
             best_res = {k: v for k, v in sorted(most_abundand.items(),
                         key=lambda item: item[1], reverse=True)}
 
@@ -447,7 +446,7 @@ if st.button('all info is correct'):
                      best_res[permut_num], "times")
             st.write(plot_schedule_time(
                      scheduled_jobs[pen_time][permut_num],
-                     cat_time_dict_new,
+                     cat_time_dict_new[pen_time][permut_num],
                      start_time.seconds,
                      date+timedelta(days=j)))
 
@@ -468,7 +467,7 @@ if st.button('all info is correct'):
                              "times")
                     st.write(plot_schedule_time(
                              scheduled_jobs[pen_time][permut_num],
-                             cat_time_dict_new,
+                             cat_time_dict_new[pen_time][permut_num],
                              start_time.seconds,
                              date+timedelta(days=j)))
 

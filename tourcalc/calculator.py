@@ -49,7 +49,7 @@ def descition_matrix(cat_time_dict,
     # array for all possible outcomes
     scheduled_jobs = np.array([[[None] * tatami] * len(permutations_list)] * DIS_CHA_TIME)
     loads = np.array([[[None] * tatami] * len(permutations_list)] * DIS_CHA_TIME)
-    cat_time_dict_new = np.array([[[None] * tatami] * len(permutations_list)] * DIS_CHA_TIME)
+    cat_time_dict_new = np.array([[None]* len(permutations_list)] * DIS_CHA_TIME)
     pen_time_list = list(range(DIS_CHA_TIME//2, DIS_CHA_TIME+DIS_CHA_TIME//2))
     happiness = [x / 10.0 for x in range(0, 20)]
 
@@ -60,11 +60,12 @@ def descition_matrix(cat_time_dict,
     for pen_var_num, pen_var_t in enumerate(pen_time_list):  # penalty time
         for j in range(0, loads.shape[1]):  # permutations
             scheduled_jobs[pen_var_num][j], loads[pen_var_num][j], \
-                cat_time_dict_new = distr_cat_alg(cat_time_dict, av_time,
-                                                  permutations_list[j],
-                                                  pen_var_t, tatami,
-                                                  break_t, breaktime,
-                                                  breaklength)
+                cat_time_dict_new[pen_var_num][j] \
+                = distr_cat_alg(cat_time_dict, av_time,
+                                permutations_list[j],
+                                pen_var_t, tatami,
+                                break_t, breaktime,
+                                breaklength)
     min_id = np.array([[0.1] * len(happiness)] * len(pen_time_list))
     min_score = np.array([[0.1] * len(happiness)] * len(pen_time_list))
 
@@ -443,7 +444,7 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
                         scheduled_jobs[minload_tatami].append(job)
                         loads[minload_tatami] += distr_sor_list[i][job].seconds
                     elif break_t == "One Block":
-                        if (loads[minload_tatami] + distr_sor_list[i][job].seconds) > breaktime.seconds and BREAK not in scheduled_jobs[minload_tatami] and len(scheduled_jobs[minload_tatami]) > 0 and scheduled_jobs[minload_tatami][-1] is not DIS_CHA:
+                        if (loads[minload_tatami] + distr_sor_list[i][job].seconds) > breaktime.seconds and BREAK not in scheduled_jobs[minload_tatami] and len(scheduled_jobs[minload_tatami]) > 0:
                             if remove is True and minload_tatami is remove_tat and ((loads[minload_tatami] - extra_time_t) < breaktime.seconds):
                                 pass  # ignore extra time
                             else:
@@ -483,8 +484,8 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
         if scheduled_jobs[tat_used][-1] is DIS_CHA:
             scheduled_jobs[tat_used].pop()
             loads[tat_used] -= cur_pen_time*60
-    # if(cur_pen_time == 25 and
-    # cur_per == ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu')):
+    #if(cur_pen_time == 25 and 
+    #cur_per == ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu')):
 
     return scheduled_jobs, loads, jobs_new
 
