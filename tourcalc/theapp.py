@@ -244,14 +244,14 @@ FINAL = bool(FINAL == 'YES')
 
 date = st.date_input('First day of the event', value=datetime.today(), key='date')
 tatami_day = [int(TATAMI)] * int(days)
-start_time_day = [time(9, 00)] * days
-bt_day = [time(13, 00)] * days
-breaklength_day = [time(0, 30)] * days
-end_time_final = [time(00, 00)] * days
-end_time_prelim = [time(00, 00)] * days
+start_time_day = [time(9, 00)] * int(days)
+bt_day = [time(13, 00)] * int(days)
+breaklength_day = [time(0, 30)] * int(days)
+end_time_final = [time(00, 00)] * int(days)
+end_time_prelim = [time(00, 00)] * int(days)
 
 j = 0
-while j < days:
+while j < int(days):
     with st.expander("Change settings for day "
                      + str(j+1) + " : " + str(date+timedelta(days=j))):
         st.write("with this settings you can fine tune your event ")
