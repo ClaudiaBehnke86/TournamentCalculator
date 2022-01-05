@@ -9,8 +9,12 @@ with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    'matplotlib',
-    'numpy>=1.15.4',
+    'numpy==1.21.2',
+    'pandas==1.3.3',
+    'plotly==5.3.1',
+    'setuptools==57.4.0',
+    'sphinx_rtd_theme==1.0.0',
+    'streamlit==1.2.0'
 ]
 
 setup_requirements = ['pytest-runner', ]
@@ -18,7 +22,7 @@ setup_requirements = ['pytest-runner', ]
 test_requirements = ['pytest', ]
 
 setup(
-    author="Claudia Behnkea",
+    author="Claudia Behnke",
     author_email='',
     classifiers=[
         'Intended Audience :: Developers',
@@ -37,6 +41,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/ClaudiaBehnke86/TournamentCalculator',
-    version='0.1.0',
+    version='0.9.0',
     zip_safe=False,
 )

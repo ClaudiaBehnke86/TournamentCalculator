@@ -1,9 +1,20 @@
-========
+********
 TourCalc
-========
+********
+You can use this program in two ways:
 
-Installation
-------------
+
+Use deployed app
+================
+
+Go on:
+`this page <https://share.streamlit.io/claudiabehnke86/tournamentcalculator/tourcalc/theapp.py>`_
+
+use `the tutorial <https://tournamentcalculator.readthedocs.io/en/latest/introduction.html>`_
+on to understand what it does
+
+Installation own instance
+=========================
 
 Fork the repository and save it at a place where you like it.
 
@@ -29,6 +40,7 @@ To create the documentation use:
 .. code-block::
 
     ./docs/build_docs.sh
+
 
 Needed software 
 ---------------

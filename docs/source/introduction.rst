@@ -1,12 +1,12 @@
-*************
-Introduction
-*************
+******************************
+Introduction & Used Algorithms
+******************************
 
 Scheduling of sports tournaments can be approximated with the so-called multiprocessor scheduling, a known NP-hard problem of computer science.  With this, the goal is to find a :term:`minimum end-time` :math:`ET_{min}` of the tournament with the distribution of the different categories on a given number of :term:`competition area` s :math:`T`. A :term:`category` here is defined in agreement with the Organization and Sporting Code (Version 3.1)  OSC_ of the Ju-Jitsu International Federation (JJIF) under paragraph 1.3 (Disciplines, Divisions and Categories). However, the program shall also provide a base for integrating more disciplines or other sports.
 
-***********************
+
 Creation of input data
-***********************
+======================
 The first step is the creation of the input data. Since the names of categories in the tournament calculator are based on 1.3.3 of the OSC, the user only needs to select one or more :term:`age category` [#]_  and :term:`discipline` [#]_. All categories are created, and the user is asked to add the number of :term:`athletes/couples` for each category. Based on the competition systems (as defined in the OSC under 4.4) the :term:`number of matches` :math:`N_{m}(n_{a})` for each category is known and can be described the following.
 
 .. math::
@@ -68,16 +68,16 @@ Based on :math:`L_{tot}` and the number of competition areas :math:`T` an (artif
 .. [#] Adults, U21, U18 and U16 are supported in version 0.1.0
 .. [#] Jiu-Jitsu, Fighting, Duo and Show system are supported in version 0.1.0
 
-********************************************************
+
 Longest Processing Time algorithm – Approximate solution
-********************************************************
+========================================================
 
 The above-described problem can be approximately solved with the LPT_ algorithm (Longest Processing Time). It sorts the categories by their time :math:`l`, from longest to shortest.  Then assigns them one after another to competition area :math:`T` with the earliest end time so far. The logical assumption is made that only one category can be run per competition area at the same moment in time.
 Since the number of categories is usually minimal (<<1000), this straightforward algorithm seems to be a good starting point. However, it needs to be modified to fulfill the requirements of multi-discipline tournaments where not all referees can work on all competition areas due to individual qualifications.
 
 
 Splitting of disciplines with dynamic creation of competition areas
-###################################################################
+-------------------------------------------------------------------
 
 In the JJIF, referees are specialized per discipline Referee_. Therefore, it is crucial to minimize the change of disciplines for the individual competition areas :math:`T` to avoid time-consuming commuting of qualified referees. To realize this, we choose to individually distribute the categories based on the above described LPT algorithm.
 This requires that for a given discipline, only needed competition areas are created.
@@ -107,7 +107,7 @@ The name fully competition areas used shall also imply that the end time of this
 The remainder of the Euclidean Division is the remainder time :math:`t_r` and might be used to create a new competition area it is called :term:`partially-used`.
 
 Example
-*******
+^^^^^^^
 
 Since these mathematical expressions might not be familiar to many readers, we would like to give the following example:
 
@@ -122,12 +122,12 @@ The remainder time :math:`t_{r}` is 1 hours and 30 minutes, which might need to 
 
 
 Partially used competition areas
-################################
+--------------------------------
 
 If fully used or partially used, competition areas are created strongly depends on the total discipline time :math:`L_{x}`, the perfect end-time :math:`ET_{perf}` and the amount of already created competition areas. We will discuss all distinct possibilities in dedicated examples below to make them better understandable.
 
 Possibility 1: No competition areas exists. :math:`L_{x}Lx  < ET_{perf}`
-************************************************************************
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In this first example, we want to explain the way the algorithm reacts when first called.
 We assume that :math:`L_{x}Lx  < ET_{perf}`. The amount of fully used competition area is calculated in the first step, and those are created. Since :math:`L_{x}Lx  < ET_{perf}`, the remainder time must be larger than zero. Since no other competition area exists, an additional partially-used competition area is created. This scenario is shown in :numref:`noPar`.
@@ -147,7 +147,7 @@ To avoid this, we will add a :term:`placeholder time block` at the partially use
 
 
 Discipline Change - penalty factor for changing a discipline 
-############################################################
+------------------------------------------------------------
 
 Changing the discipline will possibly need adjustment of the referees and the setup of the field of play. Therefore a penalty factor called discipline change is introduced.
 After the distribution of a discipline, this penalty factor is added. 
@@ -159,20 +159,19 @@ This parameter is :math:`T_{pen}` and will be later varied. The animation in :nu
     Visualization of expected behavior with three identical competition areas, two disciplines and a placeholder time block and a penalty factor
 
 
-***************
 Free parameters 
-***************
+===============
 
 The algorithm has three free and arbitrary parameters which need to be varied to find the optimal solution.
 
 
 Discipline Change - penalty factor for changing a discipline 
-############################################################
+------------------------------------------------------------
 
 
 
 Order of the disciplines 
-########################
+------------------------
 
 The answer of the algorithm depends on the order of the disciplines.  Like shown in picture  
 
@@ -203,9 +202,9 @@ The answer of the algorithm depends on the order of the disciplines.  Like shown
     https://en.wikipedia.org/wiki/Euclidean_division
 
 
-********
+
 Glossary
-********
+========
 .. glossary::
     age category
         An age category defines the minimum and maximum age of a participant
