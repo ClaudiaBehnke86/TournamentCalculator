@@ -1,6 +1,40 @@
 Tournament: test
-Tatamis: 1
-Days: 1
+Tatamis: 5
+Days: 2
 Finalblock: YES 
 Breaktype: Individual
 Startime: 32400
+Adults Fighting Male 56kg 11 1
+Adults Fighting Male 62kg 15 2
+Adults Fighting Male 69kg 7 1
+Adults Fighting Male 77kg 4 2
+Adults Fighting Male 85kg 15 2
+Adults Fighting Male 94kg 13 1
+Adults Fighting Male 95kg 12 2
+Adults Fighting Female 45kg 9 1
+Adults Fighting Female 48kg 9 2
+Adults Fighting Female 52kg 3 1
+Adults Fighting Female 57kg 10 2
+Adults Fighting Female 63kg 10 2
+Adults Fighting Female 70kg 12 1
+Adults Fighting Female 71kg 4 2
+Adults Jiu-Jitsu Male 56kg 9 1
+Adults Jiu-Jitsu Male 62kg 11 2
+Adults Jiu-Jitsu Male 69kg 13 1
+Adults Jiu-Jitsu Male 77kg 3 1
+Adults Jiu-Jitsu Male 85kg 17 2
+Adults Jiu-Jitsu Male 94kg 14 1
+Adults Jiu-Jitsu Male 95kg 1 1
+Adults Jiu-Jitsu Female 45kg 8 1
+Adults Jiu-Jitsu Female 48kg 7 2
+Adults Jiu-Jitsu Female 52kg 5 2
+Adults Jiu-Jitsu Female 57kg 7 1
+Adults Jiu-Jitsu Female 63kg 6 2
+Adults Jiu-Jitsu Female 70kg 7 1
+Adults Jiu-Jitsu Female 71kg 12 2
+Adults Show Mixed 2 2
+Adults Show Female 11 2
+Adults Show Male 14 1
+Adults Duo Mixed 5 2
+Adults Duo Female 10 1
+Adults Duo Male 13 1
