@@ -4,7 +4,6 @@ It can be run with
 
 streamlit run theapp.py
 
-
 more details see installation
 
 """
@@ -17,11 +16,11 @@ import plotly.figure_factory as ff
 import streamlit as st
 import numpy as np
 import math
-from calculator import write_tour_file
-from calculator import descition_matrix
-from calculator import cal_cat
-from calculator import read_in_file
-from calculator import calculate_fight_time
+from tourcalc.calculator import write_tour_file
+from tourcalc.calculator import descition_matrix
+from tourcalc.calculator import cal_cat
+from tourcalc.calculator import read_in_file
+from tourcalc.calculator import calculate_fight_time
 
 AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age categories
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]  # supported disciplines
@@ -36,9 +35,10 @@ BREAK = "Break"
 
 
 def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, final_time):
-    '''plots a schedule horizontal
+    """
+    plots a schedule horizontal
 
-     Parameters
+    Parameters
     ----------
     scheduled_jobs
         a list of lists of all categories per tatami [[str]]
@@ -48,7 +48,8 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
         the start time of the day [datetime]
     date
         The date of the current day [datetime]
-    '''
+
+    """
 
     l_master = [pd.DataFrame([l, [i+1]*len(l)]).T for i, l in enumerate(scheduled_jobs_i)]
 
@@ -177,7 +178,7 @@ def heatmap(data, row_labels, col_labels, str_title):
 cat_par = {}  # number of participants
 cat_dict_day = {}  # day per category
 
-tour_name = st.text_input("Name of the tournament", key=1)
+tour_name = st.text_input("Name of the tournament", key='unique')
 fname = tour_name + ".txt"
 
 permutations_object = itertools.permutations(DIS_INP)
@@ -223,21 +224,18 @@ left_column, right_column = st.columns(2)
 
 with left_column:
 
-    TATAMI = st.number_input("Number of tatamis",  value=TATAMI)
-    days = st.number_input("Number of days",  value=days)
+    TATAMI = st.number_input("Number of tatamis",  value=TATAMI, key='tatami')
+    days = st.number_input("Number of days",  value=days, key='days')
 
 with right_column:
     FINAL = st.selectbox('Does the event have a final block',
-                         ('YES', 'NO'))
+                         ('YES', 'NO'), key='final')
     breaktype = st.selectbox('What type of break do you want',
-                             ('Individual', 'One Block', 'No break'))
+                             ('Individual', 'One Block', 'No break'), key='breakt')
 
-if FINAL == 'YES':
-    FINAL = True
-else:
-    FINAL = False
+FINAL = bool(FINAL == 'YES')    
 
-date = st.date_input('First day of the event', value=datetime.today())
+date = st.date_input('First day of the event', value=datetime.today(), key='date')
 tatami_day = [int(TATAMI)] * days
 start_time_day = [time(9, 00)] * days
 bt_day = [time(13, 00)] * days

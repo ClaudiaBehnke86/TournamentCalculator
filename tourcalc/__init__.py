@@ -1,6 +1,5 @@
 from tourcalc.theapp import heatmap
-from tourcalc.theapp import plot_schedule
-from tourcalc.theapp import plot_schedule_go
+from tourcalc.theapp import plot_schedule_time
 
 from tourcalc.tourcalc import cal_cat
 from tourcalc.tourcalc import calculate_fight_time

@@ -1,6 +1,6 @@
-========
+********
 Tutorial
-========
+********
 
 After the GUI is started your standard browser should have opened. If not browser open you can open one and open the URL from your terminal:
 
@@ -11,7 +11,7 @@ After the GUI is started your standard browser should have opened. If not browse
   	Local URL: http://localhost:8506
   	Network URL: http://192.168.178.46:8506
 
-You will then see the GUI like in picture numref:`start`
+You will then see the GUI like in picture :numref:`start`
 
 .. _start:
 .. figure:: pictures/GUI_start.png
