@@ -17,6 +17,7 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import streamlit as st
 import numpy as np
+import pytz
 # [Bug] to create the sub module doc 
 # correctly one needs to add tourcalc.calculator to the import statement.
 # Otherwise the docs html is not created
@@ -89,7 +90,16 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
         df['start_time'].apply(lambda x: str(x)[-8:])
 
     # see bug https://github.com/plotly/plotly.py/issues/3065
-    end_time_prelim = datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S").timestamp() * 1000
+    end_time_prelim = datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S")
+ 
+    datetime_local = datetime.now()
+    st.write("local time :", datetime_local)
+
+    tz_UTC = pytz.timezone('UTC')
+    datetime_utc = datetime.now(tz_UTC)
+    st.write("UTC time :", datetime_utc)
+
+    end_time_prelim = end_time_prelim.timestamp() * 1000
 
     end_time_final_c = datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S") + final_time
 
