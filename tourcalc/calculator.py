@@ -446,7 +446,7 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
                         scheduled_jobs[minload_tatami].append(job)
                         loads[minload_tatami] += distr_sor_list[i][job].seconds
                     elif break_t == "One Block":
-                        if (loads[minload_tatami] + distr_sor_list[i][job].seconds) > breaktime.seconds and BREAK not in scheduled_jobs[minload_tatami] and len(scheduled_jobs[minload_tatami]) > 0:
+                        if (loads[minload_tatami] + distr_sor_list[i][job].seconds) > breaktime.seconds and BREAK not in scheduled_jobs[minload_tatami]:
                             if remove is True and minload_tatami is remove_tat and ((loads[minload_tatami] - extra_time_t) < breaktime.seconds):
                                 pass  # ignore extra time
                             else:
