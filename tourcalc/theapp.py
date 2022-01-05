@@ -195,8 +195,9 @@ if st.button("Show example tournaments"):
 permutations_object = itertools.permutations(DIS_INP)
 permutations_list = list(permutations_object)
 
-link = '[Click here for tutorial](https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
-st.markdown(link, unsafe_allow_html=True)
+LINK = '[Click here for tutorial] \
+    (https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
+st.markdown(LINK, unsafe_allow_html=True)
 
 
 if len(tour_name) > 0 and os.path.isfile(check_file) and tour_name != "random":
@@ -248,8 +249,8 @@ with right_column:
     breaktype = st.selectbox('What type of break do you want',
                              ('Individual', 'One Block', 'No break'), key='breakt')
 
-FINAL = bool(FINAL == 'YES')
 
+FINAL = bool(FINAL == 'YES')
 date = st.date_input('First day of the event', value=datetime.today(), key='date')
 tatami_day = [int(TATAMI)] * int(days)
 start_time_day = [time(9, 00)] * int(days)
@@ -282,7 +283,7 @@ with st.expander("Hide categories"):
             day_rtmp = np.random.randint(1, days+1)
             with right_column2:
                 day = st.number_input("Competition day " + i,
-                                      min_value=0, value=day_rtmp, key=i)
+                                      min_value=1, max_value=int(days) value=day_rtmp, key=i)
         else:
             val = cat_par.get(i)
             val1 = cat_dict_day.get(i)
@@ -297,7 +298,7 @@ with st.expander("Hide categories"):
                 if val1 is None:
                     val1 = 1
                 day = st.number_input("Competition day " + i,
-                                      min_value=0, key=i, max_value=int(days), value=val1)
+                                      min_value=1, key=i, max_value=int(days), value=val1)
 
         tot_par += int(inp)
         cat_par[i] = int(inp)
