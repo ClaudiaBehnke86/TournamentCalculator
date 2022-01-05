@@ -148,7 +148,7 @@ def read_in_file(fname):
         name of the tournament [str]
 
     '''
-    check_file = Path(__file__).parents[0] / fname
+    check_file = Path('example_tours') / fname
     tour_file = open(check_file, "r")
     tour_file.readline()  # Read and ignore header lines
     tatamis = tour_file.readline()  # read in tatami line

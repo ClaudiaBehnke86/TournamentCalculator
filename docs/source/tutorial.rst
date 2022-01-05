@@ -2,19 +2,16 @@
 Tutorial
 ********
 
-You will then see the GUI like in picture :numref:`start`
+Once the app starts you will see a GUI like in this:
 
 .. _start:
 .. figure:: pictures/gui_start.png
 
     First input fields of the GUI 
 
-===============
-Getting Started
-===============
-
+=======================
 Create a new tournament 
------------------------
+=======================
 
 You can change the values by typing or using the +/- buttons
 
@@ -28,7 +25,7 @@ While the name, the tatamis and days are trivial the two field
 on the left have some implication for the program.
 
 Final block
-^^^^^^^^^^^
+-----------
 
 If the event has a final block you can set this field to "YES".
 Then all categories with more than 5 athletes will have on 
@@ -48,25 +45,23 @@ a center tatami.
     Result when setting final block to NO
 
 Type of break
-^^^^^^^^^^^^^
+-------------
 
 You can choose between three different types of breaks:
 
 .. _break_sel:
 .. figure:: pictures/break_sel.png
 
-    Options in the dropdrown menue
+    Options in the dropdrown menu
 
 
 #.No break - no break will be added
 
 
-Change settings per day
------------------------
 
-
+===========================
 Read in existing tournament 
----------------------------
+===========================
 
 If the name of the tournament was used before you have two options:
 
@@ -83,9 +78,10 @@ The app has in version 0.9 the following pre-made tournaments
 
 
 
-
+==========================
 Create "random" tournament
---------------------------
+==========================
+
 
 If you name the tournament random the number of athletes and the days for each category will be automatically filled with positive integers, based on:
 
@@ -99,16 +95,11 @@ which is a normaldistribution_ with :math:`\mu = 8`, :math:`\sigma = 5.32`.
 This can be used for testing or if one does not exactly know how many participants to expect on a event.
 Please note that the random generator will rerun every time a parameters is changed.  
 
-Parameters
-##########
 
+Change settings per day
+-----------------------
 
-Advanced settings
-#################
-
-Change settings for per day
-###########################
-
+==============
 Known Problems
 ==============
 

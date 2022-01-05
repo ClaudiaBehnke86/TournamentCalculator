@@ -1,0 +1,20 @@
+Tournament: a_new _event
+Tatamis: 5
+Days: 1
+Finallblock: NO 
+Breaktype: Individual
+Startime: 32400
+Adults Fighting Male 56kg 3 1
+Adults Fighting Male 62kg 7 1
+Adults Fighting Male 69kg 5 1
+Adults Fighting Male 77kg 8 1
+Adults Fighting Male 85kg 12 1
+Adults Fighting Male 94kg 14 1
+Adults Fighting Male 95kg 9 1
+Adults Fighting Female 45kg 12 1
+Adults Fighting Female 48kg 3 1
+Adults Fighting Female 52kg 3 1
+Adults Fighting Female 57kg 8 1
+Adults Fighting Female 63kg 9 1
+Adults Fighting Female 70kg 3 1
+Adults Fighting Female 71kg 2 1
