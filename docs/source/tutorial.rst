@@ -55,8 +55,21 @@ You can choose between three different types of breaks:
     Options in the dropdrown menu
 
 
-#.No break - no break will be added
-#.
+#. No break - no break will be added
+#. Individual - break are planned after a category is finished
+#. One block - a block of breaks is added, categories are split. This can be used for an opening ceremony f.e.  
+
+.. _break_ind:
+.. figure:: pictures/break_indi.png
+
+    Individual breads are added
+
+.. _break_block:
+.. figure:: pictures/break_block.png
+
+    A block of breads are added
+
+The time and the length of the break can be adapted in the settings per day 
 
 
 ===========================
@@ -95,9 +108,9 @@ which is a normaldistribution_ with :math:`\mu = 8`, :math:`\sigma = 5.32`.
 This can be used for testing or if one does not exactly know how many participants to expect on a event.
 Please note that the random generator will rerun every time a parameters is changed.  
 
-
+=======================
 Change settings per day
------------------------
+=======================
 
 ==============
 Known Problems
