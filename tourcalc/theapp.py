@@ -257,27 +257,6 @@ breaklength_day = [time(0, 30)] * int(days)
 end_time_final = [time(00, 00)] * int(days)
 end_time_prelim = [time(00, 00)] * int(days)
 
-j = 0
-while j < int(days):
-    with st.expander("Change settings for day "
-                     + str(j+1) + " : " + str(date+timedelta(days=j))):
-        st.write("with this settings you can fine tune your event ")
-        breakl_wid_day = st.time_input('Length of the break',
-                                       time(0, 30), key=j)
-        bt_wid_day = st.time_input('Start time of the break',
-                                   time(13, 00), key=j)
-        start_time_wid_day = st.time_input('Start time of the event',
-                                           time(9, 00), key=j)
-        tatami_day[j] = int(st.number_input("Number of tatamis",
-                                            value=TATAMI, key=j))
-
-        start_time_day[j] = (datetime.combine(date.min,
-                             start_time_wid_day) - datetime.min)
-        bt_day[j] = (datetime.combine(date.min, bt_wid_day)
-                     - datetime.min - start_time_day[j])
-        breaklength_day[j] = (datetime.combine(date.min,
-                                               breakl_wid_day) - datetime.min)
-    j += 1
 
 age_select = st.multiselect('Select the participating age categories',
                             AGE_INP,
@@ -322,6 +301,28 @@ with st.expander("Hide categories"):
         tot_par += int(inp)
         cat_par[i] = int(inp)
         cat_dict_day[i] = int(day)
+
+j = 0
+while j < int(days):
+    with st.expander("Change settings for day "
+                     + str(j+1) + " : " + str(date+timedelta(days=j))):
+        st.write("with this settings you can fine tune your event ")
+        breakl_wid_day = st.time_input('Length of the break',
+                                       time(0, 30), key=j)
+        bt_wid_day = st.time_input('Start time of the break',
+                                   time(13, 00), key=j)
+        start_time_wid_day = st.time_input('Start time of the event',
+                                           time(9, 00), key=j)
+        tatami_day[j] = int(st.number_input("Number of tatamis",
+                                            value=TATAMI, key=j))
+
+        start_time_day[j] = (datetime.combine(date.min,
+                             start_time_wid_day) - datetime.min)
+        bt_day[j] = (datetime.combine(date.min, bt_wid_day)
+                     - datetime.min - start_time_day[j])
+        breaklength_day[j] = (datetime.combine(date.min,
+                                               breakl_wid_day) - datetime.min)
+    j += 1
 
 if st.button('all info is correct'):
     write_tour_file(tour_name,
