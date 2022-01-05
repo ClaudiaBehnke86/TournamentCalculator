@@ -297,7 +297,7 @@ with st.expander("Hide categories"):
                 if val1 is None:
                     val1 = 1
                 day = st.number_input("Competition day " + i,
-                                      min_value=0, key=i, max_value=days, value=val1)
+                                      min_value=0, key=i, max_value=int(days), value=val1)
 
         tot_par += int(inp)
         cat_par[i] = int(inp)
