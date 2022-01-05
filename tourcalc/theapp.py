@@ -8,7 +8,7 @@ more details see installation
 
 """
 import os
-from datetime import time, datetime, timedelta
+from datetime import time, datetime, timedelta, timezone
 import itertools  # for permutations of discipline order
 from pathlib import Path
 import math
@@ -89,7 +89,9 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
         df['start_time'].apply(lambda x: str(x)[-8:])
 
     # see bug https://github.com/plotly/plotly.py/issues/3065
-    end_time_prelim = datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S").timestamp() * 1000
+    end_time_prelim = datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S")
+    end_time_prelim = end_time_prelim.astimezone()
+    end_time_prelim = end_time_prelim.timestamp() * 1000
 
     end_time_final_c = datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S") + final_time
 
