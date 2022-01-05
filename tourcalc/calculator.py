@@ -483,7 +483,7 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
                     loads[tat_used] += cur_pen_time*60
 
     for tat_used in range(0, len(loads)):
-        if scheduled_jobs[tat_used][-1] is DIS_CHA:
+        if len(scheduled_jobs[tat_used]) > 0 and scheduled_jobs[tat_used][-1] is DIS_CHA:
             scheduled_jobs[tat_used].pop()
             loads[tat_used] -= cur_pen_time*60
     #if(cur_pen_time == 25 and 
