@@ -10,13 +10,13 @@ more details see installation
 import os
 from datetime import time, datetime, timedelta
 import itertools  # for permutations of discipline order
+from pathlib import Path
+import math
 import pandas as pd
 import plotly.express as px
 import plotly.figure_factory as ff
 import streamlit as st
 import numpy as np
-from pathlib import Path
-import math
 # [Bug] to create the sub module doc 
 # correctly one needs to add tourcalc.calculator to the import statement.
 # Otherwise the docs html is not created
@@ -243,7 +243,7 @@ with right_column:
 FINAL = bool(FINAL == 'YES')    
 
 date = st.date_input('First day of the event', value=datetime.today(), key='date')
-tatami_day = [int(TATAMI)] * days
+tatami_day = [TATAMI] * days
 start_time_day = [time(9, 00)] * days
 bt_day = [time(13, 00)] * days
 breaklength_day = [time(0, 30)] * days
