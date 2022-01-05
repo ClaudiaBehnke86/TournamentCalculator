@@ -19,10 +19,15 @@ You can change the values by typing or using the +/- buttons
 #. Number of Tatamis - [int]
 #. Number of days - [int]
 #. Does the event have a final block - [bool]
-#. Type of break [switch]
+#. Type of break - [switch]
+#. First day of the event - [date]
+
+The first day of the event can set used fur multi day events. The all figures show the relevant date.
 
 While the name, the tatamis and days are trivial the two field 
 on the left have some implication for the program.
+
+
 
 Final block
 -----------
@@ -52,12 +57,12 @@ You can choose between three different types of breaks:
 .. _break_sel:
 .. figure:: pictures/break_sel.png
 
-    Options in the dropdrown menu
+    Options in the drop drown menu
 
 
-#. No break - no break will be added
-#. Individual - break are planned after a category is finished
-#. One block - a block of breaks is added, categories are split. This can be used for an opening ceremony f.e.  
+#. *No break* - no break will be added
+#. *Individual* - break are planned after a category is finished
+#. *One block* - a block of breaks is added, categories are split. This can be used for an opening ceremony f.e.  
 
 .. _break_ind:
 .. figure:: pictures/break_indi.png
@@ -71,10 +76,39 @@ You can choose between three different types of breaks:
 
 The time and the length of the break can be adapted in the settings per day 
 
+======================
+Adding of participants 
+======================
 
-===========================
+After the basic info is set it is time to add participants to your tournament.
+Using the selection field: 
+
+.. _cat_cre:
+.. figure:: pictures/cat_cre.png
+    
+    Selection to add participants
+
+One can select the following age categories:
+
+.. _age_sel:
+.. figure:: pictures/age_sel.png
+
+And the following disciples 
+
+.. _dis_sel:
+.. figure:: pictures/dis_sel.png
+
+Once the participating age categories and disciples are crated one 
+can hide/unhide the categories and enter participants in each discipline.
+This can be done by using the +/- button or by entering a number to the field.
+
+.. _examp_sel:
+.. figure:: pictures/examp_sel.png
+    
+    Options to add to participants 
+
 Read in existing tournament 
-===========================
+---------------------------
 
 If the name of the tournament was used before you have two options:
 
@@ -89,11 +123,12 @@ If the name of the tournament was used before you have two options:
 
 The app has in version 0.9 the following pre-made tournaments
 
+If you reuse and existing tournament the entries (number of athletes and day) 
+for all categories are imported and filled. You can still modify them by using the +/- button or by entering a number to the field. 
 
 
-==========================
 Create "random" tournament
-==========================
+--------------------------
 
 
 If you name the tournament random the number of athletes and the days for each category will be automatically filled with positive integers, based on:
