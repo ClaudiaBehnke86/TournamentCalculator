@@ -15,6 +15,7 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import streamlit as st
 import numpy as np
+from pathlib import Path
 import math
 # [Bug] to create the sub module doc 
 # correctly one needs to add tourcalc.calculator to the import statement.
@@ -119,7 +120,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
         hover_name='category',
         text='category'
     )
-    
+
     fig.add_vline(x=end_time_prelim,
                   line_width=3,
                   line_dash="dash",
@@ -183,12 +184,15 @@ cat_dict_day = {}  # day per category
 
 tour_name = st.text_input("Name of the tournament", key='unique')
 fname = tour_name + ".txt"
-
+check_file = Path(__file__).parents[0] / fname
 permutations_object = itertools.permutations(DIS_INP)
 permutations_list = list(permutations_object)
 
+link = '[Click here for tutorial](https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
+st.markdown(link, unsafe_allow_html=True)
 
-if len(tour_name) > 0 and os.path.isfile(fname) and tour_name != "random":
+
+if len(tour_name) > 0 and os.path.isfile(check_file) and tour_name != "random":
     st.write("Tournament with name ", tour_name, "already exist")
     newf = st.selectbox('What do you want to do?', ['USE', 'OVERRIDE'])
     if newf == 'USE':
