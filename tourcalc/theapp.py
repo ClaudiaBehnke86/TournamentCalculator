@@ -243,7 +243,7 @@ with right_column:
 FINAL = bool(FINAL == 'YES')    
 
 date = st.date_input('First day of the event', value=datetime.today(), key='date')
-tatami_day = [TATAMI] * days
+tatami_day = [int(TATAMI)] * int(days)
 start_time_day = [time(9, 00)] * days
 bt_day = [time(13, 00)] * days
 breaklength_day = [time(0, 30)] * days
