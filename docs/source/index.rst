@@ -6,16 +6,15 @@ Welcome to TourCalc's documentation!
    :caption: Contents:
 
    introduction
-   installation
    tutorial
+   readme
    modules
    versions
    authors
-   readme   
+      
 
 .. include:: introduction.rst
 
-.. include:: installation.rst
 
 Contributing
 ============

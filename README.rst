@@ -1,6 +1,6 @@
-********
-TourCalc
-********
+**********************
+Installation and Usage
+**********************
 You can use this program in two ways:
 
 
