@@ -16,6 +16,9 @@ import plotly.figure_factory as ff
 import streamlit as st
 import numpy as np
 import math
+# [Bug] to create the sub module doc 
+# correctly one needs to add tourcalc.calculator to the import statement.
+# Otherwise the docs html is not created
 from calculator import write_tour_file
 from calculator import descition_matrix
 from calculator import cal_cat
@@ -393,7 +396,7 @@ if st.button('all info is correct'):
                      start_time_day[j].seconds,
                      date+timedelta(days=j), final_time)
 
-            st.write(fig)
+            st.plotly_chart(fig)
             st.write("Start time day:",
                      str(start_time_day[j]),
                      "  \n Finals can start at: ",
@@ -423,7 +426,7 @@ if st.button('all info is correct'):
                              start_time_day[j].seconds,
                              date+timedelta(days=j), final_time)
 
-                    st.write(fig)
+                    st.plotly_chart(fig)
                     st.write("Start time day:",
                              str(start_time_day[j]),
                              "  \n Final can start at: ",
