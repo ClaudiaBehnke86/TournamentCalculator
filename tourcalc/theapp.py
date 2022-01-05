@@ -92,13 +92,14 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
     # see bug https://github.com/plotly/plotly.py/issues/3065
     end_time_prelim = datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S")
  
-    datetime_local = datetime.now()
-    st.write("local time :", datetime_local)
+    #datetime_local = datetime.now()
+    #st.write("local time :", datetime_local)
 
-    tz_UTC = pytz.timezone('UTC')
-    datetime_utc = datetime.now(tz_UTC)
-    st.write("UTC time :", datetime_utc)
+    #tz_UTC = pytz.timezone('UTC')
+    #datetime_utc = datetime.now(tz_UTC)
+    #st.write("UTC time :", datetime_utc)
 
+    end_time_prelim = end_time_prelim - timedelta(hours=1)
     end_time_prelim = end_time_prelim.timestamp() * 1000
 
     end_time_final_c = datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S") + final_time
