@@ -186,7 +186,9 @@ tour_name = st.text_input("Name of the tournament", key='unique')
 fname = tour_name + ".txt"
 check_file = Path('tourcalc/example_tours') / fname
 
-if st.button("show examples tournames"):
+if st.button("Show example tournaments"):
+    st.write('You can read in the event by copying the name \
+        without .txt into the "Name of the tournament" field')
     filenames = os.listdir('tourcalc/example_tours')
     st.write(filenames)
 
