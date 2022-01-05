@@ -184,7 +184,7 @@ cat_dict_day = {}  # day per category
 
 tour_name = st.text_input("Name of the tournament", key='unique')
 fname = tour_name + ".txt"
-check_file = Path('example_tours') / fname
+check_file = Path('.') / fname
 filenames = os.listdir('example_tours/')
 st.write(filenames)
 permutations_object = itertools.permutations(DIS_INP)
