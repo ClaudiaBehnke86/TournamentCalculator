@@ -1,4 +1,4 @@
-Tournament: WCH21
+Tournament: WCh21
 Tatamis: 5
 Days: 9
 Finalblock: YES 
