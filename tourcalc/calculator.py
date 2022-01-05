@@ -3,6 +3,7 @@
 it does all the mathematics and return the right order of the categories
 """
 from datetime import timedelta
+from pathlib import Path
 import itertools  # for permutations of discipline order
 import numpy as np
 
@@ -147,7 +148,8 @@ def read_in_file(fname):
         name of the tournament [str]
 
     '''
-    tour_file = open(fname, "r")
+    check_file = Path(__file__).parents[0] / fname
+    tour_file = open(check_file, "r")
     tour_file.readline()  # Read and ignore header lines
     tatamis = tour_file.readline()  # read in tatami line
     tatami_inp = tatamis.split()
