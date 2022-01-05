@@ -119,7 +119,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
         hover_name='category',
         text='category'
     )
-    st.write(end_time_prelim)
+    
     fig.add_vline(x=end_time_prelim,
                   line_width=3,
                   line_dash="dash",
