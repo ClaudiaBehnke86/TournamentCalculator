@@ -16,11 +16,11 @@ import plotly.figure_factory as ff
 import streamlit as st
 import numpy as np
 import math
-from tourcalc.calculator import write_tour_file
-from tourcalc.calculator import descition_matrix
-from tourcalc.calculator import cal_cat
-from tourcalc.calculator import read_in_file
-from tourcalc.calculator import calculate_fight_time
+from calculator import write_tour_file
+from calculator import descition_matrix
+from calculator import cal_cat
+from calculator import read_in_file
+from calculator import calculate_fight_time
 
 AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age categories
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]  # supported disciplines
