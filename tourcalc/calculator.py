@@ -292,7 +292,7 @@ def calculate_fight_time(dict_inp, final, tatami):
                     if keys in cat_name:
                         cat_finals_dict[cat_name] = time_inp[keys]
                         final_time += time_inp[keys]*par_num
-                fight_num = par_num
+            fight_num = par_num
         else:
             if final is True and par_num > 5:
                 fight_num = -1  # remove final
