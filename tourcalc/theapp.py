@@ -234,6 +234,7 @@ else:
     days = 1
     FINAL = 'NO'
 
+
 left_column, right_column = st.columns(2)
 
 with left_column:
@@ -247,7 +248,7 @@ with right_column:
     breaktype = st.selectbox('What type of break do you want',
                              ('Individual', 'One Block', 'No break'), key='breakt')
 
-FINAL = bool(FINAL == 'YES')    
+FINAL = bool(FINAL == 'YES')
 
 date = st.date_input('First day of the event', value=datetime.today(), key='date')
 tatami_day = [int(TATAMI)] * int(days)
@@ -296,7 +297,7 @@ with st.expander("Hide categories"):
                 if val1 is None:
                     val1 = 1
                 day = st.number_input("Competition day " + i,
-                                      min_value=0, key=i, value=val1)
+                                      min_value=0, key=i, max_value=days, value=val1)
 
         tot_par += int(inp)
         cat_par[i] = int(inp)
