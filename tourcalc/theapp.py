@@ -283,7 +283,7 @@ with st.expander("Hide categories"):
             day_rtmp = np.random.randint(1, days+1)
             with right_column2:
                 day = st.number_input("Competition day " + i,
-                                      min_value=1, max_value=int(days) value=day_rtmp, key=i)
+                                      min_value=1, max_value=int(days), value=day_rtmp, key=i)
         else:
             val = cat_par.get(i)
             val1 = cat_dict_day.get(i)
