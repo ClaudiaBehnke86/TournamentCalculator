@@ -89,8 +89,8 @@ In the case of the described data, we can define analogous a Euclidean Division 
 
 #.    *dividend* =   total time of this discipline :math:`L_{a}`
 #.    *divisor* =    perfect end-time :math:`ET_{perf}`
-#.    * quotient* =   :term:`fully-used` competition area :math:`N_{Ta}`
-#.    * remainder* =  remainder time` :math:`t_{r}`
+#.    *quotient* =   :term:`fully-used` competition area :math:`N_{Ta}`
+#.    *remainder* =  remainder time` :math:`t_{r}`
     
 This converts the relation mentioned above to:
 
@@ -247,7 +247,7 @@ solutions.
 
 Hopefully one will be the one that fits for your event.
 
-Curious? You can test the algorithm on the following webpage:
+Curious? You can test the algorithm on this webpage_
 
 .. _webpage:
     https://share.streamlit.io/claudiabehnke86/tournamentcalculator/tourcalc/theapp.py 
