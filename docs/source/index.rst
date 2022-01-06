@@ -9,7 +9,6 @@ Welcome to TourCalc's documentation!
    readme
    tutorial
    modules
-   versions
    authors
       
 

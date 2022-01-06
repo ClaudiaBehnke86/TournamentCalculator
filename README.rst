@@ -16,12 +16,14 @@ on to understand what it does
 Installation own instance
 =========================
 
-Fork the repository and save it at a place where you like it.
+Fork the `repository <https://github.com/ClaudiaBehnke86/TournamentCalculator>`_ and save it at a place where you like it.
 
 The package consist of two files:
 
-calculator.py and theapp.py.
+.. code-block::
 
+    calculator.py  
+    theapp.py
 
 To create the module type
 .. code-block::
