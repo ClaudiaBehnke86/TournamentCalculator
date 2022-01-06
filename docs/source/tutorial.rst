@@ -124,7 +124,7 @@ If the name of the tournament was used before you have two options:
 The app has in version 0.9 the following pre-made tournaments:
 
 .. _premade:
-.. table:: exciting tournament in app
+.. table:: excising tournaments in online app
     :align: center
     
     +--------------+------------------------------------+
@@ -142,8 +142,33 @@ The app has in version 0.9 the following pre-made tournaments:
   
 .. [#] Was used to generate the pictures in this tutorial
 
+You can always use the "show example tournaments button" to check which events are available.
+
 If you reuse and existing tournament the entries (number of athletes and day) 
 for all categories are imported and filled. You can still modify them by using the +/- button or by entering a number to the field. 
+
+Structure of input file
+^^^^^^^^^^^^^^^^^^^^^^^
+
+At the moment only developers can add tournament test files.
+If you want to have your event as a testing event create a .txt file and make a pull request or 
+contact the developers.
+
+.. code-block::
+
+    Tournament: test 
+    Tatamis: 5 
+    Days: 2
+    Finalblock: YES 
+    Breaktype: Individual
+    Startime: 32400
+    Adults Fighting Male 56kg 11 1
+    Adults Fighting Male 62kg 15 2
+    Adults Fighting Male 69kg 7 1
+    Adults Fighting Male 77kg 4 2
+    Adults Fighting Male 85kg 15 2
+    Adults Fighting Male 94kg 13 1
+    Adults Fighting Male 95kg 12 2
 
 
 Create "random" tournament
@@ -180,9 +205,18 @@ You will see an example schedule and some details like in figure :numref:`best_r
     Shows the data for the best results  
 
 
-==============
-Known Problems
-==============
+=============================
+Known Problems & improvements 
+=============================
+
+Events can not be saved
+-----------------------
+
+Currently it is only possible for developers to add and store example files. 
+If you create a tournament via the app, the data is not saved.
+
+GUI is not visible
+------------------
 
 After the GUI is started your standard browser should have opened. If not browser open you can open one and open the URL from your terminal:
 
@@ -192,5 +226,12 @@ After the GUI is started your standard browser should have opened. If not browse
 
   	Local URL: http://localhost:8501
   	Network URL: http://192.168.178.46:8501
+
+
+Other issues
+------------
+
+`Pull requests <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request>`_
+are welcome.
 
 .. _normaldistribution: https://en.wikipedia.org/wiki/Normal_distribution
