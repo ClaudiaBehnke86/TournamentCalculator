@@ -65,8 +65,8 @@ Based on :math:`L_{tot}` and the number of competition areas :math:`T` an (artif
 .. math::
     ET_{perf}=\frac{L_{tot}}{T}
 
-.. [#] Adults, U21, U18 and U16 are supported in version 0.1.0
-.. [#] Jiu-Jitsu, Fighting, Duo and Show system are supported in version 0.1.0
+.. [#] Adults, U21, U18 and U16 are supported in version 0.9.0
+.. [#] Jiu-Jitsu, Fighting, Duo and Show system are supported in version 0.9.0
 
 
 Longest Processing Time algorithm – Approximate solution
@@ -87,10 +87,10 @@ With this we used a so-called Euclidean_ Division:
 
 In the case of the described data, we can define analogous a Euclidean Division with the following components:
 
-    - dividend =   total time of this discipline :math:`L_{a}`
-    - divisor =    perfect end-time :math:`ET_{perf}`
-    - quotient =   :term:`fully-used` competition area :math:`N_{Ta}`
-    - remainder =  :term:`remainder time` :math:`t_{r}`
+#.    *dividend* =   total time of this discipline :math:`L_{a}`
+#.    *divisor* =    perfect end-time :math:`ET_{perf}`
+#.    * quotient* =   :term:`fully-used` competition area :math:`N_{Ta}`
+#.    * remainder* =  :term:`remainder time` :math:`t_{r}`
     
 This converts the relation mentioned above to:
 
@@ -164,16 +164,11 @@ Free parameters
 
 The algorithm has three free and arbitrary parameters which need to be varied to find the optimal solution.
 
-
-Discipline Change - penalty factor for changing a discipline 
-------------------------------------------------------------
-
-
-
 Order of the disciplines 
 ------------------------
 
 The answer of the algorithm depends on the order of the disciplines.  Like shown in picture  
+the following pictures the results will depend on the order of the disciplines. 
 
 .. _AB:
 .. figure:: pictures/AB.png
@@ -185,10 +180,84 @@ The answer of the algorithm depends on the order of the disciplines.  Like shown
 
     Visualization of expected behavior with three identical competition areas, two disciplines, a placeholder time block, a penalty factor, starting with discipline B
 
+Since there is no preferred order in general the algorithm will brute force try all of them which means it will use all possible permutations_ of the disciplines:
+Jiu-Jitsu, Fighting, Duo , Show.
+Since the number of disciplines is four in total 4! = 24 permutations are tested.
+
+Happiness value  
+---------------
+
+What makes an organizer "happy" is to end the tournament as short as possible and have all tatamis efficiently used. The second means to minimize the standard_deviation_ of the end times.
+
+This can be computed as the minimum_ plus with the and a free parameter h.
+
+.. math::
+    ET_{min} + h * \sigma_{et}
+
+The free parameter will run from 0, meaning the standard_deviation is not taken into account to 1 meaning that the standard_deviation is as equally important as the end time, in steps of 0.1.
+
+The two pictures illustrate the parameter of the happiness value in two cases.
+
+.. _hv_1:
+.. figure:: pictures/hv_1.png
 
 
-[('Duo', 'Show', 'Jiu-Jitsu', 'Fighting'), ('Duo', 'Show', 'Fighting', 'Jiu-Jitsu'), ('Duo', 'Jiu-Jitsu', 'Show', 'Fighting'), ('Duo', 'Jiu-Jitsu', 'Fighting', 'Show'), ('Duo', 'Fighting', 'Show', 'Jiu-Jitsu'), ('Duo', 'Fighting', 'Jiu-Jitsu', 'Show'), ('Show', 'Duo', 'Jiu-Jitsu', 'Fighting'), ('Show', 'Duo', 'Fighting', 'Jiu-Jitsu'), ('Show', 'Jiu-Jitsu', 'Duo', 'Fighting'), ('Show', 'Jiu-Jitsu', 'Fighting', 'Duo'), ('Show', 'Fighting', 'Duo', 'Jiu-Jitsu'), ('Show', 'Fighting', 'Jiu-Jitsu', 'Duo'), ('Jiu-Jitsu', 'Duo', 'Show', 'Fighting'), ('Jiu-Jitsu', 'Duo', 'Fighting', 'Show'), ('Jiu-Jitsu', 'Show', 'Duo', 'Fighting'), ('Jiu-Jitsu', 'Show', 'Fighting', 'Duo'), ('Jiu-Jitsu', 'Fighting', 'Duo', 'Show'), ('Jiu-Jitsu', 'Fighting', 'Show', 'Duo'), ('Fighting', 'Duo', 'Show', 'Jiu-Jitsu'), ('Fighting', 'Duo', 'Jiu-Jitsu', 'Show'), ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu'), ('Fighting', 'Show', 'Jiu-Jitsu', 'Duo'), ('Fighting', 'Jiu-Jitsu', 'Duo', 'Show'), ('Fighting', 'Jiu-Jitsu', 'Show', 'Duo')]
+.. _hv_2:
+.. figure:: pictures/hv_2.png
 
+
+Discipline Change - penalty factor for changing a discipline 
+------------------------------------------------------------
+
+Like explained in previous chapters the change of a disciplines will result in a penalty.
+The default penalty time is 30 min. However the penalty time is rather arbitrary.
+Other results might be found by using different penalty factors.
+Therefore the parameter is varied from 15 min to 45 min.
+
+
+The *best* results 
+------------------
+
+The algorithm will run for each combination of happiness value and penalty factor and determines which is the permutation that gives the best result. 
+If less than four disciplines are used for a day the "first" appearing permutation is used. 
+
+.. _matrix:
+.. figure:: pictures/matrix.png
+
+     Outcome of an event. For each combination of a happiness value and penalty factor the best permutation is found.  
+
+So what is now the best result for a tournament?
+
+The answers will always be - it depends...
+
+
+
+
+There might be restrictions on an event which the algorithms does not take into account.
+
+In total, the algorithm will test:
+
+#. *30* different penalty factors
+#. *20* different happiness values
+#. *24* permutations
+
+And show you the best of those 
+
+.. math::
+    30  \cdot  20 \cdot  24 = 14400
+
+solutions.
+
+
+
+
+Hopefully one will be the one that fits for your event.
+
+.. _minimum:
+    https://en.wikipedia.org/wiki/Maxima_and_minima
+
+.. _permutations:
+    https://en.wikipedia.org/wiki/Permutation
 
 .. _OSC: http://www.jjif.org/fileadmin/documents/Competition-Ranking/Organization_and_sporting_code_2020.pdf
 
@@ -201,7 +270,8 @@ The answer of the algorithm depends on the order of the disciplines.  Like shown
 .. _Euclidean:
     https://en.wikipedia.org/wiki/Euclidean_division
 
-
+.. _standard_deviation:
+    https://en.wikipedia.org/wiki/Standard_deviation
 
 Glossary
 ========
