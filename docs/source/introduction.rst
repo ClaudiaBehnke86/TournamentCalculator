@@ -90,7 +90,7 @@ In the case of the described data, we can define analogous a Euclidean Division 
 #.    *dividend* =   total time of this discipline :math:`L_{a}`
 #.    *divisor* =    perfect end-time :math:`ET_{perf}`
 #.    * quotient* =   :term:`fully-used` competition area :math:`N_{Ta}`
-#.    * remainder* =  :term:`remainder time` :math:`t_{r}`
+#.    * remainder* =  remainder time` :math:`t_{r}`
     
 This converts the relation mentioned above to:
 
@@ -228,10 +228,7 @@ If less than four disciplines are used for a day the "first" appearing permutati
 
 So what is now the best result for a tournament?
 
-The answers will always be - it depends...
-
-
-
+    *The answers will always be - it depends...*
 
 There might be restrictions on an event which the algorithms does not take into account.
 
@@ -248,10 +245,12 @@ And show you the best of those
 
 solutions.
 
-
-
-
 Hopefully one will be the one that fits for your event.
+
+Curious? You can test the algorithm on the following webpage:
+
+.. _webpage:
+    https://share.streamlit.io/claudiabehnke86/tournamentcalculator/tourcalc/theapp.py 
 
 .. _minimum:
     https://en.wikipedia.org/wiki/Maxima_and_minima
@@ -275,18 +274,19 @@ Hopefully one will be the one that fits for your event.
 
 Glossary
 ========
+
 .. glossary::
     age category
         An age category defines the minimum and maximum age of a participant
         
     minimum end-time
-        The time after the last match has finished; :math:`ET_{min}`
+        The time after the last match has finished :math:`ET_{min}`
         
     discipline
         Discipline is a branch of a sport that has a set of rules. For this program, disciplines might have a different time and different referees.
         
     category
-        A category is a
+        A category is a weight or gender division in a discipline.   
     
     competition area
         A competition area can hold one match at the same time.
@@ -298,7 +298,7 @@ Glossary
         Participants in a category
         
     individual time
-        For
+        The time for each category for all matches
         
     average match time per discipline
         This is the average time between the start if one match and the start of the next match
@@ -312,9 +312,6 @@ Glossary
     partially-used
         partially-used competition area
         
-    remainder time
-        remainder time
-
     placeholder time block
-        time bloc at partially used tatamis
+        time block at partially used tatamis
 

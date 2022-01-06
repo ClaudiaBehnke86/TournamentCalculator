@@ -121,7 +121,26 @@ If the name of the tournament was used before you have two options:
     Options for existing tournament 
 
 
-The app has in version 0.9 the following pre-made tournaments
+The app has in version 0.9 the following pre-made tournaments:
+
+.. _premade:
+.. table:: exciting tournament in app
+    :align: center
+    
+    +--------------+------------------------------------+
+    | Name         | Description                        |
+    +==============+====================================+
+    | random       | the default event                  |
+    |              | for the random generator           |
+    +--------------+------------------------------------+
+    | Adults_2days | test event[#]_                     |
+    |              | 2 days, adults & all disciplines   |    
+    +--------------+------------------------------------+
+    | WCh21        | the World Championship 2021        |
+    |              | 9 days, all ages & disciplines     | 
+    +--------------+------------------------------------+
+  
+.. [#] Was used to generate the pictures in this tutorial
 
 If you reuse and existing tournament the entries (number of athletes and day) 
 for all categories are imported and filled. You can still modify them by using the +/- button or by entering a number to the field. 
@@ -146,6 +165,20 @@ Please note that the random generator will rerun every time a parameters is chan
 =======================
 Change settings per day
 =======================
+
+=======================
+Understand the results
+=======================
+
+After entering all parameters and pressing the button "all info is correct" the algorthim will run. This should take maximum a few seconds.
+
+You will see an example schedule and some details like in figure :numref:`best_res_show`
+
+.. _best_res_show:
+.. figure:: pictures/best_res_show.png
+    
+    Shows the data for the best results  
+
 
 ==============
 Known Problems
