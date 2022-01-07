@@ -133,7 +133,7 @@ The app has in version 0.9 the following pre-made tournaments:
     | random       | the default event                  |
     |              | for the random generator           |
     +--------------+------------------------------------+
-    | Adults_2days | test event [#]_                     |
+    | Adults_2days | test event [#]_                    |
     |              | 2 days, adults & all disciplines   |    
     +--------------+------------------------------------+
     | WCh21        | the World Championship 2021        |
