@@ -22,9 +22,9 @@ You can change the values by typing or using the +/- buttons
 #. Type of break - [switch]
 #. First day of the event - [date]
 
-The first day of the event can set used fur multi day events. The all figures show the relevant date.
+The first day of the event can set used fur multi day events. Then all figures show the relevant date. 
 
-While the name, the tatamis and days are trivial the two field 
+While the name, the tatamis (competition areas) and days are trivial the two field 
 on the left have some implication for the program.
 
 
