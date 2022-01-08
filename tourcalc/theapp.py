@@ -18,6 +18,7 @@ import plotly.figure_factory as ff
 import streamlit as st
 import numpy as np
 import pytz
+from io import StringIO
 # [Bug] to create the sub module doc 
 # correctly one needs to add tourcalc.calculator to the import statement.
 # Otherwise the docs html is not created
@@ -212,6 +213,23 @@ LINK = '[Click here for tutorial] \
 st.markdown(LINK, unsafe_allow_html=True)
 
 
+uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file is not None:
+    
+    # To convert to a string based IO:
+    stringio = StringIO(uploaded_file.getvalue().decode("utf-8")) 
+
+    # To read file as string:
+    string_data = stringio.read()
+
+
+    st.write(string_data)
+    #cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
+    #        start_time, breaktype = read_in_file(stringio)
+   # tour_file = open(uploaded_file, "r")
+    
+    #st.write(tour_file)
+
 if len(tour_name) > 0 and os.path.isfile(check_file) and tour_name != "random":
     st.write("Tournament with name ", tour_name, "already exist")
     newf = st.selectbox('What do you want to do?', ['USE', 'OVERRIDE'])
@@ -339,14 +357,22 @@ while j < int(days):
     j += 1
 
 if st.button('all info is correct'):
-    write_tour_file(tour_name,
-                    cat_par,
-                    cat_dict_day,
-                    TATAMI,
-                    days,
-                    FINAL,
-                    start_time_day[0],
-                    breaktype)
+    tour_file = write_tour_file(tour_name,
+                                cat_par,
+                                cat_dict_day,
+                                TATAMI,
+                                days,
+                                FINAL,
+                                start_time_day[0],
+                                breaktype)
+
+    with open(fname, "r") as file:
+        btn = st.download_button(
+             label="Download data from event",
+             data=file,
+             file_name=fname,
+             mime="text")
+
     if tot_par == 0:
         st.write("Please add at least one athlete")
     elif TATAMI > len(cat_all):

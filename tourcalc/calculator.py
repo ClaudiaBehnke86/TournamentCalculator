@@ -137,6 +137,7 @@ def write_tour_file(tour_name,
 
     tour_file.close()
 
+    return tour_file
 
 def read_in_file(fname):
     ''' Read in file
@@ -148,8 +149,8 @@ def read_in_file(fname):
         name of the tournament [str]
 
     '''
-    check_file = Path('tourcalc/example_tours') / fname
-    tour_file = open(check_file, "r")
+    #check_file = Path('tourcalc/example_tours') / fname
+    tour_file = open(fname, "r")
     tour_file.readline()  # Read and ignore header lines
     tatamis = tour_file.readline()  # read in tatami line
     tatami_inp = tatamis.split()
