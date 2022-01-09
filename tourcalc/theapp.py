@@ -20,7 +20,7 @@ import numpy as np
 import pytz
 from io import StringIO
 
-import tourcalc
+#import tourcalc
 from tourcalc.calculator import write_tour_file
 from tourcalc.calculator import descition_matrix
 from tourcalc.calculator import cal_cat
@@ -207,8 +207,6 @@ fname = tour_name + ".csv"
 path = os.path.dirname(tourcalc.__file__)
 list_path = os.path.join(path, 'example_tours')
 check_file = Path(list_path) / fname
-
-
 
 left_column_2, right_column_2 = st.columns(2)
 
