@@ -19,14 +19,13 @@ import streamlit as st
 import numpy as np
 import pytz
 from io import StringIO
-# [Bug] to create the sub module doc 
-# correctly one needs to add tourcalc.calculator to the import statement.
-# Otherwise the docs html is not created
-from calculator import write_tour_file
-from calculator import descition_matrix
-from calculator import cal_cat
-from calculator import read_in_file
-from calculator import calculate_fight_time
+
+import tourcalc
+from tourcalc.calculator import write_tour_file
+from tourcalc.calculator import descition_matrix
+from tourcalc.calculator import cal_cat
+from tourcalc.calculator import read_in_file
+from tourcalc.calculator import calculate_fight_time
 
 AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age categories
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]  # supported disciplines
@@ -192,50 +191,74 @@ def heatmap(data, row_labels, col_labels, str_title):
     return fig1
 
 
-cat_par = {}  # number of participants
-cat_dict_day = {}  # day per category
-
-tour_name = st.text_input("Name of the tournament", key='unique')
-fname = tour_name + ".txt"
-check_file = Path('tourcalc/example_tours') / fname
-
-if st.button("Show example tournaments"):
-    st.write('You can read in the event by copying the name \
-        without .txt into the "Name of the tournament" field')
-    filenames = os.listdir('tourcalc/example_tours')
-    st.write(filenames)
-
 permutations_object = itertools.permutations(DIS_INP)
 permutations_list = list(permutations_object)
+
+cat_par = {}  # number of participants
+cat_dict_day = {}  # day per category
 
 LINK = '[Click here for tutorial] \
     (https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
 st.markdown(LINK, unsafe_allow_html=True)
 
+tour_name = st.text_input("Name of the tournament", key='unique')
 
-uploaded_file = st.file_uploader("Choose a file")
-if uploaded_file is not None:
-    
-    # To convert to a string based IO:
-    stringio = StringIO(uploaded_file.getvalue().decode("utf-8")) 
-
-    # To read file as string:
-    string_data = stringio.read()
+fname = tour_name + ".csv"
+path = os.path.dirname(tourcalc.__file__)
+list_path = os.path.join(path, 'example_tours')
+check_file = Path(list_path) / fname
 
 
-    st.write(string_data)
-    #cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
-    #        start_time, breaktype = read_in_file(stringio)
-   # tour_file = open(uploaded_file, "r")
-    
-    #st.write(tour_file)
 
-if len(tour_name) > 0 and os.path.isfile(check_file) and tour_name != "random":
+left_column_2, right_column_2 = st.columns(2)
+
+with left_column_2:
+    if st.button("Show example tournaments"):
+        st.write('You can read in the event by copying the name \
+            without .csv into the "Name of the tournament" field')
+        filenames = os.listdir(list_path)
+        st.write(filenames)
+
+with right_column_2:
+    uploaded_file = st.file_uploader("Choose a file", help="Make sure to have a CSV with the right input")
+
+
+if uploaded_file is not None:       
+    cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
+            start_time, breaktype, date_inp = read_in_file(uploaded_file)        
+    date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')        
+    cat_par = cat_par_inp
+
+    for cat_name in cat_par_inp:  # loop over dictionary
+        if ("U16" in cat_name) and ("U16" not in AGE_SEL):
+            AGE_SEL.append("U16")
+        if ("U18" in cat_name) and ("U18" not in AGE_SEL):
+            AGE_SEL.append("U18")
+        if ("U21" in cat_name) and ("U21" not in AGE_SEL):
+            AGE_SEL.append("U21")
+        if ("Adults" in cat_name) and ("Adults" not in AGE_SEL):
+            AGE_SEL.append("Adults")
+        if len(AGE_SEL) == 0:
+            st.write("No age categories in input file")
+
+        if ("Show" in cat_name) and ("Show" not in DIS_SEL):
+            DIS_SEL.append("Show")
+        if ("Duo" in cat_name) and ("Duo" not in DIS_SEL):
+            DIS_SEL.append("Duo")
+        if ("Fighting" in cat_name) and ("Fighting" not in DIS_SEL):
+            DIS_SEL.append("Fighting")
+        if ("Jiu-Jitsu" in cat_name) and ("Jiu-Jitsu" not in DIS_SEL):
+            DIS_SEL.append("Jiu-Jitsu")
+        if len(DIS_SEL) == 0:
+            st.write("No disciplines in input file")
+
+elif len(tour_name) > 0 and os.path.isfile(check_file):
     st.write("Tournament with name ", tour_name, "already exist")
     newf = st.selectbox('What do you want to do?', ['USE', 'OVERRIDE'])
     if newf == 'USE':
         cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
-            start_time, breaktype = read_in_file(tour_name+".txt")
+            start_time, breaktype, date_inp = read_in_file(check_file)
+        date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')    
         cat_par = cat_par_inp
 
         for cat_name in cat_par_inp:  # loop over dictionary
@@ -263,7 +286,8 @@ if len(tour_name) > 0 and os.path.isfile(check_file) and tour_name != "random":
 else:
     TATAMI = 1
     days = 1
-    FINAL = 'NO'
+    FINAL = 'YES'
+    date_time_obj = datetime.today()
 
 
 left_column, right_column = st.columns(2)
@@ -279,9 +303,9 @@ with right_column:
     breaktype = st.selectbox('What type of break do you want',
                              ('Individual', 'One Block', 'No break'), key='breakt')
 
-
 FINAL = bool(FINAL == 'YES')
-date = st.date_input('First day of the event', value=datetime.today(), key='date')
+
+date = st.date_input('First day of the event', value=date_time_obj, key='date')
 tatami_day = [int(TATAMI)] * int(days)
 start_time_day = [time(9, 00)] * int(days)
 bt_day = [time(13, 00)] * int(days)
@@ -299,11 +323,12 @@ dis_select = st.multiselect('Select the participating disciplines',
 
 cat_all = cal_cat(age_select, dis_select)  # calculate categories
 
+random_inp = st.checkbox('Random participants')
 tot_par = 0
 with st.expander("Hide categories"):
     left_column1, right_column2 = st.columns(2)
     for i in cat_all:
-        if tour_name == "random":
+        if random_inp is True:
             _rtmp = round(np.random.normal(8, 5.32))
             while _rtmp < 0:
                 _rtmp = round(np.random.normal(8, 5.32))
@@ -320,14 +345,14 @@ with st.expander("Hide categories"):
             with left_column1:
                 if val is None:
                     val = 0
-                inp = st.number_input("Number of athletes " + i,
+                inp = st.number_input("Number of athletes " + str(i),
                                       min_value=0,
                                       key=i,
                                       value=val)
             with right_column2:
                 if val1 is None:
                     val1 = 1
-                day = st.number_input("Competition day " + i,
+                day = st.number_input("Competition day " + str(i),
                                       min_value=1, key=i, max_value=int(days), value=val1)
 
         tot_par += int(inp)
@@ -364,6 +389,7 @@ if st.button('all info is correct'):
                                 days,
                                 FINAL,
                                 start_time_day[0],
+                                date,
                                 breaktype)
 
     with open(fname, "r") as file:
@@ -371,7 +397,7 @@ if st.button('all info is correct'):
              label="Download data from event",
              data=file,
              file_name=fname,
-             mime="text")
+             mime="csv")
 
     if tot_par == 0:
         st.write("Please add at least one athlete")

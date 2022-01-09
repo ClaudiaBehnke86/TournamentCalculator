@@ -2,7 +2,10 @@
 
 it does all the mathematics and return the right order of the categories
 """
+import os
 from datetime import timedelta
+import tourcalc
+import pandas as pd
 from pathlib import Path
 import itertools  # for permutations of discipline order
 import numpy as np
@@ -94,6 +97,7 @@ def write_tour_file(tour_name,
                     days,
                     final,
                     start_time,
+                    date,
                     break_t):
     ''' create a new tournament file
 
@@ -114,34 +118,37 @@ def write_tour_file(tour_name,
         does the event have a final block [bool]
     start_time
         time when the event should happen [dateime]
+    date
+        data of the first day of the event     
     break_t
         type of the break that is used [individual, block, no break]
     '''
-    tour_file = open(tour_name + ".txt", "w")
+    tour_file = open(tour_name + ".csv", "w")
 
     # write the file
-    tour_file.write("Tournament: " + tour_name + "\n")
-    tour_file.write("Tatamis: " + str(i_tatami) + "\n")
-    tour_file.write("Days: " + str(days) + "\n")
+    tour_file.write("categories;participants;day\n")
+    tour_file.write("tatamis;" + str(i_tatami) + "\n")
+    tour_file.write("days;" + str(days) + "\n")
     if final is True:
-        tour_file.write("Finalblock: YES \n")
+        tour_file.write("finalblock;YES\n")
     else:
-        tour_file.write("Finallblock: NO \n")
-    tour_file.write("Breaktype: " + str(break_t) + "\n")
-    tour_file.write("Startime: " + str(start_time.seconds) + "\n")
-
+        tour_file.write("finallblock;NO\n")
+    tour_file.write("breaktype;" + str(break_t) + "\n")
+    tour_file.write("startime;" + str(start_time.seconds) + "\n")
+    tour_file.write("date;" + str(date) + "\n")
     for cat_name, par_num in cat_par.items():
         day = cat_dict_day[cat_name]
-        tour_file.write(str(cat_name) + " " +
-                        str(par_num) + " " + str(day) + "\n")
+        tour_file.write(str(cat_name) + ";" +
+                        str(par_num) + ";" + str(day) + "\n")
 
     tour_file.close()
 
     return tour_file
 
+
 def read_in_file(fname):
     ''' Read in file
-     - HELPER FUNCTION TO READ IN THE TXT FILE
+     - HELPER FUNCTION TO READ IN THE CSV FILE
 
     Parameters
     ----------
@@ -149,51 +156,27 @@ def read_in_file(fname):
         name of the tournament [str]
 
     '''
-    #check_file = Path('tourcalc/example_tours') / fname
-    tour_file = open(fname, "r")
-    tour_file.readline()  # Read and ignore header lines
-    tatamis = tour_file.readline()  # read in tatami line
-    tatami_inp = tatamis.split()
-    tatami = int(tatami_inp[1])
-    dayss = tour_file.readline()  # read in tatami line
-    days_inp = dayss.split()
-    days = int(days_inp[1])
+    tour_file = pd.read_csv(fname, sep=';')
+    tour_file.fillna(0, inplace=True)
+    tatami = int(tour_file['participants'][tour_file['categories'] == 'tatamis'].values[0])
+    days = int(tour_file['participants'][tour_file['categories'] == 'days'].values[0])
+    final_inp = str(tour_file['participants'][tour_file['categories'] == 'finalblock'].values[0])
+    final = bool(final_inp == 'YES')
+    break_t = str(tour_file['participants'][tour_file['categories'] == 'breaktype'].values[0])
+    starttime_inp = int(tour_file['participants'][tour_file['categories'] == 'startime'].values[0])
+    starttime = timedelta(seconds=starttime_inp)
+    date = str(tour_file['participants'][tour_file['categories'] == 'date'].values[0])
+    tour_file_data = tour_file[6:].copy()
+    tour_file_data['day'] = tour_file_data['day'].astype(int)
+    tour_file_data['participants'] = tour_file_data['participants'].astype(int)
+    cat_par = tour_file_data[
+        ['participants', 'categories']
+    ].set_index('categories').to_dict()['participants']
+    cat_dict_day = tour_file_data[
+        ['day', 'categories']
+    ].set_index('categories').to_dict()['day']
 
-    final_t = tour_file.readline()
-    final_inp = final_t.split()
-    if final_inp[1] == "YES":
-        final = True
-    elif final_inp[1] == "NO":
-        final = False
-    else:
-        print("something is wrong with ", final_inp)
-
-    break_t_in = tour_file.readline()  # read in break line
-    break_tt = break_t_in.split()
-    break_t = break_tt[1]
-    # read in starttime
-    starttimes = tour_file.readline()  # read in tatami line
-    starttime_inp = starttimes.split()
-    starttime_sec = int(starttime_inp[1])
-    starttime = timedelta(seconds=starttime_sec)
-    cat_par = {}  # number of participants
-    cat_dict_day = {}  # stores day of each dict
-    for line in tour_file:  # Loop over lines and extract variables of interest
-        line = line.strip()
-        columns = line.split()
-        if(columns[1] == "Duo" or columns[1] == "Show"):
-            catname = columns[0] + " " + columns[1] + " " + columns[2]
-            j = int(columns[3])
-            k = int(columns[4])
-        else:
-            catname = columns[0] + " " + columns[1] + " " + \
-                columns[2] + " " + columns[3]
-            j = int(columns[4])
-            k = int(columns[5])
-        cat_par[catname] = int(j)
-        cat_dict_day[catname] = int(k)
-
-    return cat_par, cat_dict_day, final, tatami, days, starttime, break_t
+    return cat_par, cat_dict_day, final, tatami, days, starttime, break_t, date
 
 
 def cal_cat(age_select, dis_select):

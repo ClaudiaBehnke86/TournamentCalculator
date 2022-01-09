@@ -3,6 +3,7 @@
 
 """The setup script."""
 
+import os
 from setuptools import setup, find_packages
 
 with open('README.rst') as readme_file:
@@ -17,9 +18,7 @@ requirements = [
     'streamlit==1.2.0'
 ]
 
-setup_requirements = ['pytest-runner', ]
-
-test_requirements = ['pytest', ]
+ex_path = os.path.join('tourcalc', 'example_tours')
 
 setup(
     author="Claudia Behnke",
@@ -37,9 +36,9 @@ setup(
     keywords='tourcalc',
     name='tourcalc',
     packages=find_packages(include=['tourcalc']),
-    setup_requires=setup_requirements,
-    test_suite='tests',
-    tests_require=test_requirements,
+    package_data = {
+	   ex_path: ['*.csv']
+    },
     url='https://github.com/ClaudiaBehnke86/TournamentCalculator',
     version='0.9.0',
     zip_safe=False,

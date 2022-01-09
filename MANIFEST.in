@@ -1,6 +1,7 @@
 include AUTHORS.rst
 include LICENSE
 include README.rst
+include tourcalc/example_tours/*.csv
 
 recursive-include tourcalc/ *.py
 recursive-include tests *

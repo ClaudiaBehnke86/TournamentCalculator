@@ -1,6 +1,0 @@
-Tournament: random
-Tatamis: 1
-Days: 1
-Finalblock: YES 
-Breaktype: Individual
-Startime: 32400
