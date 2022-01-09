@@ -204,7 +204,7 @@ st.markdown(LINK, unsafe_allow_html=True)
 tour_name = st.text_input("Name of the tournament", key='unique')
 
 fname = tour_name + ".csv"
-path = os.path.dirname(tourcalc.__file__)
+path = os.path.dirname(tourcalc.calculator.__file__)
 list_path = os.path.join(path, 'example_tours')
 check_file = Path(list_path) / fname
 
