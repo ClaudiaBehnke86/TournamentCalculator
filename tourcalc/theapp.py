@@ -224,7 +224,12 @@ with right_column_2:
 if uploaded_file is not None:       
     cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
             start_time, breaktype, date_inp = read_in_file(uploaded_file)        
-    date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')        
+    try:
+        date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
+    except ValueError:
+        print("Oops!  That was no date number.  Try again...")
+        date_time_obj = datetime.today()     
+    
     cat_par = cat_par_inp
 
     for cat_name in cat_par_inp:  # loop over dictionary
@@ -256,7 +261,12 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
     if newf == 'USE':
         cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
             start_time, breaktype, date_inp = read_in_file(check_file)
-        date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')    
+        try:
+            date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
+        except ValueError:
+            print("Oops!  That was no date number.  Try again...")
+            date_time_obj = datetime.today()
+
         cat_par = cat_par_inp
 
         for cat_name in cat_par_inp:  # loop over dictionary
