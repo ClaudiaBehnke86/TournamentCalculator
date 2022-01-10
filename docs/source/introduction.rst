@@ -24,7 +24,7 @@ The first step is the creation of the input data. Since the names of categories 
     Number of matches :math:`N_{m}` as a function of the number of athletes :math:`n_{a}`.
     
 The :term:`individual time` :math:`l` for each category can be calculated as on the number of matches :math:`N_{m}` times the :term:`average match time per discipline` :math:`<t_{x}>` (See :ref:`avtime`_ average match time per discipline). 
-The average match time covers the span between starting one match and starting of the next match, including interruptions of the fight and the change of the fighters. This value is based on the experience and used in the competition software SD, JJW, SM]. It may vary based on the place and the tournament time and can be individually adjusted in the software.
+The average match time covers the span between starting one match and starting of the next match, including interruptions of the fight and the change of the fighters. This value is based on the experience but also used in other competition software. It may vary based on the place and the tournament time and can be individually adjusted in the software source code.
 
 .. _avtime:
 .. table:: average match time per discipline
