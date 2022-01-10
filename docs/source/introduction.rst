@@ -2,12 +2,12 @@
 Introduction & Used Algorithms
 ******************************
 
-Scheduling of sports tournaments can be approximated with the so-called multiprocessor scheduling, a known NP-hard problem of computer science.  With this, the goal is to find a :term:`minimum end-time` :math:`ET_{min}` of the tournament with the distribution of the different categories on a given number of :term:`competition area` s :math:`T`. A :term:`category` here is defined in agreement with the Organization and Sporting Code (Version 3.1)  OSC_ of the Ju-Jitsu International Federation (JJIF) under paragraph 1.3 (Disciplines, Divisions and Categories). However, the program shall also provide a base for integrating more disciplines or other sports.
+Scheduling of sports tournaments can be approximated with the so-called multiprocessor scheduling, a known NP-hard computer science problem.  With this, the goal is to find a :term:`minimum end-time` :math:`ET_{min}` of the tournament by distributing of the different categories on a given number of :term:`competition area` s :math:`T`. A :term:`category` here is defined in agreement with the Organization and Sporting Code (Version 3.1)  OSC_ of the Ju-Jitsu International Federation (JJIF) under paragraph 1.3 (Disciplines, Divisions and Categories). However, the program shall also provide a base for integrating more disciplines or other sports.
 
 
 Creation of input data
 ======================
-The first step is the creation of the input data. Since the names of categories in the tournament calculator are based on 1.3.3 of the OSC, the user only needs to select one or more :term:`age category` [#]_  and :term:`discipline` [#]_. All categories are created, and the user is asked to add the number of :term:`athletes/couples` for each category. Based on the competition systems (as defined in the OSC under 4.4) the :term:`number of matches` :math:`N_{m}(n_{a})` for each category is known and can be described the following.
+The first step is the creation of the input data. Since the names of categories in the tournament calculator are based on 1.3.3 of the OSC, the user only needs to select one or more :term:`age division` [#]_  and :term:`discipline` [#]_. All categories are created, and the user is asked to add the number of :term:`athletes/couples` for each category. Based on the competition systems (as defined in the OSC under 4.4) the :term:`number of matches` :math:`N_{m}(n_{a})` for each category is known and can be described the following.
 
 .. math::
     N_{m}(n_{a})= \begin{cases}
@@ -23,23 +23,26 @@ The first step is the creation of the input data. Since the names of categories 
 
     Number of matches :math:`N_{m}` as a function of the number of athletes :math:`n_{a}`.
     
-The :term:`individual time` :math:`l` for each category can be calculated as on the number of matches :math:`N_{m}` times the :term:`average match time per discipline` :math:`<t_{x}>` (See :numref:`avtime` average match time per discipline). The average match time covers the span between starting one match and starting of the next match, including interruptions of the fight and the change of the fighters. This value is based on the experience and used in [SD, JJW, SM]. It may vary based on the place and the tournament time and can be individually adjusted in the software.
+The :term:`individual time` :math:`l` for each category can be calculated as on the number of matches :math:`N_{m}` times the :term:`average match time per discipline` :math:`<t_{x}>` (See :ref:`avtime`_ average match time per discipline). 
+The average match time covers the span between starting one match and starting of the next match, including interruptions of the fight and the change of the fighters. This value is based on the experience and used in the competition software SD, JJW, SM]. It may vary based on the place and the tournament time and can be individually adjusted in the software.
 
 .. _avtime:
 .. table:: average match time per discipline
     :align: center
     
-    +------------+------------------------------------+
-    | Discipline | Average match time :math:`<t_{x}>` |
-    +============+====================================+
-    | Jiu-Jitsu  | 8 min                              |
-    +------------+------------------------------------+
-    | Fighting   | 6 min 30 sec                       |
-    +------------+------------------------------------+
-    | Duo        | 7 min                              |
-    +------------+------------------------------------+
-    | Show       | 3 min                              |
-    +------------+------------------------------------+
+    +------------+-----------------------------------+
+    | Discipline | Average match time :math:`<t_{x}>`|
+    +============+========+========+========+========+
+    |            | Adults | U21    | U18    | U16    |
+    +------------+--------+--------+--------+--------+
+    | Jiu-Jitsu  | 8 min  | 7 min  | 6 min  | 8 min  |
+    +------------+--------+--------+--------+--------+
+    | Fighting   | 7 min  | 7 min  | 7 min  | 6 min  |
+    +------------+--------+--------+--------+--------+
+    | Duo        | 7 min  | 7 min  | 7 min  | 5 min  |
+    +------------+--------+--------+--------+--------+
+    | Show       | 4 min  | 4 min  | 4 min  | 4 min  |
+    +------------+--------+--------+--------+--------+
 
 The individual time :math:`l_{xy}` is calculated as the following:
 
@@ -214,9 +217,10 @@ The default penalty time is 30 min. However the penalty time is rather arbitrary
 Other results might be found by using different penalty factors.
 Therefore the parameter is varied from 15 min to 45 min.
 
+.. _best_result:
 
 The *best* results 
-------------------
+==================
 
 The algorithm will run for each combination of happiness value and penalty factor and determines which is the permutation that gives the best result. 
 If less than four disciplines are used for a day the "first" appearing permutation is used. 
@@ -258,7 +262,7 @@ Curious? You can test the algorithm on this webpage_
 .. _permutations:
     https://en.wikipedia.org/wiki/Permutation
 
-.. _OSC: http://www.jjif.org/fileadmin/documents/Competition-Ranking/Organization_and_sporting_code_2020.pdf
+.. _OSC: https://stg.jjif.sport/wp-content/uploads/2020/05/Organization_and_sporting_code_2020.pdf
 
 .. _Referee:
     http://jjif.org/fileadmin/JJIF/minutes/board/_MINUTES_5th_JJIF_Board_Abu_Dhabi__.4.2017.pdf
@@ -276,8 +280,8 @@ Glossary
 ========
 
 .. glossary::
-    age category
-        An age category defines the minimum and maximum age of a participant
+    age division
+        An age division defines the minimum and maximum age of a participant
         
     minimum end-time
         The time after the last match has finished :math:`ET_{min}`

@@ -2,16 +2,15 @@
 
 it does all the mathematics and return the right order of the categories
 """
-import os
+
 from datetime import timedelta
-import tourcalc
-import pandas as pd
-from pathlib import Path
 import itertools  # for permutations of discipline order
+import pandas as pd
 import numpy as np
 
+
 # some global variables
-AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age categories
+AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age divisions
 # order does not matter -> permutations
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]
 # just a name
@@ -53,8 +52,8 @@ def descition_matrix(cat_time_dict,
     # array for all possible outcomes
     scheduled_jobs = np.array([[[None] * tatami] * len(permutations_list)] * DIS_CHA_TIME)
     loads = np.array([[[None] * tatami] * len(permutations_list)] * DIS_CHA_TIME)
-    cat_time_dict_new = np.array([[None]* len(permutations_list)] * DIS_CHA_TIME)
-    pen_time_list = list(range(DIS_CHA_TIME//2, DIS_CHA_TIME+DIS_CHA_TIME//2))
+    cat_time_dict_new = np.array([[None] * len(permutations_list)] * DIS_CHA_TIME)
+    pen_time_list = list(range(DIS_CHA_TIME // 2, DIS_CHA_TIME+DIS_CHA_TIME // 2))
     happiness = [x / 10.0 for x in range(0, 20)]
 
     time_max = np.array([[None] * len(pen_time_list)] * len(happiness))
@@ -119,7 +118,7 @@ def write_tour_file(tour_name,
     start_time
         time when the event should happen [dateime]
     date
-        data of the first day of the event     
+        date of the first day of the event [dateime]
     break_t
         type of the break that is used [individual, block, no break]
     '''
@@ -132,14 +131,13 @@ def write_tour_file(tour_name,
     if final is True:
         tour_file.write("finalblock;YES\n")
     else:
-        tour_file.write("finallblock;NO\n")
+        tour_file.write("finalblock;NO\n")
     tour_file.write("breaktype;" + str(break_t) + "\n")
     tour_file.write("startime;" + str(start_time.seconds) + "\n")
     tour_file.write("date;" + str(date) + "\n")
     for cat_name, par_num in cat_par.items():
         day = cat_dict_day[cat_name]
-        tour_file.write(str(cat_name) + ";" +
-                        str(par_num) + ";" + str(day) + "\n")
+        tour_file.write(str(cat_name) + ";" + str(par_num) + ";" + str(day) + "\n")
 
     tour_file.close()
 
@@ -185,7 +183,7 @@ def cal_cat(age_select, dis_select):
     Parameters
     -----------
     age_select
-         selected age categories [list]
+        selected age divisions [list]
     dis_select
         selected disciplines [list]
     '''
@@ -201,7 +199,7 @@ def cal_cat(age_select, dis_select):
     cat_team = {"Female", "Male", "Mixed"}
 
     cat_all = []
-    for i in age_select:  # Looping AgeCategories
+    for i in age_select:  # Looping AgeDivisions
         for j in dis_select:  # Looping Disciplines
             if j in ("Duo", "Show"):
                 for k in cat_team:
@@ -288,7 +286,7 @@ def calculate_fight_time(dict_inp, final, tatami):
             if par_num < 8:
                 fight_num += low_par_num.get(par_num)
             else:
-                fight_num += (par_num-8)*2 + 11
+                fight_num += (par_num - 8) * 2 + 11
 
         fight_num_total += fight_num
         par_num_total += par_num  # add all participants
@@ -301,7 +299,7 @@ def calculate_fight_time(dict_inp, final, tatami):
                 cat_fights_dict[cat_name] = fight_num
         fight_num_total += len(cat_finals_dict)
 
-    av_time = tot_time/int(tatami)
+    av_time = tot_time / int(tatami)
 
     return cat_fights_dict, cat_finals_dict, cat_time_dict, \
         av_time, par_num_total, fight_num_total, tot_time, final_time
@@ -386,7 +384,7 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
             remove = False
 
             # Step a) creates all of "full" tatamis
-            for _ in range(0, time_needed[i]//av_time.seconds):
+            for _ in range(0, time_needed[i] // av_time.seconds):
                 if len(loads) < tatami:
                     loads.append(0)  # create loads for tatamis
                     scheduled_jobs.append([])  # create tatamis
@@ -401,18 +399,18 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
             elif i == 0:  # extra tatami is needed for first rounds
                 scheduled_jobs.append([])  # add empty tatami
                 # adds the time to the tatami
-                loads.append(extra_time_t+cur_pen_time)
+                loads.append(extra_time_t + cur_pen_time)
                 remove = True
-                remove_tat = len(scheduled_jobs)-1
-            elif loads[remove_tat] > (extra_time_t-cur_pen_time):
+                remove_tat = len(scheduled_jobs) - 1
+            elif loads[remove_tat] > (extra_time_t - cur_pen_time):
                 # extra tatami is needed
 
                 # add empty tatami
                 scheduled_jobs.append([])
                 # adds the time to the tatami
-                loads.append(extra_time_t+cur_pen_time)
+                loads.append(extra_time_t + cur_pen_time)
                 remove = True
-                remove_tat = len(scheduled_jobs)-1
+                remove_tat = len(scheduled_jobs) - 1
             else:
                 pass
 
@@ -464,14 +462,14 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
             for tat_used in range(0, len(loads)):
                 if len(scheduled_jobs[tat_used]) > 0 and scheduled_jobs[tat_used][-1] is not DIS_CHA and scheduled_jobs[tat_used][-1] is not BREAK:
                     scheduled_jobs[tat_used].append(DIS_CHA)
-                    loads[tat_used] += cur_pen_time*60
+                    loads[tat_used] += cur_pen_time * 60
 
     for tat_used in range(0, len(loads)):
         if len(scheduled_jobs[tat_used]) > 0 and scheduled_jobs[tat_used][-1] is DIS_CHA:
             scheduled_jobs[tat_used].pop()
-            loads[tat_used] -= cur_pen_time*60
-    #if(cur_pen_time == 25 and 
-    #cur_per == ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu')):
+            loads[tat_used] -= cur_pen_time * 60
+    # if(cur_pen_time == 25 and
+    # cur_per == ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu')):
 
     return scheduled_jobs, loads, jobs_new
 

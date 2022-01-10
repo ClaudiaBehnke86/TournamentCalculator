@@ -27,10 +27,10 @@ from tourcalc.calculator import cal_cat
 from tourcalc.calculator import read_in_file
 from tourcalc.calculator import calculate_fight_time
 
-AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age categories
+AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age divisions
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]  # supported disciplines
 
-AGE_SEL = []  # an empty list to select the age categories
+AGE_SEL = []  # an empty list to select the age divisions
 DIS_SEL = []  # an empty list to select the age categories
 
 DIS_CHA = "Discipline change"  # indicator of a change of a discipline
@@ -242,7 +242,7 @@ if uploaded_file is not None:
         if ("Adults" in cat_name) and ("Adults" not in AGE_SEL):
             AGE_SEL.append("Adults")
         if len(AGE_SEL) == 0:
-            st.write("No age categories in input file")
+            st.write("No age divisions in input file")
 
         if ("Show" in cat_name) and ("Show" not in DIS_SEL):
             DIS_SEL.append("Show")
@@ -279,7 +279,7 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
             if ("Adults" in cat_name) and ("Adults" not in AGE_SEL):
                 AGE_SEL.append("Adults")
             if len(AGE_SEL) == 0:
-                st.write("No age categories in input file")
+                st.write("No age divisions in input file")
 
             if ("Show" in cat_name) and ("Show" not in DIS_SEL):
                 DIS_SEL.append("Show")
@@ -322,7 +322,7 @@ end_time_final = [time(00, 00)] * int(days)
 end_time_prelim = [time(00, 00)] * int(days)
 
 
-age_select = st.multiselect('Select the participating age categories',
+age_select = st.multiselect('Select the participating age divisions',
                             AGE_INP,
                             AGE_SEL)
 dis_select = st.multiselect('Select the participating disciplines',

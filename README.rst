@@ -7,10 +7,8 @@ You can use this program in two ways:
 Use deployed app
 ================
 
-Go on:
-`this page <https://share.streamlit.io/claudiabehnke86/tournamentcalculator/tourcalc/theapp.py>`_
-
-use `the tutorial <https://tournamentcalculator.readthedocs.io/en/latest/introduction.html>`_
+Go on `this page <https://share.streamlit.io/claudiabehnke86/tournamentcalculator/tourcalc/theapp.py>`_
+and use `the tutorial <https://tournamentcalculator.readthedocs.io/en/latest/introduction.html>`_
 on to understand what it does
 
 Installation own instance
@@ -26,6 +24,7 @@ The package consist of two files:
     theapp.py
 
 To create the module type
+
 .. code-block::
 
     pip install tourcalc

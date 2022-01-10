@@ -9,7 +9,101 @@ Once the app starts you will see a GUI like in this:
 
     First input fields of the GUI 
 
-=======================
+
+Read in tournaments 
+===================
+
+The app allows you to either read in tournament an example tournament, a tournament from a file or create a new event. 
+
+If want to create a new tournament from scratch you do not need to add anything and to not use any file 
+
+.. _read_in:
+.. figure:: pictures/read_in.png
+
+    Read in tournament 
+
+
+Read in example tournament 
+--------------------------
+
+If the name of the tournament was used before you have two options:
+
+#. *Use* -  Will read in all parameters stored in the text file
+#. *Overwrite* - Creates an empty event and overwrites the existing file
+
+.. _exist:
+.. figure:: pictures/exist_tour.png
+
+    Options for existing tournament 
+
+
+
+The app has in version 0.9 the following pre-made tournaments:
+
+.. _premade:
+.. table:: existing tournaments in online app
+    :align: center
+    
+    +--------------+------------------------------------+
+    | Name         | Description                        |
+    +==============+====================================+
+    | Adults_2days | test event [#]_                    |
+    |              | 2 days, adults & all disciplines   |    
+    +--------------+------------------------------------+
+    | U21_U18_3days| 3 days, U21&U18, all disciplines   |
+    +--------------+------------------------------------+
+    | WCh21        | the World Championship 2021        |
+    |              | 9 days, all ages & disciplines     | 
+    +--------------+------------------------------------+
+  
+.. [#] Was used to generate the pictures in this tutorial
+
+You can always use the "show example tournaments button" to check which events are available.
+
+If you reuse and existing tournament the entries (number of athletes and day) 
+for all categories are imported and filled. You can still modify them by using the +/- button or by entering a number to the field. 
+
+.. _read_in_tour:
+
+Read in tournament - from file
+------------------------------
+
+Once you have created a tournament you can always read it back in from an .csv file.
+It's the best if you create the input file by saving the data from (See :ref:`save_data`) an event to make sure to have the right structure. 
+
+Structure of input file
+^^^^^^^^^^^^^^^^^^^^^^^
+
+This is an example how  the input data should look like:
+
+.. code-block::
+
+    categories;participants;day
+    tatamis;5
+    days;2
+    finalblock;YES
+    breaktype;Individual
+    startime;32400
+    date;2022-01-10
+    Adults Duo Male;7;2
+    Adults Duo Mixed;6;1
+    Adults Duo Female;10;2
+    Adults Show Male;7;1
+    Adults Show Mixed;12;1
+    Adults Show Female;6;2
+    Adults Jiu-Jitsu Male 56kg;3;1
+    Adults Jiu-Jitsu Male 62kg;8;2
+    Adults Jiu-Jitsu Male 69kg;5;1
+    Adults Jiu-Jitsu Male 77kg;14;2
+    Adults Jiu-Jitsu Male 85kg;14;2
+    Adults Jiu-Jitsu Male 94kg;6;2
+    Adults Jiu-Jitsu Male 95kg;7;1
+    Adults Jiu-Jitsu Female 45kg;19;2
+    Adults Jiu-Jitsu Female 48kg;1;1
+    Adults Jiu-Jitsu Female 52kg;7;1
+    Adults Jiu-Jitsu Female 57kg;6;2
+
+
 Create a new tournament 
 =======================
 
@@ -26,7 +120,6 @@ The first day of the event can set used fur multi day events. Then all figures s
 
 While the name, the tatamis (competition areas) and days are trivial the two field 
 on the left have some implication for the program.
-
 
 
 Final block
@@ -67,16 +160,16 @@ You can choose between three different types of breaks:
 .. _break_ind:
 .. figure:: pictures/break_indi.png
 
-    Individual breads are added
+    Individual breaks are added
 
 .. _break_block:
 .. figure:: pictures/break_block.png
 
-    A block of breads are added
+    A block of breaks are added
 
 The time and the length of the break can be adapted in the settings per day 
 
-======================
+
 Adding of participants 
 ======================
 
@@ -88,7 +181,7 @@ Using the selection field:
     
     Selection to add participants
 
-One can select the following age categories:
+One can select the following age divisions:
 
 .. _age_sel:
 .. figure:: pictures/age_sel.png
@@ -98,7 +191,7 @@ And the following disciples
 .. _dis_sel:
 .. figure:: pictures/dis_sel.png
 
-Once the participating age categories and disciples are crated one 
+Once the participating age divisions and disciples are crated one 
 can hide/unhide the categories and enter participants in each discipline.
 This can be done by using the +/- button or by entering a number to the field.
 
@@ -107,76 +200,15 @@ This can be done by using the +/- button or by entering a number to the field.
     
     Options to add to participants 
 
-Read in existing tournament 
----------------------------
 
-If the name of the tournament was used before you have two options:
-
-#. *Use*  Will read in all parameters stored in the text file
-#. *Overwrite* Creates an empty event and overwrites the existing file
-
-.. _start:
-.. figure:: pictures/exist_tour.png
-
-    Options for existing tournament 
+Adding "random" participants
+-----------------------------
 
 
-The app has in version 0.9 the following pre-made tournaments:
-
-.. _premade:
-.. table:: excising tournaments in online app
-    :align: center
+.. _random:
+.. figure:: pictures/random.png
     
-    +--------------+------------------------------------+
-    | Name         | Description                        |
-    +==============+====================================+
-    | random       | the default event                  |
-    |              | for the random generator           |
-    +--------------+------------------------------------+
-    | Adults_2days | test event [#]_                    |
-    |              | 2 days, adults & all disciplines   |    
-    +--------------+------------------------------------+
-    | WCh21        | the World Championship 2021        |
-    |              | 9 days, all ages & disciplines     | 
-    +--------------+------------------------------------+
-  
-.. [#] Was used to generate the pictures in this tutorial
-
-You can always use the "show example tournaments button" to check which events are available.
-
-If you reuse and existing tournament the entries (number of athletes and day) 
-for all categories are imported and filled. You can still modify them by using the +/- button or by entering a number to the field. 
-
-Structure of input file
-^^^^^^^^^^^^^^^^^^^^^^^
-
-At the moment only developers can add tournament test files.
-If you want to have your event as a testing event create a .txt file and make a pull request or 
-contact the developers.
-
-.. code-block::
-
-    Tournament: test 
-    Tatamis: 5 
-    Days: 2
-    Finalblock: YES 
-    Breaktype: Individual
-    Startime: 32400
-    Adults Fighting Male 56kg 11 1
-    Adults Fighting Male 62kg 15 2
-    Adults Fighting Male 69kg 7 1
-    Adults Fighting Male 77kg 4 2
-    Adults Fighting Male 85kg 15 2
-    Adults Fighting Male 94kg 13 1
-    Adults Fighting Male 95kg 12 2
-
-
-Create "random" tournament
---------------------------
-
-
-If you name the tournament random the number of athletes and the days for each category will be automatically filled with positive integers, based on:
-
+If you check"random participants" the number of athletes and the days for each category will be automatically filled with positive integers, based on:
 
 .. code-block::
 
@@ -187,15 +219,41 @@ which is a normaldistribution_ with :math:`\mu = 8`, :math:`\sigma = 5.32`.
 This can be used for testing or if one does not exactly know how many participants to expect on a event.
 Please note that the random generator will rerun every time a parameters is changed.  
 
-=======================
+
+.. _save_data:
+
+
+Save the input
+==============
+
+After every run you can save the data of the event as a .csv file using the download button
+
+.. _download:
+.. figure:: pictures/download.png
+
+You can later read it in like described in :ref:`read_in_tour`
+
+
 Change settings per day
 =======================
 
-=======================
+Per day the following parameters can be changed: 
+
+#. *Length of the break* - change the during of the break for this day
+#. *Start time of the break* - change the start time of the break for this day
+#. *Start time of the event* - Change the start time of the event
+#. *Number of tatamis* - Change the number of tatamis for this day 
+
+.. day_set:
+.. figure:: pictures/day_set.png
+
+You can later read it in like described in :ref:`read_in_tour`
+
+
 Understand the results
 =======================
 
-After entering all parameters and pressing the button "all info is correct" the algorthim will run. This should take maximum a few seconds.
+After entering all parameters and pressing the button "all info is correct" the algorithm will run. This should take maximum a few seconds.
 
 You will see an example schedule and some details like in figure :numref:`best_res_show`
 
@@ -204,16 +262,15 @@ You will see an example schedule and some details like in figure :numref:`best_r
     
     Shows the data for the best results  
 
+all other options are hidden under the field:
+There are X possible results for day Y. Open Details
 
-=============================
+Furthermore, you can see the matrix as described in :ref:`best_result`.
+
+
 Known Problems & improvements 
 =============================
 
-Events can not be saved
------------------------
-
-Currently it is only possible for developers to add and store example files. 
-If you create a tournament via the app, the data is not saved.
 
 GUI is not visible
 ------------------
