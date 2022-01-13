@@ -62,7 +62,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
         df_tatami.columns = ['category', 'tatami']
         df_tatami['time'] = df_tatami['category'].replace(cat_time_dict_i)
         df_tatami['end_time'] = np.cumsum(df_tatami['time']).values.astype('datetime64[ns]')
-        df_tatami['end_time'] += timedelta(seconds=start_time_i)
+        df_tatami['end_time'] += start_time_i
         df_tatami['start_time'] = df_tatami['end_time'].shift(
             periods=1
             ).astype('datetime64[ns]')
@@ -71,7 +71,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
 
     df = pd.concat(l_master)
 
-    str_start = str(date) + " " + str(timedelta(seconds=start_time_i))
+    str_start = str(date) + " " + str(start_time_i)
     df.fillna(str_start, inplace=True)
     df['cat_type'] = df['category']
 
@@ -227,7 +227,7 @@ if uploaded_file is not None:
     try:
         date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
     except ValueError:
-        print("Oops!  That was no date number.  Try again...")
+        st.exception("Oops!  That was no date. We will use today")
         date_time_obj = datetime.today()     
     
     cat_par = cat_par_inp
@@ -264,7 +264,7 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
         try:
             date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
         except ValueError:
-            print("Oops!  That was no date number.  Try again...")
+            st.exception("Oops!  That was no date. We will use today")
             date_time_obj = datetime.today()
 
         cat_par = cat_par_inp
@@ -296,30 +296,18 @@ else:
     days = 1
     FINAL = 'YES'
     date_time_obj = datetime.today()
-
+    start_time = time(9,0)
 
 left_column, right_column = st.columns(2)
 
 with left_column:
 
-    TATAMI = st.number_input("Number of tatamis",  value=TATAMI, key='tatami')
-    days = st.number_input("Number of days",  value=days, key='days')
-
+    TATAMI = st.number_input("Number of tatamis", value=TATAMI, key='tatami')
 with right_column:
-    FINAL = st.selectbox('Does the event have a final block',
-                         ('YES', 'NO'), key='final')
-    breaktype = st.selectbox('What type of break do you want',
-                             ('Individual', 'One Block', 'No break'), key='breakt')
-
-FINAL = bool(FINAL == 'YES')
+    days = st.number_input("Number of days", value=days, key='days')
 
 date = st.date_input('First day of the event', value=date_time_obj, key='date')
-tatami_day = [int(TATAMI)] * int(days)
-start_time_day = [time(9, 00)] * int(days)
-bt_day = [time(13, 00)] * int(days)
-breaklength_day = [time(0, 30)] * int(days)
-end_time_final = [time(00, 00)] * int(days)
-end_time_prelim = [time(00, 00)] * int(days)
+
 
 
 age_select = st.multiselect('Select the participating age divisions',
@@ -367,24 +355,57 @@ with st.expander("Hide categories"):
         cat_par[i] = int(inp)
         cat_dict_day[i] = int(day)
 
+
+# The sidebar elements
+st.sidebar.header('Change settings for event')
+
+start_time_wid_day = st.sidebar.time_input('Start time of the event',
+                                           time(9, 0))
+breaktype = st.sidebar.selectbox('What type of break do you want',
+                                 ('Individual', 'One Block', 'No break'), key='breakt')
+breakl_wid_day = st.sidebar.time_input('Length of the break',
+                                       time(0, 30))
+btime_wid_day = st.sidebar.time_input('Start time of the break',
+                                      time(13, 00))
+FINAL = st.sidebar.selectbox('Does the event have a final block',
+                             ('YES', 'NO'), key='final')
+
+# lists with default values
+tatami_day = [int(TATAMI)] * int(days)
+start_time_day = [start_time] * int(days)
+btime_day = [time(13, 00)] * int(days)
+bype_day = [breaktype] * int(days)
+breaklength_day = [time(0, 30)] * int(days)
+end_time_final = [time(00, 00)] * int(days)
+end_time_prelim = [time(00, 00)] * int(days)
+
+
+final_day = [FINAL] * int(days)
+
 j = 0
 while j < int(days):
     with st.expander("Change settings for day "
                      + str(j+1) + " : " + str(date+timedelta(days=j))):
         st.write("with this settings you can fine tune your event ")
-        breakl_wid_day = st.time_input('Length of the break',
-                                       time(0, 30), key=j)
-        bt_wid_day = st.time_input('Start time of the break',
-                                   time(13, 00), key=j)
-        start_time_wid_day = st.time_input('Start time of the event',
-                                           time(9, 00), key=j)
-        tatami_day[j] = int(st.number_input("Number of tatamis",
-                                            value=TATAMI, key=j))
 
+        tatami_day[j] = int(st.number_input("Number of tatamis",
+                                            value=int(TATAMI), key=j))
+        start_time_wid_days = st.time_input('Start time of the event',
+                                            value=start_time_wid_day, key=j)
+        bype_day[j] = st.selectbox('What type of break do you want',
+                                   ('Individual', 'One Block', 'No break'), key=j)
+        btime_wid_day = st.time_input('Start time of the break',
+                                      value=btime_wid_day, key=j)
+        breakl_wid_day = st.time_input('Length of the break',
+                                       value=breakl_wid_day, key=j)
+        final_day[j] = st.selectbox('Does the event have a final block',
+                                    ('YES', 'NO'), key=j)
+        final_day[j] = bool(final_day[j] == 'YES')
+        #convert time to datetime object                                      
         start_time_day[j] = (datetime.combine(date.min,
-                             start_time_wid_day) - datetime.min)
-        bt_day[j] = (datetime.combine(date.min, bt_wid_day)
-                     - datetime.min - start_time_day[j])
+                             start_time_wid_days) - datetime.min)
+        btime_day[j] = (datetime.combine(date.min, btime_wid_day)
+                        - datetime.min)
         breaklength_day[j] = (datetime.combine(date.min,
                                                breakl_wid_day) - datetime.min)
     j += 1
@@ -417,13 +438,14 @@ if st.button('all info is correct'):
         st.write("Tournament: ", tour_name)
         cat_fights_dict, cat_finals_dict, cat_time_dict, \
             av_time, par_num_total, fight_num_total, \
-            tot_time, final_time = calculate_fight_time(cat_par, FINAL, TATAMI)
+            tot_time, final_time = calculate_fight_time(cat_par, final_day[j], TATAMI)
         st.write("There are", tot_par, "participants, which will fight",
                  fight_num_total, " matches in ", len(cat_all),
                  "categories with a total time fight time of (HH:MM:SS)",
                  tot_time+final_time)
         st.markdown("---")
 
+        data = []
         while j < days:
             cat_par_day = {}
             for i in cat_par:
@@ -434,7 +456,7 @@ if st.button('all info is correct'):
                 av_time, par_num_total, fight_num_total, \
                 tot_time, \
                 final_time = calculate_fight_time(cat_par_day,
-                                                  FINAL,
+                                                  final_day[j],
                                                   int(tatami_day[j]))
 
             stringheader = "Day: " + str(date+timedelta(days=j))
@@ -443,7 +465,7 @@ if st.button('all info is correct'):
                      "participants, which will fight", fight_num_total,
                      " matches in ", len(cat_time_dict),
                      "categories with a total time fight time of (HH:MM:SS)",
-                     tot_time+final_time, "  \n You have",
+                     tot_time + final_time, "  \n You have",
                      len(cat_finals_dict),
                      "finals which will take", final_time,
                      "   \n Optimal solution time per tatami will be",
@@ -461,8 +483,8 @@ if st.button('all info is correct'):
                 cat_time_dict_new = descition_matrix(cat_time_dict,
                                                      av_time,
                                                      int(tatami_day[j]),
-                                                     breaktype,
-                                                     bt_day[j],
+                                                     bype_day[j],
+                                                     btime_day[j],
                                                      breaklength_day[j])
 
             best_res = {k: v for k, v in sorted(most_abundand.items(),
@@ -479,16 +501,29 @@ if st.button('all info is correct'):
             fig, end_time_final[j], end_time_prelim[j] = plot_schedule_time(
                      scheduled_jobs[pen_time][permut_num],
                      cat_time_dict_new[pen_time][permut_num],
-                     start_time_day[j].seconds,
+                     start_time_day[j],
                      date+timedelta(days=j), final_time)
 
             st.plotly_chart(fig)
             st.write("Start time day:",
                      str(start_time_day[j]),
                      "  \n Finals can start at: ",
-                     end_time_prelim[j],
+                     str(end_time_prelim[j])[-8:],
                      "  \n Day ends at: ",
-                     str(end_time_final[j]))
+                     str(end_time_final[j])[-8:])
+
+            # workaround to the get right format  
+            start_day_dt = datetime.combine(date, time(0, 0) )
+
+            # add lists for overview 
+            data.append(["Preliminaries",
+                        start_day_dt + start_time_day[j],
+                        datetime.strptime(end_time_prelim[j], "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
+                        str(date + timedelta(days=j))])
+            data.append(["Final",
+                        datetime.strptime(end_time_prelim[j], "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
+                        end_time_final[j] - timedelta(days=j),
+                        str(date + timedelta(days=j))])
 
             LABEL = "There are " + str(len(most_abundand)) + \
                     " possible results for day "\
@@ -506,19 +541,19 @@ if st.button('all info is correct'):
                              best_res[permut_num],
                              "times")
 
-                    fig, end_time_final[j], end_time_prelim[j] = plot_schedule_time(
-                             scheduled_jobs[pen_time][permut_num],
-                             cat_time_dict_new[pen_time][permut_num],
-                             start_time_day[j].seconds,
-                             date+timedelta(days=j), final_time)
+                    fig, end_time_final[j], end_time_prelim[j] \
+                        = plot_schedule_time(scheduled_jobs[pen_time][permut_num],
+                                             cat_time_dict_new[pen_time][permut_num],
+                                             start_time_day[j],
+                                             date+timedelta(days=j), final_time)
 
                     st.plotly_chart(fig)
                     st.write("Start time day:",
-                             str(start_time_day[j]),
+                             str(start_time_day[j])[-8:],
                              "  \n Final can start at: ",
-                             end_time_prelim[j],
+                             str(end_time_prelim[j])[-8:],
                              "  \n Day ends at: ",
-                             str(end_time_final[j]))
+                             str(end_time_final[j])[-8:])
                     k += 1
 
                 st.write("Matrix with the results")
@@ -531,3 +566,8 @@ if st.button('all info is correct'):
             cat_par_day.clear()
             st.markdown("---")
             j += 1
+
+        st.header("overview for all days")
+        df = pd.DataFrame(data, columns=['Type', 'Begin', 'End', 'day'])
+        fig = px.timeline(df, x_start='Begin', x_end='End', color='Type', text='day')
+        st.write(fig)
