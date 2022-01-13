@@ -133,7 +133,7 @@ def write_tour_file(tour_name,
     else:
         tour_file.write("finalblock;NO\n")
     tour_file.write("breaktype;" + str(break_t) + "\n")
-    tour_file.write("startime;" + str(start_time.seconds) + "\n")
+    tour_file.write("startime;" + str(start_time) + "\n")
     tour_file.write("date;" + str(date) + "\n")
     for cat_name, par_num in cat_par.items():
         day = cat_dict_day[cat_name]
@@ -223,7 +223,7 @@ def cal_cat(age_select, dis_select):
     return cat_all
 
 
-def calculate_fight_time(dict_inp, final, tatami):
+def calculate_fight_time(dict_inp, final):
     '''calculate the fight time
 
     Parameters
@@ -299,10 +299,10 @@ def calculate_fight_time(dict_inp, final, tatami):
                 cat_fights_dict[cat_name] = fight_num
         fight_num_total += len(cat_finals_dict)
 
-    av_time = tot_time / int(tatami)
+    
 
     return cat_fights_dict, cat_finals_dict, cat_time_dict, \
-        av_time, par_num_total, fight_num_total, tot_time, final_time
+        par_num_total, fight_num_total, tot_time, final_time
 
 
 def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,

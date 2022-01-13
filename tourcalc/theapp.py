@@ -8,7 +8,7 @@ more details see installation
 
 """
 import os
-from datetime import time, datetime, timedelta, timezone
+from datetime import time, datetime, timedelta
 import itertools  # for permutations of discipline order
 from pathlib import Path
 import math
@@ -17,8 +17,6 @@ import plotly.express as px
 import plotly.figure_factory as ff
 import streamlit as st
 import numpy as np
-import pytz
-from io import StringIO
 
 import tourcalc
 from tourcalc.calculator import write_tour_file
@@ -197,6 +195,8 @@ permutations_list = list(permutations_object)
 cat_par = {}  # number of participants
 cat_dict_day = {}  # day per category
 
+st.header('Tournament Calculator')
+
 LINK = '[Click here for tutorial] \
     (https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
 st.markdown(LINK, unsafe_allow_html=True)
@@ -218,18 +218,20 @@ with left_column_2:
         st.write(filenames)
 
 with right_column_2:
-    uploaded_file = st.file_uploader("Choose a file", help="Make sure to have a CSV with the right input")
+    uploaded_file = st.file_uploader("Choose a file",
+                                     help="Make sure to have a CSV with the right input")
 
-
-if uploaded_file is not None:       
+if uploaded_file is not None:
     cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
-            start_time, breaktype, date_inp = read_in_file(uploaded_file)        
+        start_time, breaktype, date_inp = read_in_file(uploaded_file)
+    tour_name = str(uploaded_file.name)[:-4]
+
     try:
         date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
     except ValueError:
-        st.exception("Oops!  That was no date. We will use today")
-        date_time_obj = datetime.today()     
-    
+        st.exception("Oops! That was no date. We will use today")
+        date_time_obj = datetime.today()
+
     cat_par = cat_par_inp
 
     for cat_name in cat_par_inp:  # loop over dictionary
@@ -264,7 +266,7 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
         try:
             date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
         except ValueError:
-            st.exception("Oops!  That was no date. We will use today")
+            st.exception("Oops! That was no date. We will use today")
             date_time_obj = datetime.today()
 
         cat_par = cat_par_inp
@@ -292,11 +294,11 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
             if len(DIS_SEL) == 0:
                 st.write("No disciplines in input file")
 else:
-    TATAMI = 1
+    TATAMI = 3
     days = 1
-    FINAL = 'YES'
+    FINAL = True
     date_time_obj = datetime.today()
-    start_time = time(9,0)
+    start_time = time(9, 0)
 
 left_column, right_column = st.columns(2)
 
@@ -307,8 +309,6 @@ with right_column:
     days = st.number_input("Number of days", value=days, key='days')
 
 date = st.date_input('First day of the event', value=date_time_obj, key='date')
-
-
 
 age_select = st.multiselect('Select the participating age divisions',
                             AGE_INP,
@@ -367,8 +367,10 @@ breakl_wid_day = st.sidebar.time_input('Length of the break',
                                        time(0, 30))
 btime_wid_day = st.sidebar.time_input('Start time of the break',
                                       time(13, 00))
-FINAL = st.sidebar.selectbox('Does the event have a final block',
-                             ('YES', 'NO'), key='final')
+FINAL = st.sidebar.checkbox('Final block',
+                            help='If you check this box the event will have a separate final block',
+                            value=FINAL)
+final_show = st.sidebar.checkbox('Add time for a final show')
 
 # lists with default values
 tatami_day = [int(TATAMI)] * int(days)
@@ -378,14 +380,11 @@ bype_day = [breaktype] * int(days)
 breaklength_day = [time(0, 30)] * int(days)
 end_time_final = [time(00, 00)] * int(days)
 end_time_prelim = [time(00, 00)] * int(days)
-
-
 final_day = [FINAL] * int(days)
 
-j = 0
-while j < int(days):
+for j in range(0, days):
     with st.expander("Change settings for day "
-                     + str(j+1) + " : " + str(date+timedelta(days=j))):
+                     + str(j + 1) + " : " + str(date + timedelta(days=j))):
         st.write("with this settings you can fine tune your event ")
 
         tatami_day[j] = int(st.number_input("Number of tatamis",
@@ -398,17 +397,14 @@ while j < int(days):
                                       value=btime_wid_day, key=j)
         breakl_wid_day = st.time_input('Length of the break',
                                        value=breakl_wid_day, key=j)
-        final_day[j] = st.selectbox('Does the event have a final block',
-                                    ('YES', 'NO'), key=j)
-        final_day[j] = bool(final_day[j] == 'YES')
-        #convert time to datetime object                                      
+        final_day[j] = st.checkbox('Final block', value=FINAL, key=j)
+        # convert time to datetime object
         start_time_day[j] = (datetime.combine(date.min,
                              start_time_wid_days) - datetime.min)
-        btime_day[j] = (datetime.combine(date.min, btime_wid_day)
-                        - datetime.min)
+        btime_day[j] = (datetime.combine(date.min, btime_wid_day) -
+                        datetime.min)
         breaklength_day[j] = (datetime.combine(date.min,
-                                               breakl_wid_day) - datetime.min)
-    j += 1
+                              breakl_wid_day) - datetime.min)
 
 if st.button('all info is correct'):
     tour_file = write_tour_file(tour_name,
@@ -417,16 +413,15 @@ if st.button('all info is correct'):
                                 TATAMI,
                                 days,
                                 FINAL,
-                                start_time_day[0],
+                                start_time,
                                 date,
                                 breaktype)
-
     with open(fname, "r") as file:
         btn = st.download_button(
-             label="Download data from event",
-             data=file,
-             file_name=fname,
-             mime="csv")
+            label="Download data from event",
+            data=file,
+            file_name=fname,
+            mime="csv")
 
     if tot_par == 0:
         st.write("Please add at least one athlete")
@@ -434,32 +429,31 @@ if st.button('all info is correct'):
         st.write("You have more tatamis than disciplines, \
                  please add disciplines or reduce tatamis")
     else:
-        j = 0
         st.write("Tournament: ", tour_name)
         cat_fights_dict, cat_finals_dict, cat_time_dict, \
-            av_time, par_num_total, fight_num_total, \
-            tot_time, final_time = calculate_fight_time(cat_par, final_day[j], TATAMI)
+            par_num_total, fight_num_total, \
+            tot_time, final_time = calculate_fight_time(cat_par, FINAL)
         st.write("There are", tot_par, "participants, which will fight",
                  fight_num_total, " matches in ", len(cat_all),
                  "categories with a total time fight time of (HH:MM:SS)",
-                 tot_time+final_time)
+                 tot_time + final_time)
         st.markdown("---")
 
         data = []
-        while j < days:
+        for j in range(0, days):
             cat_par_day = {}
             for i in cat_par:
                 if cat_dict_day[i] == j+1:
                     cat_par_day[i] = int(cat_par.get(i))
 
             cat_fights_dict, cat_finals_dict, cat_time_dict, \
-                av_time, par_num_total, fight_num_total, \
+                par_num_total, fight_num_total, \
                 tot_time, \
                 final_time = calculate_fight_time(cat_par_day,
-                                                  final_day[j],
-                                                  int(tatami_day[j]))
+                                                  final_day[j])
+            av_time = tot_time / int(tatami_day[j])
 
-            stringheader = "Day: " + str(date+timedelta(days=j))
+            stringheader = "Day: " + str(date + timedelta(days=j))
             st.header(stringheader)
             st.write("There are", par_num_total,
                      "participants, which will fight", fight_num_total,
@@ -471,6 +465,7 @@ if st.button('all info is correct'):
                      "   \n Optimal solution time per tatami will be",
                      av_time, "with", tatami_day[j],
                      "tatamis.")
+
 
             # add an entry for penalty time in dict!
             cat_time_dict[DIS_CHA] = timedelta(minutes=DIS_CHA_TIME)
@@ -512,10 +507,10 @@ if st.button('all info is correct'):
                      "  \n Day ends at: ",
                      str(end_time_final[j])[-8:])
 
-            # workaround to the get right format  
-            start_day_dt = datetime.combine(date, time(0, 0) )
+            # workaround to the get right format
+            start_day_dt = datetime.combine(date, time(0, 0))
 
-            # add lists for overview 
+            # add lists for overview
             data.append(["Preliminaries",
                         start_day_dt + start_time_day[j],
                         datetime.strptime(end_time_prelim[j], "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
@@ -527,7 +522,7 @@ if st.button('all info is correct'):
 
             LABEL = "There are " + str(len(most_abundand)) + \
                     " possible results for day "\
-                    + str(j+1)+". Open Details"
+                    + str(j + 1) + ". Open Details"
 
             with st.expander(LABEL):
                 k = 1
@@ -567,7 +562,7 @@ if st.button('all info is correct'):
             st.markdown("---")
             j += 1
 
-        st.header("overview for all days")
+        st.header("Overview for all days")
         df = pd.DataFrame(data, columns=['Type', 'Begin', 'End', 'day'])
         fig = px.timeline(df, x_start='Begin', x_end='End', color='Type', text='day')
         st.write(fig)
