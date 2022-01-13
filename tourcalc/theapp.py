@@ -233,6 +233,12 @@ if uploaded_file is not None:
         st.exception("Oops! That was no date. We will use today")
         date_time_obj = datetime.today()
 
+    try:
+        start_time = datetime.strptime(start_time, "%H:%M:%S").time()
+    except ValueError:
+        st.exception("Oops! That was no time. We will use 9:00")
+        start_time = time(9, 0) 
+
     cat_par = cat_par_inp
 
     for cat_name in cat_par_inp:  # loop over dictionary
@@ -270,6 +276,12 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
             st.exception("Oops! That was no date. We will use today")
             date_time_obj = datetime.today()
 
+        try:
+            start_time = datetime.strptime(start_time, "%H:%M:%S").time()
+        except ValueError:
+            st.exception("Oops! That was no time. We will use 9:00")
+            start_time = time(9, 0) 
+                
         cat_par = cat_par_inp
 
         for cat_name in cat_par_inp:  # loop over dictionary
@@ -294,6 +306,12 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
                 DIS_SEL.append("Jiu-Jitsu")
             if len(DIS_SEL) == 0:
                 st.write("No disciplines in input file")
+    else:
+        TATAMI = 3
+        days = 1
+        FINAL = True
+        date_time_obj = datetime.today()
+        start_time = time(9, 0)                
 else:
     TATAMI = 3
     days = 1
@@ -361,7 +379,7 @@ with st.expander("Hide categories"):
 st.sidebar.header('Change settings for event')
 
 start_time_wid_day = st.sidebar.time_input('Start time of the event',
-                                           time(9, 0))
+                                           value = start_time)
 breaktype = st.sidebar.selectbox('What type of break do you want',
                                  ('Individual', 'One Block', 'No break'), key='breakt')
 breakl_wid_day = st.sidebar.time_input('Length of the break',
