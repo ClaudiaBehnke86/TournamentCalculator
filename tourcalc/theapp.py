@@ -392,7 +392,10 @@ FINAL = st.sidebar.checkbox('Final block',
 SPLIT = st.sidebar.checkbox('Split large categories',
                             help= 'If a category is larger than the average end \
                             time if is split on 2 tatamis, 1/3 and 2/3')
-final_show = st.sidebar.checkbox('Add time for a final show')
+final_show = st.sidebar.checkbox('Final show & awards',
+                                help='Adds additional time for entrance and awards')
+if final_show == True:
+    show_extra_t = st.sidebar.number_input('Add time for show in minutes',value = 7 ) 
 
 # lists with default values
 tatami_day = [int(TATAMI)] * int(days)
@@ -476,6 +479,8 @@ if st.button('all info is correct'):
 
             av_time = tot_time / int(tatami_day[j])
 
+            if final_show == True:
+                final_time += len(cat_finals_dict)*timedelta(minutes= show_extra_t)
             stringheader = "Day: " + str(date + timedelta(days=j))
             st.header(stringheader)
             st.write("There are", par_num_total,
