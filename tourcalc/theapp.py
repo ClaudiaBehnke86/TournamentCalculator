@@ -24,6 +24,7 @@ from tourcalc.calculator import descition_matrix
 from tourcalc.calculator import cal_cat
 from tourcalc.calculator import read_in_file
 from tourcalc.calculator import calculate_fight_time
+from tourcalc.calculator import split_categories
 
 AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age divisions
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]  # supported disciplines
@@ -370,6 +371,9 @@ btime_wid_day = st.sidebar.time_input('Start time of the break',
 FINAL = st.sidebar.checkbox('Final block',
                             help='If you check this box the event will have a separate final block',
                             value=FINAL)
+SPLIT = st.sidebar.checkbox('Split large categories',
+                            help= 'If a category is larger than the average end \
+                            time if is split on 2 tatamis, 1/3 and 2/3')
 final_show = st.sidebar.checkbox('Add time for a final show')
 
 # lists with default values
@@ -382,7 +386,7 @@ end_time_final = [time(00, 00)] * int(days)
 end_time_prelim = [time(00, 00)] * int(days)
 final_day = [FINAL] * int(days)
 
-for j in range(0, days):
+for j in range(0, int(days)):
     with st.expander("Change settings for day "
                      + str(j + 1) + " : " + str(date + timedelta(days=j))):
         st.write("with this settings you can fine tune your event ")
@@ -451,6 +455,7 @@ if st.button('all info is correct'):
                 tot_time, \
                 final_time = calculate_fight_time(cat_par_day,
                                                   final_day[j])
+
             av_time = tot_time / int(tatami_day[j])
 
             stringheader = "Day: " + str(date + timedelta(days=j))
@@ -466,6 +471,8 @@ if st.button('all info is correct'):
                      av_time, "with", tatami_day[j],
                      "tatamis.")
 
+            if SPLIT == True:
+                cat_time_dict = split_categories(cat_time_dict, av_time)
 
             # add an entry for penalty time in dict!
             cat_time_dict[DIS_CHA] = timedelta(minutes=DIS_CHA_TIME)

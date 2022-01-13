@@ -259,10 +259,10 @@ def calculate_fight_time(dict_inp, final):
                 "U18 Show": timedelta(minutes=4),
                 "U21 Show": timedelta(minutes=4),
                 "Adults Show": timedelta(minutes=4),
-                "U16 Jiu-Jitsu": timedelta(minutes=5),
-                "U18 Jiu-Jitsu": timedelta(minutes=6),
-                "U21 Jiu-Jitsu": timedelta(minutes=7),
-                "Adults Jiu-Jitsu": timedelta(minutes=8)}
+                "U16 Jiu-Jitsu": timedelta(minutes=4),
+                "U18 Jiu-Jitsu": timedelta(minutes=5),
+                "U21 Jiu-Jitsu": timedelta(minutes=6),
+                "Adults Jiu-Jitsu": timedelta(minutes=7)}
 
     for cat_name in dict_inp:  # loop over dictionary
         par_num = int(dict_inp.get(cat_name))  # number of fights per category
@@ -303,6 +303,30 @@ def calculate_fight_time(dict_inp, final):
 
     return cat_fights_dict, cat_finals_dict, cat_time_dict, \
         par_num_total, fight_num_total, tot_time, final_time
+
+def split_categories(cat_time_dict, av_time):
+    '''
+    If a category is longer than the average time for the day plus 30 min (1800 sec),
+    the category is split in 1/3 and 2/3 and can be planned parallel
+
+    Parameters
+    ----------
+    cat_time_dict
+        dict that links the category to a day [dict (string -> int)]
+    av_time
+        average time per day [timedelta]
+    '''
+    for key, value in cat_time_dict.copy().items():
+        if value.seconds > (av_time.seconds + 1800):
+            cat_p1 = key + " part 1 "
+            cat_p2 = key + " part 2 "
+            time_1 = value.seconds* 2 / 3
+            time_2 = value.seconds* 1 / 3
+            del cat_time_dict[key]
+            cat_time_dict[cat_p1] = timedelta(seconds=time_1)
+            cat_time_dict[cat_p2] = timedelta(seconds=time_2)
+
+    return cat_time_dict
 
 
 def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
