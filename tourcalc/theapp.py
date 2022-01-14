@@ -311,7 +311,7 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
         days = 1
         FINAL = True
         date_time_obj = datetime.today()
-        start_time = time(9, 0)                
+        start_time = time(9, 0)
 else:
     TATAMI = 3
     days = 1
@@ -386,16 +386,21 @@ breakl_wid_day = st.sidebar.time_input('Length of the break',
                                        time(0, 30))
 btime_wid_day = st.sidebar.time_input('Start time of the break',
                                       time(13, 00))
-FINAL = st.sidebar.checkbox('Final block',
-                            help='If you check this box the event will have a separate final block',
-                            value=FINAL)
 SPLIT = st.sidebar.checkbox('Split large categories',
                             help= 'If a category is larger than the average end \
                             time if is split on 2 tatamis, 1/3 and 2/3')
+FINAL = st.sidebar.checkbox('Final block',
+                            help='If you check this box the event will have a separate final block',
+                            value=FINAL)
+if FINAL is True:
+    final_tat = st.sidebar.number_input('Finals tatamis',
+                                        help='On how many tatamis will the finals run',
+                                        value=1)
+
 final_show = st.sidebar.checkbox('Final show & awards',
-                                help='Adds additional time for entrance and awards')
-if final_show == True:
-    show_extra_t = st.sidebar.number_input('Add time for show in minutes',value = 7 ) 
+                                 help='Adds additional time for entrance and awards')
+if final_show is True:
+    show_extra_t = st.sidebar.number_input('Add time for show in minutes', value=7)
 
 # lists with default values
 tatami_day = [int(TATAMI)] * int(days)
@@ -406,6 +411,7 @@ breaklength_day = [time(0, 30)] * int(days)
 end_time_final = [time(00, 00)] * int(days)
 end_time_prelim = [time(00, 00)] * int(days)
 final_day = [FINAL] * int(days)
+final_tat_day = [1] * int(days)
 
 for j in range(0, int(days)):
     with st.expander("Change settings for day "
@@ -423,6 +429,10 @@ for j in range(0, int(days)):
         breakl_wid_day = st.time_input('Length of the break',
                                        value=breakl_wid_day, key=j)
         final_day[j] = st.checkbox('Final block', value=FINAL, key=j)
+        
+        if final_day[j] is True:
+            final_tat_day[j] = st.number_input('Finals tatamis',
+                                               value=final_tat, key=j)
         # convert time to datetime object
         start_time_day[j] = (datetime.combine(date.min,
                              start_time_wid_days) - datetime.min)
@@ -479,6 +489,7 @@ if st.button('all info is correct'):
 
             av_time = tot_time / int(tatami_day[j])
 
+            final_time = final_time / int(final_tat_day[j])
             if final_show == True:
                 final_time += len(cat_finals_dict)*timedelta(minutes= show_extra_t)
             stringheader = "Day: " + str(date + timedelta(days=j))
