@@ -257,11 +257,11 @@ def calculate_fight_time(dict_inp, final):
                 "U16 Show": timedelta(minutes=4),
                 "U18 Show": timedelta(minutes=4),
                 "U21 Show": timedelta(minutes=4),
-                "Adults Show": timedelta(minutes=4),
-                "U16 Jiu-Jitsu": timedelta(minutes=4),
-                "U18 Jiu-Jitsu": timedelta(minutes=5),
-                "U21 Jiu-Jitsu": timedelta(minutes=6),
-                "Adults Jiu-Jitsu": timedelta(minutes=7)}
+                "Adults Show": timedelta(minutes=4, seconds=30),
+                "U16 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
+                "U18 Jiu-Jitsu": timedelta(minutes=4, seconds=30),
+                "U21 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
+                "Adults Jiu-Jitsu": timedelta(minutes=6, seconds=30)}
 
     for cat_name in dict_inp:  # loop over dictionary
         par_num = int(dict_inp.get(cat_name))  # number of fights per category
