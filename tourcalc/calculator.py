@@ -187,15 +187,15 @@ def cal_cat(age_select, dis_select):
         selected disciplines [list]
     '''
 
-    weight_w = [45, 48, 52, 57, 63, 70, 71]
-    weight_w18 = [40, 44, 48, 52, 57, 63, 70, 71]
-    weight_w16 = [32, 36, 40, 44, 48, 52, 57, 63, 64]
+    weight_w = ['-45', '-48', '-52', '-57', '-63', '-70', '+70']
+    weight_w18 = ['-40', '-44', '-48', '-52', '-57', '-63', '-70', '+70']
+    weight_w16 = ['-32', '-36', '-40', '-44', '-48', '-52', '-57', '-63', '+63']
 
-    weight_m = [56, 62, 69, 77, 85, 94, 95]
-    weight_m18 = [46, 50, 55, 60, 66, 73, 81, 82]
-    weight_m16 = [38, 42, 46, 50, 55, 60, 66, 73, 74]
+    weight_m = ['-56', '-62', '-69', '-77', '-85', '-94', '+94']
+    weight_m18 = ['-46', '-50', '-55', '-60', '-66', '-73', '-81', '+81']
+    weight_m16 = ['-38', '-42', '-46', '-50', '-55', '-60', '-66', '-73', '+73']
 
-    cat_team = {"Female", "Male", "Mixed"}
+    cat_team = {"Women", "Men", "Mixed"}
 
     cat_all = []
     for i in age_select:  # Looping AgeDivisions
@@ -205,19 +205,19 @@ def cal_cat(age_select, dis_select):
                     cat_all.append(i + " " + j + " " + k)
             elif i == "U16":
                 for k in weight_m16:
-                    cat_all.append(i + " " + j + " Male " + str(k) + "kg")
+                    cat_all.append(i + " " + j + " Men " + k + "kg")
                 for k in weight_w16:
-                    cat_all.append(i + " " + j + " Female " + str(k) + "kg")
+                    cat_all.append(i + " " + j + " Women " + k + "kg")
             elif i == "U18":
                 for k in weight_m18:
-                    cat_all.append(i + " " + j + " Male " + str(k) + "kg")
+                    cat_all.append(i + " " + j + " Men " + k + "kg")
                 for k in weight_w18:
-                    cat_all.append(i + " " + j + " Female " + str(k) + "kg")
+                    cat_all.append(i + " " + j + " Women " + k + "kg")
             else:
                 for k in weight_m:
-                    cat_all.append(i + " " + j + " Male " + str(k) + "kg")
+                    cat_all.append(i + " " + j + " Men " + k + "kg")
                 for k in weight_w:
-                    cat_all.append(i + " " + j + " Female " + str(k) + "kg")
+                    cat_all.append(i + " " + j + " Female " + k + "kg")
 
     return cat_all
 
@@ -272,7 +272,7 @@ def calculate_fight_time(dict_inp, final):
                     # if name of Discipline is in string of category:
                     if keys in cat_name:
                         cat_finals_dict[cat_name] = time_inp[keys]
-                        final_time += time_inp[keys]*par_num
+                        final_time += time_inp[keys] * par_num
             fight_num = par_num
         else:
             if final is True and par_num > 5:
@@ -298,10 +298,9 @@ def calculate_fight_time(dict_inp, final):
                 cat_fights_dict[cat_name] = fight_num
         fight_num_total += len(cat_finals_dict)
 
-    
-
     return cat_fights_dict, cat_finals_dict, cat_time_dict, \
         par_num_total, fight_num_total, tot_time, final_time
+
 
 def split_categories(cat_time_dict, av_time):
     '''
