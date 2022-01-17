@@ -12,7 +12,7 @@ import numpy as np
 # some global variables
 AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age divisions
 # order does not matter -> permutations
-DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]
+DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]  # supported disciplines
 # just a name
 DIS_CHA = "Discipline change"  # indicator of a change of a discipline
 # add the changing time for the change between disciplines in minutes
@@ -205,19 +205,19 @@ def cal_cat(age_select, dis_select):
                     cat_all.append(i + " " + j + " " + k)
             elif i == "U16":
                 for k in weight_m16:
-                    cat_all.append(i + " " + j + " Men " + k + "kg")
+                    cat_all.append(i + " " + j + " Men " + k + " kg")
                 for k in weight_w16:
-                    cat_all.append(i + " " + j + " Women " + k + "kg")
+                    cat_all.append(i + " " + j + " Women " + k + " kg")
             elif i == "U18":
                 for k in weight_m18:
-                    cat_all.append(i + " " + j + " Men " + k + "kg")
+                    cat_all.append(i + " " + j + " Men " + k + " kg")
                 for k in weight_w18:
-                    cat_all.append(i + " " + j + " Women " + k + "kg")
+                    cat_all.append(i + " " + j + " Women " + k + " kg")
             else:
                 for k in weight_m:
-                    cat_all.append(i + " " + j + " Men " + k + "kg")
+                    cat_all.append(i + " " + j + " Men " + k + " kg")
                 for k in weight_w:
-                    cat_all.append(i + " " + j + " Female " + k + "kg")
+                    cat_all.append(i + " " + j + " Women " + k + " kg")
 
     return cat_all
 
@@ -248,7 +248,7 @@ def calculate_fight_time(dict_inp, final):
 
     time_inp = {"U16 Fighting": timedelta(minutes=6, seconds=00),
                 "U18 Fighting": timedelta(minutes=7, seconds=00),
-                "U21 Fighting": timedelta(minutes=7, seconds=00),
+                "U21 JFighting": timedelta(minutes=7, seconds=00),
                 "Adults Fighting": timedelta(minutes=7, seconds=00),
                 "U16 Duo": timedelta(minutes=5),
                 "U18 Duo": timedelta(minutes=7),
@@ -258,7 +258,7 @@ def calculate_fight_time(dict_inp, final):
                 "U18 Show": timedelta(minutes=4),
                 "U21 Show": timedelta(minutes=4),
                 "Adults Show": timedelta(minutes=4, seconds=30),
-                "U16 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
+                "U16 JJiu-Jitsu": timedelta(minutes=5, seconds=30),
                 "U18 Jiu-Jitsu": timedelta(minutes=4, seconds=30),
                 "U21 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
                 "Adults Jiu-Jitsu": timedelta(minutes=6, seconds=30)}

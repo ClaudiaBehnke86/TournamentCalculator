@@ -25,9 +25,10 @@ from tourcalc.calculator import cal_cat
 from tourcalc.calculator import read_in_file
 from tourcalc.calculator import calculate_fight_time
 from tourcalc.calculator import split_categories
+from tourcalc.APIcall import getdata
 
 AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age divisions
-DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]  # supported disciplines
+DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"] 
 
 AGE_SEL = []  # an empty list to select the age divisions
 DIS_SEL = []  # an empty list to select the age categories
@@ -203,8 +204,8 @@ LINK = '[Click here for tutorial] \
 st.markdown(LINK, unsafe_allow_html=True)
 
 tour_name = st.text_input("Name of the tournament", key='unique')
-
 fname = tour_name + ".csv"
+
 path = os.path.dirname(tourcalc.__file__)
 list_path = os.path.join(path, 'example_tours')
 check_file = Path(list_path) / fname
@@ -222,6 +223,15 @@ with right_column_2:
     uploaded_file = st.file_uploader("Choose a file",
                                      help="Make sure to have a CSV with the right input")
 
+# get the data from sportdata
+apidata = st.sidebar.checkbox("Get registration from Sportdata API")
+if apidata is True:
+    sd_key = st.sidebar.number_input("enter the number of Sportdata event number",
+                                     help='is the number behind vernr= in the URI', value=0)
+    if sd_key > 0:
+        cat_par = getdata(str(sd_key), st.secrets['user'], st.secrets['password'])
+
+
 if uploaded_file is not None:
     cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
         start_time, breaktype, date_inp = read_in_file(uploaded_file)
@@ -237,7 +247,7 @@ if uploaded_file is not None:
         start_time = datetime.strptime(start_time, "%H:%M:%S").time()
     except ValueError:
         st.exception("Oops! That was no time. We will use 9:00")
-        start_time = time(9, 0) 
+        start_time = time(9, 0)
 
     cat_par = cat_par_inp
 
@@ -275,13 +285,12 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
         except ValueError:
             st.exception("Oops! That was no date. We will use today")
             date_time_obj = datetime.today()
-
         try:
             start_time = datetime.strptime(start_time, "%H:%M:%S").time()
         except ValueError:
             st.exception("Oops! That was no time. We will use 9:00")
-            start_time = time(9, 0) 
-                
+            start_time = time(9, 0)
+
         cat_par = cat_par_inp
 
         for cat_name in cat_par_inp:  # loop over dictionary
@@ -306,6 +315,7 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
                 DIS_SEL.append("Jiu-Jitsu")
             if len(DIS_SEL) == 0:
                 st.write("No disciplines in input file")
+
     else:
         TATAMI = 3
         days = 1
@@ -402,6 +412,8 @@ final_show = st.sidebar.checkbox('Final show & awards',
 if final_show is True:
     show_extra_t = st.sidebar.number_input('Add time for show in minutes', value=7)
 
+
+
 # lists with default values
 tatami_day = [int(TATAMI)] * int(days)
 start_time_day = [start_time] * int(days)
@@ -441,29 +453,33 @@ for j in range(0, int(days)):
         breaklength_day[j] = (datetime.combine(date.min,
                               breakl_wid_day) - datetime.min)
 
+fname = tour_name + ".csv"
 if st.button('all info is correct'):
-    tour_file = write_tour_file(tour_name,
-                                cat_par,
-                                cat_dict_day,
-                                TATAMI,
-                                days,
-                                FINAL,
-                                start_time,
-                                date,
-                                breaktype)
-    with open(fname, "r") as file:
-        btn = st.download_button(
-            label="Download data from event",
-            data=file,
-            file_name=fname,
-            mime="csv")
-
+    st.write(tour_name)
     if tot_par == 0:
         st.write("Please add at least one athlete")
+    elif len(fname) < 1:
+        st.write("Please give the event a name")
     elif TATAMI > len(cat_all):
         st.write("You have more tatamis than disciplines, \
                  please add disciplines or reduce tatamis")
     else:
+        tour_file = write_tour_file(tour_name,
+                                    cat_par,
+                                    cat_dict_day,
+                                    TATAMI,
+                                    days,
+                                    FINAL,
+                                    start_time,
+                                    date,
+                                    breaktype)
+        with open(fname, "r") as file:
+            btn = st.download_button(
+                label="Download data from event",
+                data=file,
+                file_name=fname,
+                mime="csv")
+
         st.write("Tournament: ", tour_name)
         cat_fights_dict, cat_finals_dict, cat_time_dict, \
             par_num_total, fight_num_total, \
