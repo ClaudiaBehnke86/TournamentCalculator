@@ -28,7 +28,7 @@ from tourcalc.calculator import split_categories
 from tourcalc.APIcall import getdata
 
 AGE_INP = ["U16", "U18", "U21", "Adults"]  # the supported age divisions
-DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"] 
+DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]
 
 AGE_SEL = []  # an empty list to select the age divisions
 DIS_SEL = []  # an empty list to select the age categories
@@ -56,17 +56,14 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
 
     """
 
-    l_master = [pd.DataFrame([l, [i+1]*len(l)]).T for i, l in enumerate(scheduled_jobs_i)]
+    l_master = [pd.DataFrame([l, [i + 1] * len(l)]).T for i, l in enumerate(scheduled_jobs_i)]
 
     for df_tatami in l_master:
         df_tatami.columns = ['category', 'tatami']
         df_tatami['time'] = df_tatami['category'].replace(cat_time_dict_i)
         df_tatami['end_time'] = np.cumsum(df_tatami['time']).values.astype('datetime64[ns]')
         df_tatami['end_time'] += start_time_i
-        df_tatami['start_time'] = df_tatami['end_time'].shift(
-            periods=1
-            ).astype('datetime64[ns]')
-
+        df_tatami['start_time'] = df_tatami['end_time'].shift(periods=1).astype('datetime64[ns]')
         df_tatami['time'] = df_tatami['time'].values.astype('datetime64[ns]')
 
     df = pd.concat(l_master)
@@ -164,16 +161,12 @@ def heatmap(data, row_labels, col_labels, str_title):
     # create the hover text
     perm_map = {
         i: permutations_list[i] for i in range(
-            0, len(permutations_list)
-        )
-    }
-    _x = len(col_labels)
-    _y = len(row_labels)
+            0, len(permutations_list))}
     _hover = []
-    for i in range(0, _y):
+    
+    for i in range(0, len(row_labels)):
         _hover.append(
-            [str(perm_map[int(data[i][j])]) for j in range(0, _x)]
-            )
+            [str(perm_map[int(data[i][j])]) for j in range(0, len(col_labels))])
 
     fig1 = ff.create_annotated_heatmap(
         data,
@@ -191,65 +184,17 @@ def heatmap(data, row_labels, col_labels, str_title):
     return fig1
 
 
-permutations_object = itertools.permutations(DIS_INP)
-permutations_list = list(permutations_object)
+def make_input(cat_par_inp):
+    '''
+    Loops of the input files and returns the selected age divisions and
+    disciplines in the GUI
 
-cat_par = {}  # number of participants
-cat_dict_day = {}  # day per category
-
-st.header('Tournament Calculator')
-
-LINK = '[Click here for tutorial] \
-    (https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
-st.markdown(LINK, unsafe_allow_html=True)
-
-tour_name = st.text_input("Name of the tournament", key='unique')
-fname = tour_name + ".csv"
-
-path = os.path.dirname(tourcalc.__file__)
-list_path = os.path.join(path, 'example_tours')
-check_file = Path(list_path) / fname
-
-left_column_2, right_column_2 = st.columns(2)
-
-with left_column_2:
-    if st.button("Show example tournaments"):
-        st.write('You can read in the event by copying the name \
-            without .csv into the "Name of the tournament" field')
-        filenames = os.listdir(list_path)
-        st.write(filenames)
-
-with right_column_2:
-    uploaded_file = st.file_uploader("Choose a file",
-                                     help="Make sure to have a CSV with the right input")
-
-# get the data from sportdata
-apidata = st.sidebar.checkbox("Get registration from Sportdata API")
-if apidata is True:
-    sd_key = st.sidebar.number_input("enter the number of Sportdata event number",
-                                     help='is the number behind vernr= in the URI', value=0)
-    if sd_key > 0:
-        cat_par = getdata(str(sd_key), st.secrets['user'], st.secrets['password'])
-
-
-if uploaded_file is not None:
-    cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
-        start_time, breaktype, date_inp = read_in_file(uploaded_file)
-    tour_name = str(uploaded_file.name)[:-4]
-
-    try:
-        date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
-    except ValueError:
-        st.exception("Oops! That was no date. We will use today")
-        date_time_obj = datetime.today()
-
-    try:
-        start_time = datetime.strptime(start_time, "%H:%M:%S").time()
-    except ValueError:
-        st.exception("Oops! That was no time. We will use 9:00")
-        start_time = time(9, 0)
-
-    cat_par = cat_par_inp
+    Parameters
+    ----------
+    cat_par_inp
+        dictionary with categories and number of participants
+        of each category [dict]
+    '''
 
     for cat_name in cat_par_inp:  # loop over dictionary
         if ("U16" in cat_name) and ("U16" not in AGE_SEL):
@@ -274,6 +219,128 @@ if uploaded_file is not None:
         if len(DIS_SEL) == 0:
             st.write("No disciplines in input file")
 
+    return AGE_SEL, DIS_SEL
+
+
+def timing(start_time):
+    ''' The sidebar elements for the timing
+
+    Parameters
+    ----------
+    start_time
+        start time of the event
+    '''
+
+    st.sidebar.header('Change settings for event')
+
+    start_time_wid_day_inp = st.sidebar.time_input('Start time of the event',
+                                                   value=start_time)
+    breaktype_inp = st.sidebar.selectbox('What type of break do you want',
+                                         ('Individual', 'One Block', 'No break'), key='breakt')
+    breakl_wid_day_inp = st.sidebar.time_input('Length of the break',
+                                               time(0, 30))
+    btime_wid_day_inp = st.sidebar.time_input('Start time of the break',
+                                              time(13, 00))
+    split_inp = st.sidebar.checkbox('Split large categories',
+                                    help= 'If a category is larger than the average end \
+                                    time if is split on 2 tatamis, 1/3 and 2/3. \
+                                    Only use this if you know how to schedule it that no matches overlap')
+    return start_time_wid_day_inp, breaktype_inp, breakl_wid_day_inp, btime_wid_day_inp, split_inp
+
+
+def final_setting(final):
+    ''' The sidebar elements for the final settings
+
+    Parameters
+    ----------
+    FINAL
+        bool to say if there is a final block planned
+    '''
+    final = st.sidebar.checkbox('Final block',
+                                help='If you check this box the event will have a separate final block',
+                                value=final)
+    if final is True:
+        final_tat_inp = st.sidebar.number_input('Finals tatamis',
+                                                help='On how many tatamis will the finals run',
+                                                value=1)
+    else:
+        final_tat_inp = 1
+
+    final_show_inp = st.sidebar.checkbox('Final show & awards',
+                                         help='Adds additional time for entrance and awards')
+    if final_show_inp is True:
+        show_extra_t_inp = st.sidebar.number_input('Add time for show in minutes', value=7)
+    else:
+        show_extra_t_inp = 0
+
+    return final, final_tat_inp, final_show_inp, show_extra_t_inp
+
+
+def api_call(cat_par):
+    ''' Overrides the number of participants with the number in sportdata
+    Parameters
+    ----------
+    cat_par
+        dictionary with categories and number of participants
+        of each category [dict]
+    '''
+    apidata = st.sidebar.checkbox("Get registration from Sportdata API")
+    if apidata is True:
+        sd_key = st.sidebar.number_input("enter the number of Sportdata event number",
+                                         help='is the number behind vernr= in the URI', value=0)
+        if sd_key > 0:
+            cat_par = getdata(str(sd_key), st.secrets['user'], st.secrets['password'])
+
+    return cat_par
+
+
+permutations_object = itertools.permutations(DIS_INP)
+permutations_list = list(permutations_object)
+
+cat_par = {}  # number of participants
+cat_dict_day = {}  # day per category
+
+st.header('Tournament Calculator')
+
+LINK = '[Click here for tutorial] \
+    (https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
+st.markdown(LINK, unsafe_allow_html=True)
+
+tour_name = st.text_input("Name of the tournament", key='tour_name_key', value="")
+fname = tour_name + ".csv"
+path = os.path.dirname(tourcalc.__file__)
+list_path = os.path.join(path, 'example_tours')
+check_file = Path(list_path) / fname
+
+left_column_2, right_column_2 = st.columns(2)
+with left_column_2:
+    if st.button("Show example tournaments"):
+        st.write('You can read in the event by copying the name \
+            without .csv into the "Name of the tournament" field')
+        filenames = os.listdir(list_path)
+        st.write(filenames)
+with right_column_2:
+    uploaded_file = st.file_uploader("Choose a file",
+                                     help="Make sure to have a CSV with the right input")
+
+if uploaded_file is not None:
+    cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
+        start_time, breaktype, date_inp = read_in_file(uploaded_file)
+    tour_name = str(uploaded_file.name)[:-4]
+
+    try:
+        date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
+    except ValueError:
+        st.exception("Oops! That was no date. We will use today")
+        date_time_obj = datetime.today()
+    try:
+        start_time = datetime.strptime(start_time, "%H:%M:%S").time()
+    except ValueError:
+        st.exception("Oops! That was no time. We will use 9:00")
+        start_time = time(9, 0) 
+    AGE_SEL, DIS_SEL = make_input(cat_par_inp)
+    cat_par = cat_par_inp
+
 elif len(tour_name) > 0 and os.path.isfile(check_file):
     st.write("Tournament with name ", tour_name, "already exist")
     newf = st.selectbox('What do you want to do?', ['USE', 'OVERRIDE'])
@@ -291,30 +358,8 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
             st.exception("Oops! That was no time. We will use 9:00")
             start_time = time(9, 0)
 
+        AGE_SEL, DIS_SEL = make_input(cat_par_inp)
         cat_par = cat_par_inp
-
-        for cat_name in cat_par_inp:  # loop over dictionary
-            if ("U16" in cat_name) and ("U16" not in AGE_SEL):
-                AGE_SEL.append("U16")
-            if ("U18" in cat_name) and ("U18" not in AGE_SEL):
-                AGE_SEL.append("U18")
-            if ("U21" in cat_name) and ("U21" not in AGE_SEL):
-                AGE_SEL.append("U21")
-            if ("Adults" in cat_name) and ("Adults" not in AGE_SEL):
-                AGE_SEL.append("Adults")
-            if len(AGE_SEL) == 0:
-                st.write("No age divisions in input file")
-
-            if ("Show" in cat_name) and ("Show" not in DIS_SEL):
-                DIS_SEL.append("Show")
-            if ("Duo" in cat_name) and ("Duo" not in DIS_SEL):
-                DIS_SEL.append("Duo")
-            if ("Fighting" in cat_name) and ("Fighting" not in DIS_SEL):
-                DIS_SEL.append("Fighting")
-            if ("Jiu-Jitsu" in cat_name) and ("Jiu-Jitsu" not in DIS_SEL):
-                DIS_SEL.append("Jiu-Jitsu")
-            if len(DIS_SEL) == 0:
-                st.write("No disciplines in input file")
 
     else:
         TATAMI = 3
@@ -329,10 +374,16 @@ else:
     date_time_obj = datetime.today()
     start_time = time(9, 0)
 
+# all on the sidebar:
+start_time_wid_day, breaktype, breakl_wid_day, btime_wid_day, SPLIT = timing(start_time)
+
+FINAL, final_tat, final_show, show_extra_t = final_setting(FINAL)
+
+cat_par = api_call(cat_par)
+
+
 left_column, right_column = st.columns(2)
-
 with left_column:
-
     TATAMI = st.number_input("Number of tatamis", value=TATAMI, key='tatami')
 with right_column:
     days = st.number_input("Number of days", value=days, key='days')
@@ -364,7 +415,7 @@ with st.expander("Hide categories"):
             with right_column2:
                 day = st.number_input("Competition day " + i,
                                       min_value=1, max_value=int(days), value=day_rtmp, key=i)
-        else:
+        else: 
             val = cat_par.get(i)
             val1 = cat_dict_day.get(i)
             with left_column1:
@@ -385,33 +436,10 @@ with st.expander("Hide categories"):
         cat_dict_day[i] = int(day)
 
 
-# The sidebar elements
-st.sidebar.header('Change settings for event')
-
-start_time_wid_day = st.sidebar.time_input('Start time of the event',
-                                           value = start_time)
-breaktype = st.sidebar.selectbox('What type of break do you want',
-                                 ('Individual', 'One Block', 'No break'), key='breakt')
-breakl_wid_day = st.sidebar.time_input('Length of the break',
-                                       time(0, 30))
-btime_wid_day = st.sidebar.time_input('Start time of the break',
-                                      time(13, 00))
-SPLIT = st.sidebar.checkbox('Split large categories',
-                            help= 'If a category is larger than the average end \
-                            time if is split on 2 tatamis, 1/3 and 2/3')
-FINAL = st.sidebar.checkbox('Final block',
-                            help='If you check this box the event will have a separate final block',
-                            value=FINAL)
-if FINAL is True:
-    final_tat = st.sidebar.number_input('Finals tatamis',
-                                        help='On how many tatamis will the finals run',
-                                        value=1)
-
-final_show = st.sidebar.checkbox('Final show & awards',
-                                 help='Adds additional time for entrance and awards')
-if final_show is True:
-    show_extra_t = st.sidebar.number_input('Add time for show in minutes', value=7)
-
+for key in cat_par.copy().keys():
+    if key not in cat_all:
+        st.write("You have not chosen the age division/disciple of ", key, "as input")
+        cat_par.pop(key, None)
 
 
 # lists with default values
@@ -441,7 +469,7 @@ for j in range(0, int(days)):
         breakl_wid_day = st.time_input('Length of the break',
                                        value=breakl_wid_day, key=j)
         final_day[j] = st.checkbox('Final block', value=FINAL, key=j)
-        
+
         if final_day[j] is True:
             final_tat_day[j] = st.number_input('Finals tatamis',
                                                value=final_tat, key=j)

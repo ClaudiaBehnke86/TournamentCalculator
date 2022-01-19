@@ -1,79 +1,79 @@
 categories;participants;day
-tatamis;6;
-days;3;
-finalblock;YES;
-breaktype;Individual;
-startime;09:30:00;
-date;31/01/2022;
-U21 Duo Male;3;2
-U21 Duo Mixed;4;1
-U21 Duo Female;8;2
-U21 Show Male;11;3
-U21 Show Mixed;13;2
-U21 Show Female;4;3
-U21 Jiu-Jitsu Male -56kg;2;3
-U21 Jiu-Jitsu Male -62kg;5;3
-U21 Jiu-Jitsu Male -69kg;5;3
-U21 Jiu-Jitsu Male -77kg;0;2
-U21 Jiu-Jitsu Male -85kg;1;1
-U21 Jiu-Jitsu Male -94kg;10;3
-U21 Jiu-Jitsu Male +94kg;6;2
-U21 Jiu-Jitsu Female -45kg;13;1
-U21 Jiu-Jitsu Female -48kg;9;3
-U21 Jiu-Jitsu Female -52kg;1;2
-U21 Jiu-Jitsu Female -57kg;3;1
-U21 Jiu-Jitsu Female -63kg;6;1
-U21 Jiu-Jitsu Female -70kg;17;1
-U21 Jiu-Jitsu Female +70kg;14;1
-U21 Fighting Male -56kg;17;3
-U21 Fighting Male -62kg;15;3
-U21 Fighting Male -69kg;4;3
-U21 Fighting Male -77kg;7;3
-U21 Fighting Male -85kg;6;3
-U21 Fighting Male -94kg;12;1
-U21 Fighting Male +94kg;4;1
-U21 Fighting Female -45kg;12;2
-U21 Fighting Female -48kg;16;3
-U21 Fighting Female -52kg;0;1
-U21 Fighting Female -57kg;13;2
-U21 Fighting Female -63kg;2;3
-U21 Fighting Female -70kg;8;3
-U21 Fighting Female +70kg;8;2
-U18 Duo Male;2;2
-U18 Duo Mixed;10;2
-U18 Duo Female;12;1
-U18 Show Male;7;2
-U18 Show Mixed;3;3
-U18 Show Female;7;2
-U18 Jiu-Jitsu Male -46kg;6;1
-U18 Jiu-Jitsu Male -50kg;9;1
-U18 Jiu-Jitsu Male -55kg;16;2
-U18 Jiu-Jitsu Male -60kg;4;3
-U18 Jiu-Jitsu Male -66kg;8;2
-U18 Jiu-Jitsu Male -73kg;11;3
-U18 Jiu-Jitsu Male -81kg;3;1
-U18 Jiu-Jitsu Male +81kg;13;2
-U18 Jiu-Jitsu Female -40kg;1;1
-U18 Jiu-Jitsu Female -44kg;1;3
-U18 Jiu-Jitsu Female -48kg;8;3
-U18 Jiu-Jitsu Female -52kg;6;2
-U18 Jiu-Jitsu Female -57kg;5;2
-U18 Jiu-Jitsu Female -63kg;8;1
-U18 Jiu-Jitsu Female -70kg;10;3
-U18 Jiu-Jitsu Female +70kg;5;1
-U18 Fighting Male -46kg;0;1
-U18 Fighting Male -50kg;5;1
-U18 Fighting Male -55kg;16;3
-U18 Fighting Male -60kg;1;3
-U18 Fighting Male -66kg;4;2
-U18 Fighting Male -73kg;11;1
-U18 Fighting Male -81kg;11;2
-U18 Fighting Male +81kg;16;3
-U18 Fighting Female -40kg;6;2
-U18 Fighting Female -44kg;4;3
-U18 Fighting Female -48kg;12;3
-U18 Fighting Female -52kg;3;2
-U18 Fighting Female -57kg;15;3
-U18 Fighting Female -63kg;3;3
-U18 Fighting Female -70kg;6;1
-U18 Fighting Female +70kg;11;2
+tatamis;6
+days;3
+finalblock;YES
+breaktype;Individual
+startime;09:30:00
+date;2022-01-31
+U18 Jiu-Jitsu Women +70 kg;17;3
+U18 Jiu-Jitsu Women -40 kg;15;1
+U18 Jiu-Jitsu Women -44 kg;24;3
+U18 Jiu-Jitsu Women -48 kg;11;2
+U18 Jiu-Jitsu Women -52 kg;8;2
+U18 Jiu-Jitsu Women -57 kg;5;2
+U18 Jiu-Jitsu Women -63 kg;13;1
+U18 Jiu-Jitsu Women -70 kg;1;1
+U18 Jiu-Jitsu Men +81 kg;11;1
+U18 Jiu-Jitsu Men -46 kg;12;1
+U18 Jiu-Jitsu Men -50 kg;7;3
+U18 Jiu-Jitsu Men -55 kg;9;2
+U18 Jiu-Jitsu Men -60 kg;10;3
+U18 Jiu-Jitsu Men -66 kg;14;3
+U18 Jiu-Jitsu Men -73 kg;14;3
+U18 Jiu-Jitsu Men -81 kg;13;2
+U18 Duo Men;8;1
+U18 Duo Mixed;8;1
+U18 Duo Women;5;1
+U18 Fighting Women +70 kg;12;1
+U18 Fighting Women -40 kg;9;1
+U18 Fighting Women -44 kg;12;2
+U18 Fighting Women -48 kg;9;2
+U18 Fighting Women -52 kg;7;3
+U18 Fighting Women -57 kg;7;2
+U18 Fighting Women -63 kg;2;2
+U18 Fighting Women -70 kg;2;3
+U18 Fighting Men +81 kg;7;3
+U18 Fighting Men -46 kg;7;3
+U18 Fighting Men -50 kg;11;2
+U18 Fighting Men -55 kg;0;1
+U18 Fighting Men -60 kg;3;2
+U18 Fighting Men -66 kg;3;2
+U18 Fighting Men -73 kg;16;3
+U18 Fighting Men -81 kg;10;1
+U18 Show Men;4;1
+U18 Show Mixed;3;1
+U18 Show Women;6;2
+U21 Jiu-Jitsu Women +70 kg;3;2
+U21 Jiu-Jitsu Women -45 kg;2;1
+U21 Jiu-Jitsu Women -48 kg;7;1
+U21 Jiu-Jitsu Women -52 kg;4;3
+U21 Jiu-Jitsu Women -57 kg;3;3
+U21 Jiu-Jitsu Women -63 kg;7;2
+U21 Jiu-Jitsu Women -70 kg;11;1
+U21 Jiu-Jitsu Men +94 kg;5;1
+U21 Jiu-Jitsu Men -56 kg;6;1
+U21 Jiu-Jitsu Men -62 kg;12;3
+U21 Jiu-Jitsu Men -69 kg;0;1
+U21 Jiu-Jitsu Men -77 kg;4;2
+U21 Jiu-Jitsu Men -85 kg;2;2
+U21 Jiu-Jitsu Men -94 kg;9;3
+U21 Duo Men;10;1
+U21 Duo Mixed;3;3
+U21 Duo Women;2;1
+U21 Fighting Women +70 kg;8;2
+U21 Fighting Women -45 kg;6;2
+U21 Fighting Women -48 kg;3;3
+U21 Fighting Women -52 kg;5;2
+U21 Fighting Women -57 kg;0;2
+U21 Fighting Women -63 kg;8;3
+U21 Fighting Women -70 kg;2;3
+U21 Fighting Men +94 kg;4;2
+U21 Fighting Men -56 kg;5;2
+U21 Fighting Men -62 kg;8;3
+U21 Fighting Men -69 kg;6;3
+U21 Fighting Men -77 kg;4;3
+U21 Fighting Men -85 kg;7;3
+U21 Fighting Men -94 kg;0;3
+U21 Show Men;7;3
+U21 Show Mixed;18;2
+U21 Show Women;14;2

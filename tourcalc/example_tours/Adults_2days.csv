@@ -1,41 +1,41 @@
 categories;participants;day
 tatamis;5;
 days;2;
-finalblock;NO;
+finalblock;YES;
 breaktype;Individual;
 startime;10:00:00;
 date;10/01/2022;
-Adults Duo Male;7;2
-Adults Duo Mixed;6;1
-Adults Duo Female;10;2
-Adults Show Male;7;1
-Adults Show Mixed;12;1
-Adults Show Female;6;2
-Adults Jiu-Jitsu Male -56kg;3;1
-Adults Jiu-Jitsu Male -62kg;8;2
-Adults Jiu-Jitsu Male -69kg;5;1
-Adults Jiu-Jitsu Male -77kg;14;2
-Adults Jiu-Jitsu Male -85kg;14;2
-Adults Jiu-Jitsu Male -94kg;6;2
-Adults Jiu-Jitsu Male +90kg;7;1
-Adults Jiu-Jitsu Female -45kg;19;2
-Adults Jiu-Jitsu Female -48kg;1;1
-Adults Jiu-Jitsu Female -52kg;7;1
-Adults Jiu-Jitsu Female -57kg;6;2
-Adults Jiu-Jitsu Female -63kg;20;1
-Adults Jiu-Jitsu Female -70kg;12;1
-Adults Jiu-Jitsu Female +70kg;7;2
-Adults Fighting Male -56kg;7;1
-Adults Fighting Male -62kg;14;2
-Adults Fighting Male -69kg;10;1
-Adults Fighting Male -77kg;5;2
-Adults Fighting Male -85kg;8;1
-Adults Fighting Male -94kg;13;2
-Adults Fighting Male +94kg;7;2
-Adults Fighting Female -45kg;12;1
-Adults Fighting Female -48kg;16;2
-Adults Fighting Female -52kg;16;2
-Adults Fighting Female -57kg;8;1
-Adults Fighting Female -63kg;7;2
-Adults Fighting Female -70kg;22;2
-Adults Fighting Female +70kg;5;1
+Adults Jiu-Jitsu Women +70 kg;9;2
+Adults Jiu-Jitsu Women -45 kg;8;1
+Adults Jiu-Jitsu Women -48 kg;14;1
+Adults Jiu-Jitsu Women -52 kg;12;2
+Adults Jiu-Jitsu Women -57 kg;16;1
+Adults Jiu-Jitsu Women -63 kg;15;1
+Adults Jiu-Jitsu Women -70 kg;11;1
+Adults Jiu-Jitsu Men +94 kg;21;1
+Adults Jiu-Jitsu Men -56 kg;22;1
+Adults Jiu-Jitsu Men -62 kg;30;2
+Adults Jiu-Jitsu Men -69 kg;38;1
+Adults Jiu-Jitsu Men -77 kg;41;2
+Adults Jiu-Jitsu Men -85 kg;37;2
+Adults Jiu-Jitsu Men -94 kg;30;2
+Adults Duo Men;12;2
+Adults Duo Mixed;13;1
+Adults Duo Women;8;2
+Adults Fighting Women +70 kg;7;1
+Adults Fighting Women -45 kg;5;2
+Adults Fighting Women -48 kg;10;1
+Adults Fighting Women -52 kg;9;2
+Adults Fighting Women -57 kg;16;1
+Adults Fighting Women -63 kg;18;2
+Adults Fighting Women -70 kg;11;2
+Adults Fighting Men +94 kg;9;1
+Adults Fighting Men -56 kg;13;2
+Adults Fighting Men -62 kg;25;2
+Adults Fighting Men -69 kg;25;1
+Adults Fighting Men -77 kg;28;2
+Adults Fighting Men -85 kg;23;2
+Adults Fighting Men -94 kg;16;1
+Adults Show Men;7;1
+Adults Show Women;9;1
+Adults Show Mixed;7;2

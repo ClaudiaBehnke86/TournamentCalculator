@@ -258,7 +258,7 @@ def calculate_fight_time(dict_inp, final):
                 "U18 Show": timedelta(minutes=4),
                 "U21 Show": timedelta(minutes=4),
                 "Adults Show": timedelta(minutes=4, seconds=30),
-                "U16 JJiu-Jitsu": timedelta(minutes=5, seconds=30),
+                "U16 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
                 "U18 Jiu-Jitsu": timedelta(minutes=4, seconds=30),
                 "U21 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
                 "Adults Jiu-Jitsu": timedelta(minutes=6, seconds=30)}
