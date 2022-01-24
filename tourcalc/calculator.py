@@ -248,7 +248,7 @@ def calculate_fight_time(dict_inp, final):
 
     time_inp = {"U16 Fighting": timedelta(minutes=6, seconds=00),
                 "U18 Fighting": timedelta(minutes=7, seconds=00),
-                "U21 JFighting": timedelta(minutes=7, seconds=00),
+                "U21 Fighting": timedelta(minutes=7, seconds=00),
                 "Adults Fighting": timedelta(minutes=7, seconds=00),
                 "U16 Duo": timedelta(minutes=5),
                 "U18 Duo": timedelta(minutes=7),
