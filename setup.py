@@ -10,12 +10,12 @@ with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    'numpy==1.21.2',
-    'pandas==1.3.3',
-    'plotly==5.3.1',
-    'setuptools==57.4.0',
-    'sphinx_rtd_theme==1.0.0',
-    'streamlit==1.2.0'
+    'numpy',
+    'pandas',
+    'plotly',
+    'setuptools',
+    'sphinx_rtd_theme',
+    'streamlit'
 ]
 
 ex_path = os.path.join('tourcalc', 'example_tours')
