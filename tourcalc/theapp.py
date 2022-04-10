@@ -448,6 +448,7 @@ tatami_day = [int(TATAMI)] * int(days)
 start_time_day = [start_time] * int(days)
 btime_day = [time(13, 00)] * int(days)
 bype_day = [breaktype] * int(days)
+bt_index = ['Individual', 'One Block', 'No break'].index(breaktype)
 breaklength_day = [time(0, 30)] * int(days)
 end_time_final = [time(00, 00)] * int(days)
 end_time_prelim = [time(00, 00)] * int(days)
@@ -464,7 +465,7 @@ for j in range(0, int(days)):
         start_time_wid_days = st.time_input('Start time of the event',
                                             value=start_time_wid_day, key=j)
         bype_day[j] = st.selectbox('What type of break do you want',
-                                   ('Individual', 'One Block', 'No break'), key=j)
+                                   ('Individual', 'One Block', 'No break'), index=bt_index, key=j)
         btime_wid_day = st.time_input('Start time of the break',
                                       value=btime_wid_day, key=j)
         breakl_wid_day = st.time_input('Length of the break',
