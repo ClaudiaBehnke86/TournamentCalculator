@@ -277,7 +277,7 @@ def calculate_fight_time(dict_inp, final):
     for cat_name in dict_inp:  # loop over dictionary
         par_num = int(dict_inp.get(cat_name))  # number of fights per category
         fight_num = 0  # reset counter
-        if "Show" in cat_name:
+        if "Show" in cat_name and par_num > 1:
             if final is True and par_num > 5:
                 for keys in time_inp:
                     # if name of Discipline is in string of category:
