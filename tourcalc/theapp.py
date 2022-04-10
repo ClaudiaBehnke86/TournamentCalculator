@@ -475,9 +475,9 @@ for j in range(0, int(days)):
                                                value=final_tat, key=j)
         # convert time to datetime object
         start_time_day[j] = (datetime.combine(date.min,
-                             start_time_wid_days) - datetime.min)
-        btime_day[j] = (datetime.combine(date.min, btime_wid_day) -
-                        datetime.min)
+                             start_time_wid_days) - datetime.min) 
+        # convert break time to hours after start                         
+        btime_day[j] = datetime.combine(date.min, btime_wid_day) - datetime.combine(date.min, start_time_wid_days)                  
         breaklength_day[j] = (datetime.combine(date.min,
                               breakl_wid_day) - datetime.min)
 
