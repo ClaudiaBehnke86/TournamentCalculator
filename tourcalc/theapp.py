@@ -327,9 +327,9 @@ if uploaded_file is not None:
     cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
         start_time, breaktype, date_inp = read_in_file(uploaded_file)
     tour_name = str(uploaded_file.name)[:-4]
-
+    print("date ",date_inp)
     try:
-        date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
+        date_time_obj = datetime.strptime(date_inp[0:10], '%Y-%m-%d')
     except ValueError:
         st.exception("Oops! That was no date. We will use today")
         date_time_obj = datetime.today()
@@ -347,6 +347,7 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
     if newf == 'USE':
         cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
             start_time, breaktype, date_inp = read_in_file(check_file)
+        print("date ",date_inp)
         try:
             date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
         except ValueError:
