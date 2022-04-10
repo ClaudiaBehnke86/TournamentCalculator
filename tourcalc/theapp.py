@@ -97,7 +97,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
     # st.write("UTC time :", datetime_utc)
 
     # quick and dirty fix to make the app online working
-    #end_time_prelim = end_time_prelim - timedelta(hours=1)
+    end_time_prelim = end_time_prelim - timedelta(hours=2)
     end_time_prelim = end_time_prelim.timestamp() * 1000
 
     end_time_final_c = datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S") + final_time
