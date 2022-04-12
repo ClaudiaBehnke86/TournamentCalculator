@@ -149,7 +149,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
                   annotation_text=str(df['end_time'].max())[-8:],
                   annotation_position="top right")
 
-    return fig, end_time_final_c, final_start_time
+    return fig, end_time_final_c, df['end_time'].max(), final_start_time
 
 
 def heatmap(data, row_labels, col_labels, str_title):
@@ -313,9 +313,10 @@ def final_setting(final):
         final_tat_inp = 1
         show_extra_t_inp = 0
         final_show_inp = False
+        final_fix_start_time = False
         final_start_time = None
     
-    return final, final_tat_inp, final_show_inp, show_extra_t_inp, final_start_time
+    return final, final_tat_inp, final_show_inp, show_extra_t_inp, final_fix_start_time, final_start_time
 
 
 permutations_object = itertools.permutations(DIS_INP)
@@ -351,7 +352,6 @@ if uploaded_file is not None:
     cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
         start_time, breaktype, date_inp = read_in_file(uploaded_file)
     tour_name = str(uploaded_file.name)[:-4]
-    print("date ",date_inp)
     try:
         date_time_obj = datetime.strptime(date_inp[0:10], '%Y-%m-%d')
     except ValueError:
@@ -403,7 +403,7 @@ else:
 start_time_wid_day, breaktype, breakl_wid_day, btime_wid_day, SPLIT = timing(start_time)
 cat_par = api_call(cat_par)\
 
-FINAL, final_tat, final_show, show_extra_t, f_start_time = final_setting(FINAL)
+FINAL, final_tat, final_show, show_extra_t, f_fix_start_time, f_start_time = final_setting(FINAL)
 
 left_column, right_column = st.columns(2)
 with left_column:
@@ -468,7 +468,7 @@ for key in cat_par.copy().keys():
 # lists with default values
 tatami_day = [int(TATAMI)] * int(days)
 start_time_day = [start_time] * int(days)
-btime_day = [time(13, 00)] * int(days)
+btime_day = [time(12, 00)] * int(days)
 bype_day = [breaktype] * int(days)
 bt_index = ['Individual', 'One Block', 'No break'].index(breaktype)
 breaklength_day = [time(0, 30)] * int(days)
@@ -476,6 +476,8 @@ end_time_final = [time(00, 00)] * int(days)
 end_time_prelim = [time(00, 00)] * int(days)
 final_day = [FINAL] * int(days)
 final_tat_day = [1] * int(days)
+f_fix_start_time_day = [f_fix_start_time] * int(days)
+f_start_time_day = [time(15, 00)] * int(days)
 
 for j in range(0, int(days)):
     with st.expander("Change settings for day "
@@ -493,6 +495,15 @@ for j in range(0, int(days)):
         breakl_wid_day = st.time_input('Length of the break',
                                        value=breakl_wid_day, key=j)
         final_day[j] = st.checkbox('Final block', value=FINAL, key=j)
+        if final_day[j] is True:
+            f_fix_start_time_day[j] = st.checkbox('Fix start time of finals',
+                                         help='Select a fixed start time when the finales should begin', 
+                                         value = f_fix_start_time_day[j],  key=j) 
+        if f_fix_start_time_day[j] is True:
+            f_start_time_day[j] = st.time_input('Start time of the finals', help='[hh:mm]',
+                                              value=f_start_time,  key=j)
+        else:
+            f_start_time_day[j] = None
 
         if final_day[j] is True:
             final_tat_day[j] = st.number_input('Finals tatamis',
@@ -602,11 +613,11 @@ if st.button('all info is correct'):
                      "gives best result ",
                      best_res[permut_num], "times")
 
-            fig, end_time_final[j], end_time_prelim[j] = plot_schedule_time(
+            fig, end_time_final[j], end_time_prelim[j], start_time_final = plot_schedule_time(
                      scheduled_jobs[pen_time][permut_num],
                      cat_time_dict_new[pen_time][permut_num],
                      start_time_day[j],
-                     date+timedelta(days=j), final_time, f_start_time)
+                     date+timedelta(days=j), final_time, f_start_time_day[j])
 
             st.plotly_chart(fig)
             st.write("Start time day:",
@@ -625,7 +636,7 @@ if st.button('all info is correct'):
                         datetime.strptime(end_time_prelim[j], "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
                         str(date + timedelta(days=j))])
             data.append(["Final",
-                        datetime.strptime(end_time_prelim[j], "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
+                        datetime.strptime(start_time_final, "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
                         end_time_final[j] - timedelta(days=j),
                         str(date + timedelta(days=j))])
 
@@ -645,7 +656,7 @@ if st.button('all info is correct'):
                              best_res[permut_num],
                              "times")
 
-                    fig, end_time_final[j], end_time_prelim[j] \
+                    fig, end_time_final[j], end_time_prelim[j], start_time_final \
                         = plot_schedule_time(scheduled_jobs[pen_time][permut_num],
                                              cat_time_dict_new[pen_time][permut_num],
                                              start_time_day[j],
