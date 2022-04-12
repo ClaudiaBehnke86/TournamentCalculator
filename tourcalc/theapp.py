@@ -249,10 +249,16 @@ def timing(start_time):
                                                    value=start_time)
     breaktype_inp = st.sidebar.selectbox('What type of break do you want',
                                          ('Individual', 'One Block', 'No break'), key='breakt')
-    breakl_wid_day_inp = st.sidebar.time_input('Length of the break', help='[hh:mm]',
-                                               value=time(0, 30))
-    btime_wid_day_inp = st.sidebar.time_input('Start time of the break', help='[hh:mm]',
-                                              value=time(12, 00))
+    if breaktype_inp != 'No break':
+        breakl_wid_day_inp = st.sidebar.time_input('Length of the break',
+                                                   help='[hh:mm]',
+                                                   value=time(0, 30))
+        btime_wid_day_inp = st.sidebar.time_input('Start time of the break', 
+                                                  help='[hh:mm]',
+                                                  value=time(12, 00))
+    else:
+        breakl_wid_day_inp = time(0, 30)
+        btime_wid_day_inp = time(12, 0)
     split_inp = st.sidebar.checkbox('Split large categories',
                                     help='If a category is larger than the average end \
                                     time if is split on 2 tatamis, 1/3 and 2/3. \
@@ -468,10 +474,10 @@ for key in cat_par.copy().keys():
 # lists with default values
 tatami_day = [int(TATAMI)] * int(days)
 start_time_day = [start_time] * int(days)
-btime_day = [time(12, 00)] * int(days)
-bype_day = [breaktype] * int(days)
+btime_day = [time(00, 00)] * int(days)
+btype_day = [breaktype] * int(days)
 bt_index = ['Individual', 'One Block', 'No break'].index(breaktype)
-breaklength_day = [time(0, 30)] * int(days)
+breaklength_day = [time(0, 00)] * int(days)
 end_time_final = [time(00, 00)] * int(days)
 end_time_prelim = [time(00, 00)] * int(days)
 final_day = [FINAL] * int(days)
@@ -488,12 +494,13 @@ for j in range(0, int(days)):
                                             value=int(TATAMI), key=j))
         start_time_wid_days = st.time_input('Start time of the event',
                                             value=start_time_wid_day, key=j)
-        bype_day[j] = st.selectbox('What type of break do you want',
+        btype_day[j] = st.selectbox('What type of break do you want',
                                    ('Individual', 'One Block', 'No break'), index=bt_index, key=j)
-        btime_wid_day = st.time_input('Start time of the break',
-                                      value=btime_wid_day, key=j)
-        breakl_wid_day = st.time_input('Length of the break',
-                                       value=breakl_wid_day, key=j)
+        if btype_day[j] != 'No break':
+            btime_wid_day = st.time_input('Start time of the break',
+                                          value=btime_wid_day, key=j)
+            breakl_wid_day = st.time_input('Length of the break',
+                                          value=breakl_wid_day, key=j)
         final_day[j] = st.checkbox('Final block', value=FINAL, key=j)
         if final_day[j] is True:
             f_fix_start_time_day[j] = st.checkbox('Fix start time of finals',
@@ -598,7 +605,7 @@ if st.button('all info is correct'):
                 cat_time_dict_new = descition_matrix(cat_time_dict,
                                                      av_time,
                                                      int(tatami_day[j]),
-                                                     bype_day[j],
+                                                     btype_day[j],
                                                      btime_day[j],
                                                      breaklength_day[j])
 
