@@ -101,6 +101,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
     end_time_prelim = end_time_prelim.timestamp() * 1000
 
 
+
     if final_start_time is not None and \
        datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S").time() > final_start_time:
         st.error("You will be late! The Preliminaries will run to long.")
@@ -183,7 +184,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
                   line_width=3,
                   line_dash="dash",
                   line_color="white",
-                  annotation_text=str(df['end_time'].max())[-8:],
+                  annotation_text=str(end_time_prelim),
                   annotation_position="top right")
 
     return fig, end_time_final_c, df['end_time'].max(), final_start_time
