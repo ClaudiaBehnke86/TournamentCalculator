@@ -39,7 +39,7 @@ DIS_CHA_TIME = 30  # add the changing time between disciplines in minutes
 BREAK = "Break"
 
 
-def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, final_time, final_start_time):
+def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, final_time, final_start_time, bfinal_type, bfinal_time, final_tat, bfinal_tat):
     """
     plots a schedule horizontal
 
@@ -100,33 +100,70 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
     end_time_prelim = end_time_prelim - timedelta(hours=2)
     end_time_prelim = end_time_prelim.timestamp() * 1000
 
+
     if final_start_time is not None and \
        datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S").time() > final_start_time:
         st.error("You will be late! The Preliminaries will run to long.")
-        st.warning("To fix this: Add a tatami or move the final time!\n \
+        st.warning("To fix this: Add a tatami or change the final time!\n \
                  The finals will NOT start at the planned fixed time")
-        final_start_time = None    
+        final_start_time = None
 
     if final_start_time is None:
-        final_start_time = df['end_time'].max()        
-    else:        
+        final_start_time = df['end_time'].max()
+    else:
         final_start_time = str(date_i) + " "+str(final_start_time)
+
+    if bfinal_type == 'Before the final':
+        bfinal_start_time = final_start_time
+        final_start_time = datetime.strptime(bfinal_start_time, "%Y-%m-%d %H:%M:%S")  + bfinal_time
+        final_start_time = str(final_start_time)
+    else: 
+        bfinal_start_time = final_start_time
+
+    bfinal_end_time_c = datetime.strptime(bfinal_start_time, "%Y-%m-%d %H:%M:%S") + bfinal_time
 
     end_time_final_c = datetime.strptime(final_start_time, "%Y-%m-%d %H:%M:%S") + final_time
 
+    df_list = []
+    df_list.append(df)
+    tat_dev = []
+    for i in range(TATAMI):
+        tat_dev.append(i+1)
+
+
+    if bfinal_time.seconds > 0:   
+        for x in range(int(bfinal_tat)):
+            if bfinal_type == 'Before the final':
+                y = int(x) + math.ceil(np.mean(tat_dev)-math.floor((np.std(tat_dev)/3*bfinal_tat)))     
+            else:
+                z = int(x) + math.ceil(np.mean(tat_dev)-math.floor((np.std(tat_dev)/3*bfinal_tat)))           
+                if x < z:
+                    y = x +1
+                else:
+                    y = TATAMI - (bfinal_tat+x)    
+            df = pd.DataFrame({'category': "Bronze Final Block",
+                               'tatami': y,
+                               'end_time': str(bfinal_end_time_c),
+                               'start_time': str(bfinal_start_time),
+                              'cat_type': 'Final Block'}, index=[0])
+            df_list.append(df)
+
+
+
     if final_time.seconds > 0:
-        df2 = df.append(
-            dict(category="Final Block",
-                 tatami=math.ceil(TATAMI/2),
-                 end_time=end_time_final_c,
-                 start_time=final_start_time,
-                 cat_type='Final Block'),
-            ignore_index=True)
-    else:
-        df2 = df
+        for x in range(int(final_tat)):
+            y = int(x) + math.ceil(np.mean(tat_dev)-math.floor((np.std(tat_dev)/3*final_tat)))        
+            df = pd.DataFrame({'category': "Final Block",
+                              'tatami':y,
+                              'end_time': str(end_time_final_c),
+                              'start_time': str(final_start_time),
+                              'cat_type':'Final Block'}, index=[0])
+            df_list.append(df)
+  
+    df_print = pd.concat(df_list, ignore_index = True, axis = 0) 
 
     fig = px.timeline(
-        df2,
+        df_print,
         x_start='start_time',
         x_end='end_time',
         y='tatami',
@@ -283,7 +320,7 @@ def api_call(cat_par):
 
     return cat_par
 
-def final_setting(final):
+def final_setting(final, TATAMI):
     ''' The sidebar elements for the final settings
 
     Parameters
@@ -299,30 +336,51 @@ def final_setting(final):
     if final is True:
         final_tat_inp = st.sidebar.number_input('Finals tatamis',
                                                 help='On how many tatamis will the finals run',
-                                                value=1)
+                                                value=1, min_value = 1,max_value= TATAMI)
         final_show_inp = st.sidebar.checkbox('Final show & awards',
                                          help='Adds additional time for entrance and awards') 
 
         if final_show_inp is True:
-            show_extra_t_inp = st.sidebar.number_input('Add time for show in minutes', value=7)
+            show_extra_t_inp = st.sidebar.number_input('Add time for show in minutes',
+                                                       value=7)
         else:
             show_extra_t_inp = 0
 
         final_fix_start_time = st.sidebar.checkbox('Fix start time of finals',
-                                         help='Select a fixed start time when the finales should begin') 
+                                                   help='Select a fixed start time when the finales should begin') 
         if final_fix_start_time is True:
-            final_start_time = st.sidebar.time_input('Start time of the finals', help='[hh:mm]',
-                                              value=time(15, 00))
+            final_start_time = st.sidebar.time_input('Start time of the finals',
+                                                     help='[hh:mm]',
+                                                     value=time(15, 00))
         else:
             final_start_time = None
+        bronze_finals = st.sidebar.checkbox('Include the bronze fight',
+                                            help='Add the bronze fights to the final block.') 
+        if bronze_finals is True:
+            bf_type = st.sidebar.selectbox('How should the bronze finals be held',
+                                          ('Before the final', 'Parallel to the finals [BETA]'))
+            bfinal_tat_max = TATAMI
+            if bf_type == "Parallel to the finals":
+                bfinal_tat_max = TATAMI - final_tat_inp
+            bfinal_tat_inp = st.sidebar.number_input('Bronzefinals tatamis',
+                                                     help='On how many tatamis will the bronze finals run',
+                                                     value=2, min_value = 1, max_value= bfinal_tat_max)
+
+        else: 
+            bfinal_tat_inp = 1
+            bf_type = None
+
     else:
         final_tat_inp = 1
         show_extra_t_inp = 0
         final_show_inp = False
         final_fix_start_time = False
         final_start_time = None
+        bronze_finals = False
+        bfinal_tat_inp = 1
+        bf_type = None
     
-    return final, final_tat_inp, final_show_inp, show_extra_t_inp, final_fix_start_time, final_start_time
+    return final, final_tat_inp, final_show_inp, show_extra_t_inp, final_fix_start_time, final_start_time, bronze_finals, bfinal_tat_inp, bf_type
 
 
 permutations_object = itertools.permutations(DIS_INP)
@@ -409,7 +467,7 @@ else:
 start_time_wid_day, breaktype, breakl_wid_day, btime_wid_day, SPLIT = timing(start_time)
 cat_par = api_call(cat_par)\
 
-FINAL, final_tat, final_show, show_extra_t, f_fix_start_time, f_start_time = final_setting(FINAL)
+FINAL, final_tat, final_show, show_extra_t, f_fix_start_time, f_start_time , bfinals, bfinal_tat_inp, bfinal_type = final_setting(FINAL, TATAMI)
 
 left_column, right_column = st.columns(2)
 with left_column:
@@ -482,6 +540,9 @@ end_time_final = [time(00, 00)] * int(days)
 end_time_prelim = [time(00, 00)] * int(days)
 final_day = [FINAL] * int(days)
 final_tat_day = [1] * int(days)
+bfinal_day = [bfinals] * int(days)
+bfinal_tat_day = [1] * int(days)
+
 f_fix_start_time_day = [f_fix_start_time] * int(days)
 f_start_time_day = [time(15, 00)] * int(days)
 
@@ -515,6 +576,11 @@ for j in range(0, int(days)):
         if final_day[j] is True:
             final_tat_day[j] = st.number_input('Finals tatamis',
                                                value=final_tat, key=j)
+            bfinal_day[j] = st.checkbox('Inlude Bronzefinals', value=bfinals, key=j)
+            if bfinal_day[j] is True:
+                bfinal_tat_day[j] = st.number_input('Bronzefinals tatamis',
+                                                    help='On how many tatamis will the bronze finals run',
+                                                    value=bfinal_tat_inp, key=j)
         # convert time to datetime object
         start_time_day[j] = (datetime.combine(date.min,
                              start_time_wid_days) - datetime.min) 
@@ -553,7 +619,8 @@ if st.button('all info is correct'):
         st.write("Tournament: ", tour_name)
         cat_fights_dict, cat_finals_dict, cat_time_dict, \
             par_num_total, fight_num_total, \
-            tot_time, final_time = calculate_fight_time(cat_par, FINAL)
+            tot_time, final_time, cat_bfinals_dict, bfinal_time = calculate_fight_time(cat_par, FINAL, bfinals)
+
         st.write("There are", tot_par, "participants, which will fight",
                  fight_num_total, " matches in ", len(cat_all),
                  "categories with a total time fight time of (HH:MM:SS)",
@@ -570,13 +637,15 @@ if st.button('all info is correct'):
             cat_fights_dict, cat_finals_dict, cat_time_dict, \
                 par_num_total, fight_num_total, \
                 tot_time, \
-                final_time = calculate_fight_time(cat_par_day,
-                                                  final_day[j])
+                final_time, cat_bfinals_dict, \
+                bfinal_time = calculate_fight_time(cat_par_day,
+                                                   final_day[j], bfinal_day[j])
 
             av_time = tot_time / int(tatami_day[j])
 
             final_time = final_time / int(final_tat_day[j])
-            if final_show == True:
+            bfinal_time = bfinal_time / int(bfinal_tat_day[j])
+            if final_show is True:
                 final_time += len(cat_finals_dict)*timedelta(minutes= show_extra_t)
             stringheader = "Day: " + str(date + timedelta(days=j))
             st.header(stringheader)
@@ -584,10 +653,17 @@ if st.button('all info is correct'):
                      "participants, which will fight", fight_num_total,
                      " matches in ", len(cat_time_dict),
                      "categories with a total time fight time of (HH:MM:SS)",
-                     tot_time + final_time, "  \n You have",
-                     len(cat_finals_dict),
-                     "finals which will take", final_time,
-                     "   \n Optimal solution time per tatami will be",
+                     tot_time + final_time)
+            if final_day[j]:
+                st.write("You have",len(cat_finals_dict),
+                         "finals, which will take", final_time,
+                         "on ",  int(final_tat_day[j]), "tatamis")
+            if bfinal_day[j]:
+                st.write("You have 2x", len(cat_bfinals_dict), " = ", 
+                         len(cat_bfinals_dict)*2,
+                         "bronze finals, which will take", bfinal_time,
+                         "on ",  int(bfinal_tat_day[j]), "tatamis")
+            st.write("Optimal solution time per tatami will be",
                      av_time, "with", tatami_day[j],
                      "tatamis.")
 
@@ -624,7 +700,8 @@ if st.button('all info is correct'):
                      scheduled_jobs[pen_time][permut_num],
                      cat_time_dict_new[pen_time][permut_num],
                      start_time_day[j],
-                     date+timedelta(days=j), final_time, f_start_time_day[j])
+                     date+timedelta(days=j), final_time, f_start_time_day[j], 
+                     bfinal_type, bfinal_time, final_tat_day[j], bfinal_tat_day[j])
 
             st.plotly_chart(fig)
             st.write("Start time day:",
@@ -667,7 +744,9 @@ if st.button('all info is correct'):
                         = plot_schedule_time(scheduled_jobs[pen_time][permut_num],
                                              cat_time_dict_new[pen_time][permut_num],
                                              start_time_day[j],
-                                             date+timedelta(days=j), final_time, f_start_time)
+                                             date+timedelta(days=j), final_time,
+                                             f_start_time, bfinal_type,
+                                             bfinal_time, final_tat_day[j], bfinal_tat_day[j])
 
                     st.plotly_chart(fig)
                     st.write("Start time day:",

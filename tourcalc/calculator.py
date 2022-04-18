@@ -229,7 +229,7 @@ def cal_cat(age_select, dis_select):
     return cat_all
 
 
-def calculate_fight_time(dict_inp, final):
+def calculate_fight_time(dict_inp, final, bronze_final):
     '''calculate the fight time
 
     Parameters
@@ -246,9 +246,12 @@ def calculate_fight_time(dict_inp, final):
     cat_fights_dict = {}  # categories & number of fights
     cat_finals_dict = {}  # categories of finale block & time
     cat_time_dict = {}  # categories & time
+    cat_bfinals_dict = {}  # categories of bronze finale block & time
+
 
     tot_time = timedelta()
     final_time = timedelta()
+    bfinal_time = timedelta()
     # fights for low numbers of participants
     low_par_num = {0: 0, 1: 0, 2: 3, 3: 3, 4: 6, 5: 10, 6: 9, 7: 11}
     # 8:11 from 8 on its always +2
@@ -293,6 +296,13 @@ def calculate_fight_time(dict_inp, final):
                     if keys in cat_name:
                         cat_finals_dict[cat_name] = time_inp[keys]
                         final_time += time_inp[keys]
+                if bronze_final is True and par_num > 6:
+                    fight_num = -3  # remove  bronze finals
+                    for keys in time_inp:
+                    # if name of Discipline is in string of category:
+                        if keys in cat_name:
+                            cat_bfinals_dict[cat_name] = time_inp[keys]
+                            bfinal_time += 2*time_inp[keys]
             if par_num < 8:
                 fight_num += low_par_num.get(par_num)
             else:
@@ -310,7 +320,7 @@ def calculate_fight_time(dict_inp, final):
         fight_num_total += len(cat_finals_dict)
 
     return cat_fights_dict, cat_finals_dict, cat_time_dict, \
-        par_num_total, fight_num_total, tot_time, final_time
+        par_num_total, fight_num_total, tot_time, final_time, cat_bfinals_dict, bfinal_time
 
 
 def split_categories(cat_time_dict, av_time):
