@@ -577,7 +577,7 @@ for j in range(0, int(days)):
         if final_day[j] is True:
             final_tat_day[j] = st.number_input('Finals tatamis',
                                                value=final_tat, key=j)
-            bfinal_day[j] = st.checkbox('Inlude Bronzefinals', value=bfinals, key=j)
+            bfinal_day[j] = st.checkbox('Include Bronzefinals', value=bfinals, key=j)
             if bfinal_day[j] is True:
                 bfinal_tat_day[j] = st.number_input('Bronzefinals tatamis',
                                                     help='On how many tatamis will the bronze finals run',
@@ -746,7 +746,7 @@ if st.button('all info is correct'):
                                              cat_time_dict_new[pen_time][permut_num],
                                              start_time_day[j],
                                              date+timedelta(days=j), final_time,
-                                             f_start_time, bfinal_type,
+                                             f_start_time_day[j], bfinal_type,
                                              bfinal_time, final_tat_day[j], bfinal_tat_day[j])
 
                     st.plotly_chart(fig)
