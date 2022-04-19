@@ -100,7 +100,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
     end_time_prelim = end_time_prelim - timedelta(hours=2)
     end_time_prelim = end_time_prelim.timestamp() * 1000
 
-
+    end_time_prelim_time = df['end_time'].max()
 
     if final_start_time is not None and \
        datetime.strptime(df['end_time'].max(), "%Y-%m-%d %H:%M:%S").time() > final_start_time:
@@ -184,10 +184,10 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
                   line_width=3,
                   line_dash="dash",
                   line_color="white",
-                  annotation_text=str(end_time_prelim),
+                  annotation_text=str(end_time_prelim_time)[-8:],
                   annotation_position="top right")
 
-    return fig, end_time_final_c, df['end_time'].max(), final_start_time
+    return fig, end_time_final_c, end_time_prelim_time, final_start_time
 
 
 def heatmap(data, row_labels, col_labels, str_title):
@@ -708,7 +708,7 @@ if st.button('all info is correct'):
             st.write("Start time day:",
                      str(start_time_day[j]),
                      "  \n Finals can start at: ",
-                     str(end_time_prelim[j])[-8:],
+                     str(start_time_final)[-8:],
                      "  \n Day ends at: ",
                      str(end_time_final[j])[-8:])
 
@@ -753,7 +753,7 @@ if st.button('all info is correct'):
                     st.write("Start time day:",
                              str(start_time_day[j])[-8:],
                              "  \n Final can start at: ",
-                             str(end_time_prelim[j])[-8:],
+                             str(start_time_final)[-8:],
                              "  \n Day ends at: ",
                              str(end_time_final[j])[-8:])
                     k += 1
