@@ -10,7 +10,7 @@ import numpy as np
 
 
 # some global variables
-AGE_INP = ["U14", "U16", "U18", "U21", "Adults"]  # the supported age divisions
+AGE_INP = ["U12", "U14", "U16", "U18", "U21", "Adults"]  # the supported age divisions
 # order does not matter -> permutations
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]  # supported disciplines
 # just a name
@@ -191,11 +191,13 @@ def cal_cat(age_select, dis_select):
     weight_w18 = ['-40', '-44', '-48', '-52', '-57', '-63', '-70', '+70']
     weight_w16 = ['-32', '-36', '-40', '-44', '-48', '-52', '-57', '-63', '+63']
     weight_w14 = ['-25', '-28', '-32', '-36', '-40', '-44', '-48', '-52', '-57', '+57']
+    weight_w12 = ['-22', '-25', '-28', '-32', '-36', '-40', '-44', '-48', '+48']
 
     weight_m = ['-56', '-62', '-69', '-77', '-85', '-94', '+94']
     weight_m18 = ['-46', '-50', '-55', '-60', '-66', '-73', '-81', '+81']
     weight_m16 = ['-38', '-42', '-46', '-50', '-55', '-60', '-66', '-73', '+73']
     weight_m14 = ['-30', '-34', '-38', '-42', '-46', '-50', '-55', '-60', '-66', '+66']
+    weight_m12 = ['-24','-27','-30', '-34', '-38', '-42', '-46', '-50', '+50']
 
     cat_team = {"Women", "Men", "Mixed"}
 
@@ -205,6 +207,11 @@ def cal_cat(age_select, dis_select):
             if j in ("Duo", "Show"):
                 for k in cat_team:
                     cat_all.append(i + " " + j + " " + k)
+            elif i == "U12":
+                for k in weight_m12:
+                    cat_all.append(i + " " + j + " Men " + k + " kg")
+                for k in weight_w12:
+                    cat_all.append(i + " " + j + " Women " + k + " kg")        
             elif i == "U14":
                 for k in weight_m14:
                     cat_all.append(i + " " + j + " Men " + k + " kg")
@@ -256,23 +263,27 @@ def calculate_fight_time(dict_inp, final, bronze_final):
     low_par_num = {0: 0, 1: 0, 2: 3, 3: 3, 4: 6, 5: 10, 6: 9, 7: 11}
     # 8:11 from 8 on its always +2
 
-    time_inp = {"U14 Fighting": timedelta(minutes=6, seconds=00),
+    time_inp = {"U12 Fighting": timedelta(minutes=5, seconds=00),
+                "U14 Fighting": timedelta(minutes=6, seconds=00),
                 "U16 Fighting": timedelta(minutes=6, seconds=00),
                 "U18 Fighting": timedelta(minutes=7, seconds=00),
                 "U21 Fighting": timedelta(minutes=7, seconds=00),
                 "Adults Fighting": timedelta(minutes=7, seconds=00),
+                "U12 Duo": timedelta(minutes=5),
                 "U14 Duo": timedelta(minutes=5),
                 "U16 Duo": timedelta(minutes=5),
                 "U18 Duo": timedelta(minutes=7),
                 "U21 Duo": timedelta(minutes=7),
                 "Adults Duo": timedelta(minutes=7),
+                "U12 Show": timedelta(minutes=4),
                 "U14 Show": timedelta(minutes=4),
                 "U16 Show": timedelta(minutes=4),
                 "U18 Show": timedelta(minutes=4),
                 "U21 Show": timedelta(minutes=4),
-                "Adults Show": timedelta(minutes=4, seconds=30),
-                "U14 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
-                "U16 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
+                "Adults Show": timedelta(minutes=3, seconds=30),
+                "U12 Jiu-Jitsu": timedelta(minutes=3, seconds=30),
+                "U14 Jiu-Jitsu": timedelta(minutes=3, seconds=30),
+                "U16 Jiu-Jitsu": timedelta(minutes=4, seconds=30),
                 "U18 Jiu-Jitsu": timedelta(minutes=4, seconds=30),
                 "U21 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
                 "Adults Jiu-Jitsu": timedelta(minutes=6, seconds=30)}

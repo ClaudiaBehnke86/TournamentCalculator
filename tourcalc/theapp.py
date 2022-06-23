@@ -27,7 +27,7 @@ from tourcalc.calculator import calculate_fight_time
 from tourcalc.calculator import split_categories
 from tourcalc.APIcall import getdata
 
-AGE_INP = ["U14", "U16", "U18", "U21", "Adults"]  # the supported age divisions
+AGE_INP = ["U12", "U14", "U16", "U18", "U21", "Adults"]  # the supported age divisions
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]
 
 AGE_SEL = []  # an empty list to select the age divisions
