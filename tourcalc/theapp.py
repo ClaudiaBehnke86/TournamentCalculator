@@ -247,6 +247,10 @@ def make_input(cat_par_inp):
     '''
 
     for cat_name in cat_par_inp:  # loop over dictionary
+        if ("U12" in cat_name) and ("U12" not in AGE_SEL):
+            AGE_SEL.append("U12")
+        if ("U14" in cat_name) and ("U14" not in AGE_SEL):
+            AGE_SEL.append("U14")
         if ("U16" in cat_name) and ("U16" not in AGE_SEL):
             AGE_SEL.append("U16")
         if ("U18" in cat_name) and ("U18" not in AGE_SEL):
