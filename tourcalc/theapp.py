@@ -774,6 +774,14 @@ if st.button('all info is correct'):
                     st.write(fig1)
             else:
                 st.write("nothing happends at this day ")
+                data.append(["Preliminaries",
+                            start_day_dt + start_time_day[j],
+                            start_day_dt + start_time_day[j],
+                            str(date + timedelta(days=j))])
+                data.append(["Final",
+                            start_day_dt + start_time_day[j],
+                            start_day_dt + start_time_day[j],
+                            str(date + timedelta(days=j))])
 
             cat_par_day.clear()
              
