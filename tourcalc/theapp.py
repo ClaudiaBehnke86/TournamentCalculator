@@ -659,117 +659,121 @@ if st.button('all info is correct'):
                      " matches in ", len(cat_time_dict),
                      "categories with a total time fight time of (HH:MM:SS)",
                      tot_time + final_time)
-            if final_day[j]:
-                st.write("You have",len(cat_finals_dict),
-                         "finals, which will take", final_time,
-                         "on ",  int(final_tat_day[j]), "tatamis")
-            if bfinal_day[j]:
-                st.write("You have 2x", len(cat_bfinals_dict), " = ", 
-                         len(cat_bfinals_dict)*2,
-                         "bronze finals, which will take", bfinal_time,
-                         "on ",  int(bfinal_tat_day[j]), "tatamis")
-            st.write("Optimal solution time per tatami will be",
-                     av_time, "with", tatami_day[j],
-                     "tatamis.")
+            if par_num_total > 1:
+                if final_day[j]:
+                    st.write("You have",len(cat_finals_dict),
+                             "finals, which will take", final_time,
+                             "on ",  int(final_tat_day[j]), "tatamis")
+                if bfinal_day[j]:
+                    st.write("You have 2x", len(cat_bfinals_dict), " = ", 
+                             len(cat_bfinals_dict)*2,
+                             "bronze finals, which will take", bfinal_time,
+                             "on ",  int(bfinal_tat_day[j]), "tatamis")
+                st.write("Optimal solution time per tatami will be",
+                         av_time, "with", tatami_day[j],
+                         "tatamis.")
 
-            if SPLIT == True:
-                cat_time_dict = split_categories(cat_time_dict, av_time)
+                if SPLIT == True:
+                    cat_time_dict = split_categories(cat_time_dict, av_time)
 
-            # add an entry for penalty time in dict!
-            cat_time_dict[DIS_CHA] = timedelta(minutes=DIS_CHA_TIME)
-            # add an entry for the break time in dict!
-            cat_time_dict[BREAK] = breaklength_day[j]
+                # add an entry for penalty time in dict!
+                cat_time_dict[DIS_CHA] = timedelta(minutes=DIS_CHA_TIME)
+                # add an entry for the break time in dict!
+                cat_time_dict[BREAK] = breaklength_day[j]
 
-            scheduled_jobs, most_abundand, min_id, \
-                pen_time_list, happiness, \
-                min_score, \
-                cat_time_dict_new = descition_matrix(cat_time_dict,
-                                                     av_time,
-                                                     int(tatami_day[j]),
-                                                     btype_day[j],
-                                                     btime_day[j],
-                                                     breaklength_day[j])
+                scheduled_jobs, most_abundand, min_id, \
+                    pen_time_list, happiness, \
+                    min_score, \
+                    cat_time_dict_new = descition_matrix(cat_time_dict,
+                                                         av_time,
+                                                         int(tatami_day[j]),
+                                                         btype_day[j],
+                                                         btime_day[j],
+                                                         breaklength_day[j])
 
-            best_res = {k: v for k, v in sorted(most_abundand.items(),
-                        key=lambda item: item[1], reverse=True)}
+                best_res = {k: v for k, v in sorted(most_abundand.items(),
+                            key=lambda item: item[1], reverse=True)}
 
-            pen_time = DIS_CHA_TIME//2  # chosen penalty time
-            permut_num = int(list(best_res)[0])  # chosen permutation
+                pen_time = DIS_CHA_TIME//2  # chosen penalty time
+                permut_num = int(list(best_res)[0])  # chosen permutation
 
-            st.write("Permutation ", permut_num, " ",
-                     permutations_list[permut_num],
-                     "gives best result ",
-                     best_res[permut_num], "times")
+                st.write("Permutation ", permut_num, " ",
+                         permutations_list[permut_num],
+                         "gives best result ",
+                         best_res[permut_num], "times")
 
-            fig, end_time_final[j], end_time_prelim[j], start_time_final = plot_schedule_time(
-                     scheduled_jobs[pen_time][permut_num],
-                     cat_time_dict_new[pen_time][permut_num],
-                     start_time_day[j],
-                     date+timedelta(days=j), final_time, f_start_time_day[j], 
-                     bfinal_type, bfinal_time, final_tat_day[j], bfinal_tat_day[j])
+                fig, end_time_final[j], end_time_prelim[j], start_time_final = plot_schedule_time(
+                         scheduled_jobs[pen_time][permut_num],
+                         cat_time_dict_new[pen_time][permut_num],
+                         start_time_day[j],
+                         date+timedelta(days=j), final_time, f_start_time_day[j], 
+                         bfinal_type, bfinal_time, final_tat_day[j], bfinal_tat_day[j])
 
-            st.plotly_chart(fig)
-            st.write("Start time day:",
-                     str(start_time_day[j]),
-                     "  \n Finals can start at: ",
-                     str(start_time_final)[-8:],
-                     "  \n Day ends at: ",
-                     str(end_time_final[j])[-8:])
+                st.plotly_chart(fig)
+                st.write("Start time day:",
+                         str(start_time_day[j]),
+                         "  \n Finals can start at: ",
+                         str(start_time_final)[-8:],
+                         "  \n Day ends at: ",
+                         str(end_time_final[j])[-8:])
 
-            # workaround to the get right format
-            start_day_dt = datetime.combine(date, time(0, 0))
+                # workaround to the get right format
+                start_day_dt = datetime.combine(date, time(0, 0))
 
-            # add lists for overview
-            data.append(["Preliminaries",
-                        start_day_dt + start_time_day[j],
-                        datetime.strptime(end_time_prelim[j], "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
-                        str(date + timedelta(days=j))])
-            data.append(["Final",
-                        datetime.strptime(start_time_final, "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
-                        end_time_final[j] - timedelta(days=j),
-                        str(date + timedelta(days=j))])
+                # add lists for overview
+                data.append(["Preliminaries",
+                            start_day_dt + start_time_day[j],
+                            datetime.strptime(end_time_prelim[j], "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
+                            str(date + timedelta(days=j))])
+                data.append(["Final",
+                            datetime.strptime(start_time_final, "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
+                            end_time_final[j] - timedelta(days=j),
+                            str(date + timedelta(days=j))])
 
-            LABEL = "There are " + str(len(most_abundand)) + \
-                    " possible results for day "\
-                    + str(j + 1) + ". Open Details"
+                LABEL = "There are " + str(len(most_abundand)) + \
+                        " possible results for day "\
+                        + str(j + 1) + ". Open Details"
 
-            with st.expander(LABEL):
-                k = 1
-                st.write("other options")
-                while k < len(best_res):
-                    permut_num = int(list(best_res)[k])  # chosen permutation
-                    st.write("Permutation number",
-                             permut_num, " ",
-                             permutations_list[permut_num],
-                             "gives best result ",
-                             best_res[permut_num],
-                             "times")
+                with st.expander(LABEL):
+                    k = 1
+                    st.write("other options")
+                    while k < len(best_res):
+                        permut_num = int(list(best_res)[k])  # chosen permutation
+                        st.write("Permutation number",
+                                 permut_num, " ",
+                                 permutations_list[permut_num],
+                                 "gives best result ",
+                                 best_res[permut_num],
+                                 "times")
 
-                    fig, end_time_final[j], end_time_prelim[j], start_time_final \
-                        = plot_schedule_time(scheduled_jobs[pen_time][permut_num],
-                                             cat_time_dict_new[pen_time][permut_num],
-                                             start_time_day[j],
-                                             date+timedelta(days=j), final_time,
-                                             f_start_time_day[j], bfinal_type,
-                                             bfinal_time, final_tat_day[j], bfinal_tat_day[j])
+                        fig, end_time_final[j], end_time_prelim[j], start_time_final \
+                            = plot_schedule_time(scheduled_jobs[pen_time][permut_num],
+                                                 cat_time_dict_new[pen_time][permut_num],
+                                                 start_time_day[j],
+                                                 date+timedelta(days=j), final_time,
+                                                 f_start_time_day[j], bfinal_type,
+                                                 bfinal_time, final_tat_day[j], bfinal_tat_day[j])
 
-                    st.plotly_chart(fig)
-                    st.write("Start time day:",
-                             str(start_time_day[j])[-8:],
-                             "  \n Final can start at: ",
-                             str(start_time_final)[-8:],
-                             "  \n Day ends at: ",
-                             str(end_time_final[j])[-8:])
-                    k += 1
+                        st.plotly_chart(fig)
+                        st.write("Start time day:",
+                                 str(start_time_day[j])[-8:],
+                                 "  \n Final can start at: ",
+                                 str(start_time_final)[-8:],
+                                 "  \n Day ends at: ",
+                                 str(end_time_final[j])[-8:])
+                        k += 1
 
-                st.write("Matrix with the results")
-                fig1 = heatmap(min_id,
-                               pen_time_list,
-                               happiness,
-                               "Best permutation")
-                st.write(fig1)
+                    st.write("Matrix with the results")
+                    fig1 = heatmap(min_id,
+                                   pen_time_list,
+                                   happiness,
+                                   "Best permutation")
+                    st.write(fig1)
+            else:
+                st.write("nothing happends at this day ")
 
             cat_par_day.clear()
+             
             st.markdown("---")
             j += 1
 
