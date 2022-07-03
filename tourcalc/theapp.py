@@ -424,8 +424,11 @@ if uploaded_file is not None:
     try:
         date_time_obj = datetime.strptime(date_inp[0:10], '%Y-%m-%d')
     except ValueError:
-        st.exception("Oops! That was no date. We will use today")
-        date_time_obj = datetime.today()
+        try:
+            date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
+        except ValueError:
+            st.exception("Oops! That was no date. We will use today")
+            date_time_obj = datetime.today()
     try:
         start_time = datetime.strptime(start_time, "%H:%M:%S").time()
     except ValueError:
