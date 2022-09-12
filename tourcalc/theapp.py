@@ -16,6 +16,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.figure_factory as ff
 import streamlit as st
+import random
 import numpy as np
 
 import tourcalc
@@ -400,7 +401,7 @@ LINK = '[Click here for tutorial] \
     (https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
 st.markdown(LINK, unsafe_allow_html=True)
 
-tour_name = st.text_input("Name of the tournament", key='tour_name_key_inp', value="")
+tour_name = st.text_input("Name of the tournament", key='tour_name_key_inp'+str(random.randint(0, 100)), value="")
 fname = tour_name + ".csv"
 path = os.path.dirname(tourcalc.__file__)
 list_path = os.path.join(path, 'example_tours')
@@ -505,11 +506,11 @@ with st.expander("Hide categories"):
                 _rtmp = round(np.random.normal(8, 5.32))
             with left_column1:
                 inp = st.number_input("Number of athletes " + i,
-                                      min_value=0, value=_rtmp, key=i)
+                                      min_value=0, value=_rtmp, key="athletes_" + str(i))
             day_rtmp = np.random.randint(1, days+1)
             with right_column2:
                 day = st.number_input("Competition day " + i,
-                                      min_value=1, max_value=int(days), value=day_rtmp, key=i)
+                                      min_value=1, max_value=int(days), value=day_rtmp, key="com_day_" + str(i))
         else: 
             val = cat_par.get(i)
             val1 = cat_dict_day.get(i)
@@ -518,7 +519,7 @@ with st.expander("Hide categories"):
                     val = 0
                 inp = st.number_input("Number of athletes " + str(i),
                                       min_value=0,
-                                      key=i,
+                                      key="N_athletes" + str(i),
                                       value=val)
             with right_column2:
                 if val1 is None:
