@@ -400,7 +400,7 @@ LINK = '[Click here for tutorial] \
     (https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
 st.markdown(LINK, unsafe_allow_html=True)
 
-tour_name = st.text_input("Name of the tournament", key='tour_name_key', value="")
+tour_name = st.text_input("Name of the tournament", key='tour_name_key_inp', value="")
 fname = tour_name + ".csv"
 path = os.path.dirname(tourcalc.__file__)
 list_path = os.path.join(path, 'example_tours')
