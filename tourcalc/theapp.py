@@ -584,12 +584,12 @@ for j in range(0, int(days)):
 
         if final_day[j] is True:
             final_tat_day[j] = st.number_input('Finals tatamis',
-                                               value=final_tat, key=j)
-            bfinal_day[j] = st.checkbox('Include Bronzefinals', value=bfinals, key=j)
+                                               value=final_tat, key="final_tat" + str(j))
+            bfinal_day[j] = st.checkbox('Include Bronzefinals', value=bfinals, key="bfinals" +str(j))
             if bfinal_day[j] is True:
                 bfinal_tat_day[j] = st.number_input('Bronzefinals tatamis',
                                                     help='On how many tatamis will the bronze finals run',
-                                                    value=bfinal_tat_inp, key=j)
+                                                    value=bfinal_tat_inp, key= "bfinals_tat" +str(j))
         # convert time to datetime object
         start_time_day[j] = (datetime.combine(date.min,
                              start_time_wid_days) - datetime.min) 
