@@ -571,14 +571,14 @@ for j in range(0, int(days)):
                                           value=btime_wid_day, key="start_time_break" + str(j))
             breakl_wid_day = st.time_input('Length of the break',
                                           value=breakl_wid_day, key="length_break" + str(j))
-        final_day[j] = st.checkbox('Final block', value=FINAL, key=j)
+        final_day[j] = st.checkbox('Final block', value=FINAL, key= "final_"+ str(j))
         if final_day[j] is True:
             f_fix_start_time_day[j] = st.checkbox('Fix start time of finals',
                                          help='Select a fixed start time when the finales should begin', 
-                                         value = f_fix_start_time_day[j],  key=j) 
+                                         value = f_fix_start_time_day[j],  key= "fix_start_time_day"+str(j)) 
         if f_fix_start_time_day[j] is True:
             f_start_time_day[j] = st.time_input('Start time of the finals', help='[hh:mm]',
-                                              value=f_start_time,  key=j)
+                                              value=f_start_time,  key="start_time_day_finals" + str(j))
         else:
             f_start_time_day[j] = None
 
