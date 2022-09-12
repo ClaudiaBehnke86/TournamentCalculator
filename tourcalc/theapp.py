@@ -408,7 +408,7 @@ check_file = Path(list_path) / fname
 
 left_column_2, right_column_2 = st.columns(2)
 with left_column_2:
-    if st.button("Show example tournaments"):
+    if st.button("Show example tournaments", key ="example_tournaments"):
         st.write('You can read in the event by copying the name \
             without .csv into the "Name of the tournament" field')
         filenames = os.listdir(list_path)
@@ -524,7 +524,7 @@ with st.expander("Hide categories"):
                 if val1 is None:
                     val1 = 1
                 day = st.number_input("Competition day " + str(i),
-                                      min_value=1, key=i, max_value=int(days), value=val1)
+                                      min_value=1, key="day_" + str(i), max_value=int(days), value=val1)
 
         tot_par += int(inp)
         cat_par[i] = int(inp)
