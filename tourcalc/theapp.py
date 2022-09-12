@@ -567,7 +567,7 @@ for j in range(0, int(days)):
                                    ('Individual', 'One Block', 'No break'), index=bt_index, key=j)
         if btype_day[j] != 'No break':
             btime_wid_day = st.time_input('Start time of the break',
-                                          value=btime_wid_day, key=j)
+                                          value=btime_wid_day, key="start_time_" + str(j)
             breakl_wid_day = st.time_input('Length of the break',
                                           value=breakl_wid_day, key=j)
         final_day[j] = st.checkbox('Final block', value=FINAL, key=j)
