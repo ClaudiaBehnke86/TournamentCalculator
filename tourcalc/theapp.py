@@ -562,14 +562,14 @@ for j in range(0, int(days)):
         tatami_day[j] = int(st.number_input("Number of tatamis",
                                             value=int(TATAMI), key=j))
         start_time_wid_days = st.time_input('Start time of the event',
-                                            value=start_time_wid_day, key=j)
+                                            value=start_time_wid_day, key="start_time_" + str(j))
         btype_day[j] = st.selectbox('What type of break do you want',
-                                   ('Individual', 'One Block', 'No break'), index=bt_index, key=j)
+                                   ('Individual', 'One Block', 'No break'), index=bt_index, key="break_type_" + str(j))
         if btype_day[j] != 'No break':
             btime_wid_day = st.time_input('Start time of the break',
-                                          value=btime_wid_day, key="start_time_" + str(j))
+                                          value=btime_wid_day, key="start_time_break" + str(j))
             breakl_wid_day = st.time_input('Length of the break',
-                                          value=breakl_wid_day, key=j)
+                                          value=breakl_wid_day, key="length_break" + str(j))
         final_day[j] = st.checkbox('Final block', value=FINAL, key=j)
         if final_day[j] is True:
             f_fix_start_time_day[j] = st.checkbox('Fix start time of finals',
