@@ -399,7 +399,7 @@ cat_dict_day = {}  # day per category
 
 st.header('Tournament Calculator')
 
-LINK = '[Click here for tutorial] (https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
+LINK = '[Click here for tutorial](https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
 st.markdown(LINK, unsafe_allow_html=True)
 
 tour_name = st.text_input("Name of the tournament", key='tour_name_key_inp'+str(random.randint(0, 100)), value="")
