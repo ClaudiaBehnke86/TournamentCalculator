@@ -12,11 +12,12 @@ from datetime import time, datetime, timedelta
 import itertools  # for permutations of discipline order
 from pathlib import Path
 import math
+import random
 import pandas as pd
 import plotly.express as px
 import plotly.figure_factory as ff
 import streamlit as st
-import random
+
 import numpy as np
 
 import tourcalc
@@ -285,7 +286,8 @@ def timing(start_time):
     start_time
         start time of the event
     '''
-
+    st.sidebar.image("https://i0.wp.com/jjeu.eu/wp-content/uploads/2018/08/jjif-logo-170.png?fit=222%2C160&ssl=1",
+                     use_column_width='always')
     st.sidebar.header('Change settings for event')
 
     start_time_wid_day_inp = st.sidebar.time_input('Start time of the event',
@@ -397,8 +399,7 @@ cat_dict_day = {}  # day per category
 
 st.header('Tournament Calculator')
 
-LINK = '[Click here for tutorial] \
-    (https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
+LINK = '[Click here for tutorial] (https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
 st.markdown(LINK, unsafe_allow_html=True)
 
 tour_name = st.text_input("Name of the tournament", key='tour_name_key_inp'+str(random.randint(0, 100)), value="")
@@ -793,3 +794,8 @@ if st.button('all info is correct'):
         df = pd.DataFrame(data, columns=['Type', 'Begin', 'End', 'day'])
         fig = px.timeline(df, x_start='Begin', x_end='End', color='Type', text='day')
         st.write(fig)
+
+st.sidebar.markdown('<a href="mailto:sportdirector@jjif.org">Contact for problems</a>', unsafe_allow_html=True)
+
+LINK = '[Click here for the source code](https://github.com/ClaudiaBehnke86/TournamentCalculator)'
+st.markdown(LINK, unsafe_allow_html=True)
