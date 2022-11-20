@@ -11,6 +11,7 @@ import os
 from datetime import time, datetime, timedelta
 import itertools  # for permutations of discipline order
 from pathlib import Path
+from pandas import json_normalize
 import math
 import random
 import pandas as pd
@@ -28,6 +29,9 @@ from tourcalc.calculator import read_in_file
 from tourcalc.calculator import calculate_fight_time
 from tourcalc.calculator import split_categories
 from tourcalc.APIcall import getdata
+
+import requests
+from requests.auth import HTTPBasicAuth
 
 AGE_INP = ["U12", "U14", "U16", "U18", "U21", "Adults"]  # the supported age divisions
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]
@@ -321,12 +325,30 @@ def api_call(cat_par):
     apidata = st.sidebar.checkbox("Get registration from Sportdata API", 
                                   help="Check if the registration is still open")
     if apidata is True:
-        sd_key = st.sidebar.number_input("Enter the number of Sportdata event number",
-                                         help='is the number behind vernr= in the URL', value=0)
+        # get upcoming events
+        uri_upc = "https://www.sportdata.org/ju-jitsu/rest/events/upcoming/"
+        response = requests.get(uri_upc,
+                                auth=HTTPBasicAuth(st.secrets['user'],
+                                                   st.secrets['password']),
+                                                   timeout=5)
+        d_upc = response.json()
+        df_upc = json_normalize(d_upc)
+        evts = df_upc['name'].tolist()
+        evts.append('Other')
+        option = st.sidebar.selectbox("Choose your event", evts,
+                                      help='if the event is not listed choose Other')
+
+        if option == 'Other':
+            sd_key = st.sidebar.number_input("Enter the Sportdata event number",
+                                             help='the number behind vernr= in the URL', value=0)
+        else:
+            sd_key = int(df_upc['id'][df_upc['name'] == option])
+
         if sd_key > 0:
             cat_par = getdata(str(sd_key), st.secrets['user'], st.secrets['password'])
 
     return cat_par
+
 
 def final_setting(final, TATAMI):
     ''' The sidebar elements for the final settings
@@ -401,6 +423,7 @@ st.header('Tournament Calculator')
 
 LINK = '[Click here for tutorial](https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
 st.markdown(LINK, unsafe_allow_html=True)
+
 
 tour_name = st.text_input("Name of the tournament", key='tour_name_key_inp'+str(random.randint(0, 100)), value="")
 fname = tour_name + ".csv"
