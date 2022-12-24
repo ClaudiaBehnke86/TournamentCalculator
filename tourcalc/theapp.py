@@ -33,7 +33,7 @@ from tourcalc.APIcall import getdata
 import requests
 from requests.auth import HTTPBasicAuth
 
-AGE_INP = ["U12", "U14", "U16", "U18", "U21", "Adults"]  # the supported age divisions
+AGE_INP = ["U12", "U14", "U16", "U18", "U21", "Adults", "Master"]  # the supported age divisions
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]
 
 AGE_SEL = []  # an empty list to select the age divisions
@@ -156,18 +156,17 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
             df_list.append(df)
 
 
-
     if final_time.seconds > 0:
         for x in range(int(final_tat)):
             y = int(x) + math.ceil(np.mean(tat_dev)-math.floor((np.std(tat_dev)/3*final_tat)))        
             df = pd.DataFrame({'category': "Final Block",
-                              'tatami':y,
-                              'end_time': str(end_time_final_c),
-                              'start_time': str(final_start_time),
-                              'cat_type':'Final Block'}, index=[0])
+                              'tatami': y,
+                               'end_time': str(end_time_final_c),
+                               'start_time': str(final_start_time),
+                               'cat_type':'Final Block'}, index=[0])
             df_list.append(df)
   
-    df_print = pd.concat(df_list, ignore_index = True, axis = 0) 
+    df_print = pd.concat(df_list, ignore_index=True, axis=0)
 
     fig = px.timeline(
         df_print,
@@ -265,6 +264,8 @@ def make_input(cat_par_inp):
             AGE_SEL.append("U21")
         if ("Adults" in cat_name) and ("Adults" not in AGE_SEL):
             AGE_SEL.append("Adults")
+        if ("Master" in cat_name) and ("Master" not in AGE_SEL):
+            AGE_SEL.append("Master")
         if len(AGE_SEL) == 0:
             st.write("No age divisions in input file")
 
@@ -458,7 +459,7 @@ if uploaded_file is not None:
         start_time = datetime.strptime(start_time, "%H:%M:%S").time()
     except ValueError:
         st.exception("Oops! That was no time. We will use 9:00")
-        start_time = time(9, 0) 
+        start_time = time(9, 0)
     AGE_SEL, DIS_SEL = make_input(cat_par_inp)
     cat_par = cat_par_inp
 
@@ -468,7 +469,7 @@ elif len(tour_name) > 0 and os.path.isfile(check_file):
     if newf == 'USE':
         cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
             start_time, breaktype, date_inp = read_in_file(check_file)
-        print("date ",date_inp)
+        print("date ", date_inp)
         try:
             date_time_obj = datetime.strptime(date_inp[0:10], '%d/%m/%Y')
         except ValueError:

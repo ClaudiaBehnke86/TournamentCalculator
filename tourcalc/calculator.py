@@ -10,7 +10,7 @@ import numpy as np
 
 
 # some global variables
-AGE_INP = ["U12", "U14", "U16", "U18", "U21", "Adults"]  # the supported age divisions
+AGE_INP = ["U12", "U14", "U16", "U18", "U21", "Adults", "Master"]  # the supported age divisions
 # order does not matter -> permutations
 DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]  # supported disciplines
 # just a name
@@ -227,6 +227,12 @@ def cal_cat(age_select, dis_select):
                     cat_all.append(i + " " + j + " Men " + k + " kg")
                 for k in weight_w18:
                     cat_all.append(i + " " + j + " Women " + k + " kg")
+            elif i == "Master":
+                for n in ["M1", "M2", "M3", "M4"]:
+                    for k in weight_m:
+                        cat_all.append(i + " "+n + " " + j + " Men " + k + " kg")
+                    for k in weight_w:
+                        cat_all.append(i + " "+n + " " + j + " Women " + k + " kg")
             else:
                 for k in weight_m:
                     cat_all.append(i + " " + j + " Men " + k + " kg")
@@ -269,24 +275,41 @@ def calculate_fight_time(dict_inp, final, bronze_final):
                 "U18 Fighting": timedelta(minutes=7, seconds=00),
                 "U21 Fighting": timedelta(minutes=7, seconds=00),
                 "Adults Fighting": timedelta(minutes=7, seconds=00),
+                "Master M1 Fighting": timedelta(minutes=6, seconds=00),
+                "Master M2 Fighting": timedelta(minutes=6, seconds=00),
+                "Master M3 Fighting": timedelta(minutes=6, seconds=00),
+                "Master M4 Fighting": timedelta(minutes=6, seconds=00),
                 "U12 Duo": timedelta(minutes=5),
                 "U14 Duo": timedelta(minutes=5),
                 "U16 Duo": timedelta(minutes=5),
                 "U18 Duo": timedelta(minutes=7),
                 "U21 Duo": timedelta(minutes=7),
                 "Adults Duo": timedelta(minutes=7),
+                "Master M1 Duo": timedelta(minutes=7),
+                "Master M2 Duo": timedelta(minutes=7),
+                "Master M3 Duo": timedelta(minutes=7),
+                "Master M4 Duo": timedelta(minutes=7),
                 "U12 Show": timedelta(minutes=4),
                 "U14 Show": timedelta(minutes=4),
                 "U16 Show": timedelta(minutes=4),
                 "U18 Show": timedelta(minutes=4),
                 "U21 Show": timedelta(minutes=4),
                 "Adults Show": timedelta(minutes=3, seconds=30),
+                "Master M1 Show": timedelta(minutes=3, seconds=30),
+                "Master M2 Show": timedelta(minutes=3, seconds=30),
+                "Master M3 Show": timedelta(minutes=3, seconds=30),
+                "Master M4 Show": timedelta(minutes=3, seconds=30),
                 "U12 Jiu-Jitsu": timedelta(minutes=3, seconds=30),
                 "U14 Jiu-Jitsu": timedelta(minutes=3, seconds=30),
                 "U16 Jiu-Jitsu": timedelta(minutes=4, seconds=30),
                 "U18 Jiu-Jitsu": timedelta(minutes=4, seconds=30),
                 "U21 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
-                "Adults Jiu-Jitsu": timedelta(minutes=6, seconds=30)}
+                "Adults Jiu-Jitsu": timedelta(minutes=5, seconds=30),
+                "Master M1 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
+                "Master M2 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
+                "Master M3 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
+                "Master M4 Jiu-Jitsu": timedelta(minutes=5, seconds=30)
+                }
 
     for cat_name in dict_inp:  # loop over dictionary
         par_num = int(dict_inp.get(cat_name))  # number of fights per category
