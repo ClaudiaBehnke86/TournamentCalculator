@@ -18,6 +18,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.figure_factory as ff
 import streamlit as st
+from fpdf import FPDF
 
 import numpy as np
 
@@ -43,6 +44,40 @@ DIS_CHA = "Discipline change"  # indicator of a change of a discipline
 DIS_CHA_TIME = 30  # add the changing time between disciplines in minutes
 
 BREAK = "Break"
+
+class PDF(FPDF):
+    '''
+    overwrites the pdf settings
+    '''
+
+    def __init__(self, orientation, tourname):
+        # initialize attributes of parent class
+        super().__init__(orientation)
+        # initialize class attributes
+        self.tourname = tourname
+
+    def header(self):
+        # Logo
+        self.image('Logo_real.png', 8, 8, 30)
+        # Arial bold 15
+        self.set_font('Arial', 'B', 15)
+        # Move to the right
+        self.cell(70)
+        # Title
+        self.cell(30, 10, 'Daily Schedule for ' + self.tourname, 'C')
+        # Line break
+        self.ln(20)
+
+    # Page footer
+    def footer(self):
+        # Position at 1.5 cm from bottom
+        self.set_y(-15)
+        # Arial italic 8
+        self.set_font('Arial', 'I', 8)
+        # Page number & printing date
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        self.cell(0, 10, 'Printed ' + str(now) + ' Page ' +
+                  str(self.page_no()) + '/{nb}', 0, 0, 'C')
 
 
 def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, final_time, final_start_time, bfinal_type, bfinal_time, final_tat, bfinal_tat):
@@ -644,7 +679,14 @@ if st.button('all info is correct'):
                 file_name=fname,
                 mime="csv")
 
-        st.write("Tournament: ", tour_name)
+        # new pdf in landscape
+        pdf = PDF('L', tour_name)
+        pdf.add_page()
+        pdf.alias_nb_pages()
+        pdf.set_font("Arial", size=20)
+        pdf.cell(200, 20, txt="Proposed planning ", ln=1, align='C')
+        pdf.set_font("Arial", size=12)
+
         cat_fights_dict, cat_finals_dict, cat_time_dict, \
             par_num_total, fight_num_total, \
             tot_time, final_time, cat_bfinals_dict, bfinal_time = calculate_fight_time(cat_par, FINAL, bfinals)
@@ -662,6 +704,9 @@ if st.button('all info is correct'):
                 if cat_dict_day[i] == j+1:
                     cat_par_day[i] = int(cat_par.get(i))
 
+            #st.write(str(cat_par_day.keys()))
+            pdf.cell(200, 10, txt="Day " + str(date + timedelta(days=j)) , ln=1, align='L')
+            pdf.multi_cell(300, 5, txt= str(cat_par_day), align='L')
             cat_fights_dict, cat_finals_dict, cat_time_dict, \
                 par_num_total, fight_num_total, \
                 tot_time, \
@@ -793,7 +838,7 @@ if st.button('all info is correct'):
                                    "Best permutation")
                     st.write(fig1)
             else:
-                st.write("nothing happends at this day ")
+                st.write("nothing happens at this day ")
                 data.append(["Preliminaries",
                             start_day_dt + start_time_day[j],
                             start_day_dt + start_time_day[j],
@@ -808,10 +853,21 @@ if st.button('all info is correct'):
             st.markdown("---")
             j += 1
 
+        pdf.output("dummy2.pdf")
+        with open("dummy2.pdf", "rb") as pdf_file:
+            PDFbyte2 = pdf_file.read()
+
+        st.download_button(label="Download Planning",
+                           data=PDFbyte2,
+                           file_name=tour_name+'.pdf')
+        os.remove("dummy2.pdf")
+
+
         st.header("Overview for all days")
         df = pd.DataFrame(data, columns=['Type', 'Begin', 'End', 'day'])
         fig = px.timeline(df, x_start='Begin', x_end='End', color='Type', text='day')
         st.write(fig)
+
 
 st.sidebar.markdown('<a href="mailto:sportdirector@jjif.org">Contact for problems</a>', unsafe_allow_html=True)
 
