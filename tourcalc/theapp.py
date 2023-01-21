@@ -369,7 +369,7 @@ def final_setting(final, TATAMI):
                                                 help='On how many tatamis will the finals run',
                                                 value=1, min_value = 1,max_value= TATAMI)
         final_show_inp = st.sidebar.checkbox('Final show & awards',
-                                         help='Adds additional time for entrance and awards') 
+                                             help='Adds additional time for entrance and awards')
 
         if final_show_inp is True:
             show_extra_t_inp = st.sidebar.number_input('Add time for show in minutes',
@@ -386,18 +386,18 @@ def final_setting(final, TATAMI):
         else:
             final_start_time = None
         bronze_finals = st.sidebar.checkbox('Include the bronze fight',
-                                            help='Add the bronze fights to the final block.') 
+                                            help='Add the bronze fights to the final block.')
         if bronze_finals is True:
             bf_type = st.sidebar.selectbox('How should the bronze finals be held',
-                                          ('Before the final', 'Parallel to the finals [BETA]'))
+                                           ('Before the final', 'Parallel to the finals [BETA]'))
             bfinal_tat_max = TATAMI
             if bf_type == "Parallel to the finals":
                 bfinal_tat_max = TATAMI - final_tat_inp
-            bfinal_tat_inp = st.sidebar.number_input('Bronzefinals tatamis',
+            bfinal_tat_inp = st.sidebar.number_input('Bronze finals tatamis',
                                                      help='On how many tatamis will the bronze finals run',
                                                      value=2, min_value = 1, max_value= bfinal_tat_max)
 
-        else: 
+        else:
             bfinal_tat_inp = 1
             bf_type = None
 
@@ -410,7 +410,7 @@ def final_setting(final, TATAMI):
         bronze_finals = False
         bfinal_tat_inp = 1
         bf_type = None
-    
+
     return final, final_tat_inp, final_show_inp, show_extra_t_inp, final_fix_start_time, final_start_time, bronze_finals, bfinal_tat_inp, bf_type
 
 
@@ -425,28 +425,23 @@ st.header('Tournament Calculator')
 LINK = '[Click here for tutorial](https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
 st.markdown(LINK, unsafe_allow_html=True)
 
-
-tour_name = st.text_input("Name of the tournament", key='tour_name_key_inp'+str(random.randint(0, 100)), value="")
-fname = tour_name + ".csv"
-path = os.path.dirname(tourcalc.__file__)
-list_path = os.path.join(path, 'example_tours')
-check_file = Path(list_path) / fname
-
 left_column_2, right_column_2 = st.columns(2)
 with left_column_2:
-    if st.button("Show example tournaments", key ="example_tournaments"):
-        st.write('You can read in the event by copying the name \
-            without .csv into the "Name of the tournament" field')
-        filenames = os.listdir(list_path)
-        st.write(filenames)
+    st.subheader("New Tournament")
+    tour_name = st.text_input("Name of the tournament", key='tour_name_key_inp'+str(random.randint(0, 100)), value="")
+    fname = tour_name + ".csv"
 with right_column_2:
+    st.subheader("Read in file")
     uploaded_file = st.file_uploader("Choose a file",
                                      help="Make sure to have a CSV with the right input")
+
 
 if uploaded_file is not None:
     cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
         start_time, breaktype, date_inp = read_in_file(uploaded_file)
     tour_name = str(uploaded_file.name)[:-4]
+    fname = tour_name + ".csv"
+    st.write("Make the planning for", tour_name)
     try:
         date_time_obj = datetime.strptime(date_inp[0:10], '%Y-%m-%d')
     except ValueError:
@@ -625,7 +620,6 @@ for j in range(0, int(days)):
 
 fname = tour_name + ".csv"
 if st.button('all info is correct'):
-    st.write(tour_name)
     if tot_par == 0:
         st.write("Please add at least one athlete")
     elif len(fname) < 1:
