@@ -2,6 +2,7 @@ numpy
 pandas
 plotly
 setuptools
-sphinx_rtd_theme
+sphinx_rte_theme
+fpdf2
 streamlit
 git+https://github.com/ClaudiaBehnke86/TournamentCalculator

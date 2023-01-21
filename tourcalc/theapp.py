@@ -705,8 +705,8 @@ if st.button('all info is correct'):
                     cat_par_day[i] = int(cat_par.get(i))
 
             #st.write(str(cat_par_day.keys()))
-            pdf.cell(200, 10, txt="Day " + str(date + timedelta(days=j)) , ln=1, align='L')
-            pdf.multi_cell(300, 5, txt= str(cat_par_day), align='L')
+            pdf.cell(200, 10, txt="Categories on Day " + str(date + timedelta(days=j)), ln=1, align='L')
+            pdf.multi_cell(250, 5, txt=str(cat_par_day.keys()), align='L')
             cat_fights_dict, cat_finals_dict, cat_time_dict, \
                 par_num_total, fight_num_total, \
                 tot_time, \
