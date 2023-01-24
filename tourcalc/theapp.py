@@ -536,18 +536,21 @@ cat_par = api_call(cat_par)\
 FINAL, final_tat, final_show, show_extra_t, f_fix_start_time, f_start_time, \
     bfinals, bfinal_tat_inp, bfinal_type, ms_mode = final_setting(FINAL, TATAMI)
 
-left_column, right_column = st.columns(2)
+left_column, middle_column, right_column = st.columns(3)
 with left_column:
     TATAMI = st.number_input("Number of tatamis", value=TATAMI, key='tatami')
-with right_column:
+with middle_column:
     days = st.number_input("Number of days", value=days, key='days')
+with right_column:
+    date = st.date_input('First day of the event', value=date_time_obj, key='date')
 
-date = st.date_input('First day of the event', value=date_time_obj, key='date')
-
-age_select = st.multiselect('Select the participating age divisions',
+left_column, right_column = st.columns(2)
+with left_column:
+    age_select = st.multiselect('Select the participating age divisions',
                             AGE_INP,
                             AGE_SEL)
-dis_select = st.multiselect('Select the participating disciplines',
+with right_column:
+    dis_select = st.multiselect('Select the participating disciplines',
                             DIS_INP,
                             DIS_SEL)
 
@@ -613,48 +616,53 @@ bfinal_tat_day = [1] * int(days)
 f_fix_start_time_day = [f_fix_start_time] * int(days)
 f_start_time_day = [time(15, 00)] * int(days)
 
-for j in range(0, int(days)):
-    with st.expander("Change settings for day "
-                     + str(j + 1) + " : " + str(date + timedelta(days=j))):
-        st.write("with this settings you can fine tune your event ")
 
-        tatami_day[j] = int(st.number_input("Number of tatamis",
-                                            value=int(TATAMI), key=j))
-        start_time_wid_days = st.time_input('Start time of the event',
-                                            value=start_time_wid_day, key="start_time_" + str(j))
-        btype_day[j] = st.selectbox('What type of break do you want',
-                                   ('Individual', 'One Block', 'No break'), index=bt_index, key="break_type_" + str(j))
-        if btype_day[j] != 'No break':
-            btime_wid_day = st.time_input('Start time of the break',
-                                          value=btime_wid_day, key="start_time_break" + str(j))
-            breakl_wid_day = st.time_input('Length of the break',
-                                          value=breakl_wid_day, key="length_break" + str(j))
-        final_day[j] = st.checkbox('Final block', value=FINAL, key= "final_"+ str(j))
-        if final_day[j] is True:
-            f_fix_start_time_day[j] = st.checkbox('Fix start time of finals',
-                                         help='Select a fixed start time when the finales should begin', 
-                                         value = f_fix_start_time_day[j],  key= "fix_start_time_day"+str(j)) 
-        if f_fix_start_time_day[j] is True:
-            f_start_time_day[j] = st.time_input('Start time of the finals', help='[hh:mm]',
-                                              value=f_start_time,  key="start_time_day_finals" + str(j))
-        else:
-            f_start_time_day[j] = None
+cols = st.columns(days)
 
-        if final_day[j] is True:
-            final_tat_day[j] = st.number_input('Finals tatamis',
-                                               value=final_tat, key="final_tat" + str(j))
-            bfinal_day[j] = st.checkbox('Include Bronzefinals', value=bfinals, key="bfinals" +str(j))
-            if bfinal_day[j] is True:
-                bfinal_tat_day[j] = st.number_input('Bronzefinals tatamis',
-                                                    help='On how many tatamis will the bronze finals run',
-                                                    value=bfinal_tat_inp, key= "bfinals_tat" +str(j))
-        # convert time to datetime object
-        start_time_day[j] = (datetime.combine(date.min,
-                             start_time_wid_days) - datetime.min) 
-        # convert break time to hours after start                         
-        btime_day[j] = datetime.combine(date.min, btime_wid_day) - datetime.combine(date.min, start_time_wid_days)                  
-        breaklength_day[j] = (datetime.combine(date.min,
-                              breakl_wid_day) - datetime.min)
+for j in range(days):
+    col = cols[j%5]
+    with col:
+        with st.expander("Change settings for day "
+                         + str(j + 1) + " : " + str(date + timedelta(days=j))):
+            st.write("with this settings you can fine tune your event ")
+
+            tatami_day[j] = int(st.number_input("Number of tatamis",
+                                                value=int(TATAMI), key=j))
+            start_time_wid_days = st.time_input('Start time of the event',
+                                                value=start_time_wid_day, key="start_time_" + str(j))
+            btype_day[j] = st.selectbox('What type of break do you want',
+                                       ('Individual', 'One Block', 'No break'), index=bt_index, key="break_type_" + str(j))
+            if btype_day[j] != 'No break':
+                btime_wid_day = st.time_input('Start time of the break',
+                                              value=btime_wid_day, key="start_time_break" + str(j))
+                breakl_wid_day = st.time_input('Length of the break',
+                                              value=breakl_wid_day, key="length_break" + str(j))
+            final_day[j] = st.checkbox('Final block', value=FINAL, key= "final_"+ str(j))
+            if final_day[j] is True:
+                f_fix_start_time_day[j] = st.checkbox('Fix start time of finals',
+                                             help='Select a fixed start time when the finales should begin',
+                                             value = f_fix_start_time_day[j],  key= "fix_start_time_day"+str(j))
+            if f_fix_start_time_day[j] is True:
+                f_start_time_day[j] = st.time_input('Start time of the finals', help='[hh:mm]',
+                                                  value=f_start_time,  key="start_time_day_finals" + str(j))
+            else:
+                f_start_time_day[j] = None
+
+            if final_day[j] is True:
+                final_tat_day[j] = st.number_input('Finals tatamis',
+                                                   value=final_tat, key="final_tat" + str(j))
+                bfinal_day[j] = st.checkbox('Include Bronzefinals', value=bfinals, key="bfinals" +str(j))
+                if bfinal_day[j] is True:
+                    bfinal_tat_day[j] = st.number_input('Bronzefinals tatamis',
+                                                        help='On how many tatamis will the bronze finals run',
+                                                        value=bfinal_tat_inp, key= "bfinals_tat" +str(j))
+            # convert time to datetime object
+            start_time_day[j] = (datetime.combine(date.min,
+                                 start_time_wid_days) - datetime.min)
+            # convert break time to hours after start
+            btime_day[j] = datetime.combine(date.min, btime_wid_day) - datetime.combine(date.min, start_time_wid_days)
+            breaklength_day[j] = (datetime.combine(date.min,
+                                  breakl_wid_day) - datetime.min)
 
 fname = tour_name + ".csv"
 if st.button('all info is correct'):
