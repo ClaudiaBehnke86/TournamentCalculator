@@ -157,7 +157,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
 
     if bfinal_type == 'Before the final':
         bfinal_start_time = final_start_time
-        final_start_time = datetime.strptime(bfinal_start_time, "%Y-%m-%d %H:%M:%S")  + bfinal_time
+        final_start_time = datetime.strptime(final_start_time, "%Y-%m-%d %H:%M:%S")  + bfinal_time
         final_start_time = str(final_start_time)
     else: 
         bfinal_start_time = final_start_time
@@ -227,7 +227,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
                   annotation_text=str(end_time_prelim_time)[-8:],
                   annotation_position="top right")
 
-    return fig, end_time_final_c, end_time_prelim_time, final_start_time
+    return fig, end_time_final_c, end_time_prelim_time, final_start_time, bfinal_start_time, bfinal_end_time_c
 
 
 def heatmap(data, row_labels, col_labels, str_title):
@@ -422,6 +422,8 @@ def final_setting(final, TATAMI):
             final_start_time = None
         bronze_finals = st.sidebar.checkbox('Include the bronze fight',
                                             help='Add the bronze fights to the final block.')
+        ms_mode = st.sidebar.checkbox('Add extra fight for bronze',
+                                            help='Use this for TWG & CG.')
         if bronze_finals is True:
             bf_type = st.sidebar.selectbox('How should the bronze finals be held',
                                            ('Before the final', 'Parallel to the finals [BETA]'))
@@ -446,7 +448,7 @@ def final_setting(final, TATAMI):
         bfinal_tat_inp = 1
         bf_type = None
 
-    return final, final_tat_inp, final_show_inp, show_extra_t_inp, final_fix_start_time, final_start_time, bronze_finals, bfinal_tat_inp, bf_type
+    return final, final_tat_inp, final_show_inp, show_extra_t_inp, final_fix_start_time, final_start_time, bronze_finals, bfinal_tat_inp, bf_type, ms_mode
 
 
 permutations_object = itertools.permutations(DIS_INP)
@@ -531,7 +533,8 @@ else:
 start_time_wid_day, breaktype, breakl_wid_day, btime_wid_day, SPLIT = timing(start_time)
 cat_par = api_call(cat_par)\
 
-FINAL, final_tat, final_show, show_extra_t, f_fix_start_time, f_start_time , bfinals, bfinal_tat_inp, bfinal_type = final_setting(FINAL, TATAMI)
+FINAL, final_tat, final_show, show_extra_t, f_fix_start_time, f_start_time, \
+    bfinals, bfinal_tat_inp, bfinal_type, ms_mode = final_setting(FINAL, TATAMI)
 
 left_column, right_column = st.columns(2)
 with left_column:
@@ -689,7 +692,7 @@ if st.button('all info is correct'):
 
         cat_fights_dict, cat_finals_dict, cat_time_dict, \
             par_num_total, fight_num_total, \
-            tot_time, final_time, cat_bfinals_dict, bfinal_time = calculate_fight_time(cat_par, FINAL, bfinals)
+            tot_time, final_time, cat_bfinals_dict, bfinal_time = calculate_fight_time(cat_par, FINAL, bfinals, ms_mode)
 
         st.write("There are", tot_par, "participants, which will fight",
                  fight_num_total, " matches in ", len(cat_all),
@@ -704,7 +707,7 @@ if st.button('all info is correct'):
                 if cat_dict_day[i] == j+1:
                     cat_par_day[i] = int(cat_par.get(i))
 
-            #st.write(str(cat_par_day.keys()))
+            # st.write(str(cat_par_day.keys()))
             pdf.cell(200, 10, txt="Categories on Day " + str(date + timedelta(days=j)), ln=1, align='L')
             pdf.multi_cell(250, 5, txt=str(cat_par_day.keys()), align='L')
             cat_fights_dict, cat_finals_dict, cat_time_dict, \
@@ -712,7 +715,7 @@ if st.button('all info is correct'):
                 tot_time, \
                 final_time, cat_bfinals_dict, \
                 bfinal_time = calculate_fight_time(cat_par_day,
-                                                   final_day[j], bfinal_day[j])
+                                                   final_day[j], bfinal_day[j], ms_mode)
 
             av_time = tot_time / int(tatami_day[j])
 
@@ -770,7 +773,7 @@ if st.button('all info is correct'):
                          "gives best result ",
                          best_res[permut_num], "times")
 
-                fig, end_time_final[j], end_time_prelim[j], start_time_final = plot_schedule_time(
+                fig, end_time_final[j], end_time_prelim[j], start_time_final, bfinal_start_time, bfinal_end_time_c = plot_schedule_time(
                          scheduled_jobs[pen_time][permut_num],
                          cat_time_dict_new[pen_time][permut_num],
                          start_time_day[j],
@@ -789,6 +792,8 @@ if st.button('all info is correct'):
                 start_day_dt = datetime.combine(date, time(0, 0))
 
                 # add lists for overview
+
+                st.write(start_time_final)
                 data.append(["Preliminaries",
                             start_day_dt + start_time_day[j],
                             datetime.strptime(end_time_prelim[j], "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
@@ -796,6 +801,10 @@ if st.button('all info is correct'):
                 data.append(["Final",
                             datetime.strptime(start_time_final, "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
                             end_time_final[j] - timedelta(days=j),
+                            str(date + timedelta(days=j))])
+                data.append(["Bronzefinals",
+                            datetime.strptime(bfinal_start_time, "%Y-%m-%d %H:%M:%S") - timedelta(days=j),
+                            bfinal_end_time_c - timedelta(days=j),
                             str(date + timedelta(days=j))])
 
                 LABEL = "There are " + str(len(most_abundand)) + \
@@ -814,7 +823,7 @@ if st.button('all info is correct'):
                                  best_res[permut_num],
                                  "times")
 
-                        fig, end_time_final[j], end_time_prelim[j], start_time_final \
+                        fig, end_time_final[j], end_time_prelim[j], start_time_final, bfinal_start_time, bfinal_end_time_c \
                             = plot_schedule_time(scheduled_jobs[pen_time][permut_num],
                                                  cat_time_dict_new[pen_time][permut_num],
                                                  start_time_day[j],
@@ -838,12 +847,16 @@ if st.button('all info is correct'):
                                    "Best permutation")
                     st.write(fig1)
             else:
-                st.write("nothing happens at this day ")
+                st.info('Nothing happens at this day', icon="ℹ️")
                 data.append(["Preliminaries",
                             start_day_dt + start_time_day[j],
                             start_day_dt + start_time_day[j],
                             str(date + timedelta(days=j))])
                 data.append(["Final",
+                            start_day_dt + start_time_day[j],
+                            start_day_dt + start_time_day[j],
+                            str(date + timedelta(days=j))])
+                data.append(["Bronzefinals",
                             start_day_dt + start_time_day[j],
                             start_day_dt + start_time_day[j],
                             str(date + timedelta(days=j))])

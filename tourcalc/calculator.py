@@ -242,7 +242,7 @@ def cal_cat(age_select, dis_select):
     return cat_all
 
 
-def calculate_fight_time(dict_inp, final, bronze_final):
+def calculate_fight_time(dict_inp, final, bronze_final, ms_mode):
     '''calculate the fight time
 
     Parameters
@@ -253,6 +253,9 @@ def calculate_fight_time(dict_inp, final, bronze_final):
         number of competition areas [int]
     final
         does the event have a final block [bool]
+    ms_mode
+        add an extra fight for bronze[bool]
+
     '''
     fight_num_total = 0
     par_num_total = 0
@@ -314,6 +317,7 @@ def calculate_fight_time(dict_inp, final, bronze_final):
     for cat_name in dict_inp:  # loop over dictionary
         par_num = int(dict_inp.get(cat_name))  # number of fights per category
         fight_num = 0  # reset counter
+
         if "Show" in cat_name and par_num > 1:
             if final is True and par_num > 5:
                 for keys in time_inp:
@@ -331,12 +335,22 @@ def calculate_fight_time(dict_inp, final, bronze_final):
                         cat_finals_dict[cat_name] = time_inp[keys]
                         final_time += time_inp[keys]
                 if bronze_final is True and par_num > 6:
-                    fight_num = -3  # remove  bronze finals
-                    for keys in time_inp:
-                    # if name of Discipline is in string of category:
-                        if keys in cat_name:
-                            cat_bfinals_dict[cat_name] = time_inp[keys]
-                            bfinal_time += 2*time_inp[keys]
+                    if ms_mode is True:
+                        # the "normal" bronze finals stay in preliminary
+                        for keys in time_inp:
+                            # if name of Discipline is in string of category:
+                            if keys in cat_name:
+                                cat_bfinals_dict[cat_name] = time_inp[keys]
+                                bfinal_time += time_inp[keys]
+                                # add one bronze final
+                    else:
+                        fight_num = - 3  # remove bronze finals too
+                        for keys in time_inp:
+                            # if name of Discipline is in string of category:
+                            if keys in cat_name:
+                                cat_bfinals_dict[cat_name] = time_inp[keys]
+                                bfinal_time += 2*time_inp[keys]
+
             if par_num < 8:
                 fight_num += low_par_num.get(par_num)
             else:
