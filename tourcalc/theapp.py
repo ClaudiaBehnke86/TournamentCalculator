@@ -45,6 +45,7 @@ DIS_CHA_TIME = 30  # add the changing time between disciplines in minutes
 
 BREAK = "Break"
 
+
 class PDF(FPDF):
     '''
     overwrites the pdf settings
@@ -558,6 +559,8 @@ cat_all = cal_cat(age_select, dis_select)  # calculate categories
 
 random_inp = st.checkbox('Random participants')
 tot_par = 0
+
+input_df = pd.DataFrame()
 with st.expander("Hide categories"):
     left_column1, right_column2 = st.columns(2)
     for i in cat_all:
@@ -588,16 +591,16 @@ with st.expander("Hide categories"):
                 day = st.number_input("Competition day " + str(i),
                                       min_value=1, key="cday_" + str(i), max_value=int(days), value=val1)
 
-        tot_par += int(inp)
-        cat_par[i] = int(inp)
-        cat_dict_day[i] = int(day)
+        input_df = input_df.append({'cate_name': str(i),
+                                    'participants': int(inp),
+                                    'day_df': int(day)}, ignore_index=True)
 
+        tot_par += int(inp)
 
 for key in cat_par.copy().keys():
     if key not in cat_all:
         st.write("You have not chosen the age division/disciple of ", key, "as input")
         cat_par.pop(key, None)
-
 
 # lists with default values
 tatami_day = [int(TATAMI)] * int(days)
@@ -615,7 +618,6 @@ bfinal_tat_day = [1] * int(days)
 
 f_fix_start_time_day = [f_fix_start_time] * int(days)
 f_start_time_day = [time(15, 00)] * int(days)
-
 
 cols = st.columns(days)
 
@@ -664,6 +666,15 @@ for j in range(days):
             breaklength_day[j] = (datetime.combine(date.min,
                                   breakl_wid_day) - datetime.min)
 
+
+for j in range(days):
+    col = cols[j%5]
+    with col:
+        with st.expander("Change categories for day "
+                         + str(j + 1) + " : " + str(date + timedelta(days=j))):
+            cat_par_day = input_df['cate_name'][input_df['day_df']==j+1].tolist()
+            st.write(str(cat_par_day))
+
 fname = tour_name + ".csv"
 if st.button('all info is correct'):
     if tot_par == 0:
@@ -710,10 +721,9 @@ if st.button('all info is correct'):
 
         data = []
         for j in range(0, days):
-            cat_par_day = {}
-            for i in cat_par:
-                if cat_dict_day[i] == j+1:
-                    cat_par_day[i] = int(cat_par.get(i))
+            cat_par_day = input_df[input_df['day_df']==j+1]
+            cat_par_day = cat_par_day.set_index('cate_name')[['participants']].to_dict()
+            cat_par_day = json_normalize(cat_par_day)
 
             # st.write(str(cat_par_day.keys()))
             pdf.cell(200, 10, txt="Categories on Day " + str(date + timedelta(days=j)), ln=1, align='L')
@@ -740,11 +750,11 @@ if st.button('all info is correct'):
                      tot_time + final_time)
             if par_num_total > 1:
                 if final_day[j]:
-                    st.write("You have",len(cat_finals_dict),
+                    st.write("You have ", len(cat_finals_dict),
                              "finals, which will take", final_time,
                              "on ",  int(final_tat_day[j]), "tatamis")
                 if bfinal_day[j]:
-                    st.write("You have 2x", len(cat_bfinals_dict), " = ", 
+                    st.write("You have 2x ", len(cat_bfinals_dict), " = ",
                              len(cat_bfinals_dict)*2,
                              "bronze finals, which will take", bfinal_time,
                              "on ",  int(bfinal_tat_day[j]), "tatamis")
@@ -785,7 +795,7 @@ if st.button('all info is correct'):
                          scheduled_jobs[pen_time][permut_num],
                          cat_time_dict_new[pen_time][permut_num],
                          start_time_day[j],
-                         date+timedelta(days=j), final_time, f_start_time_day[j], 
+                         date+timedelta(days=j), final_time, f_start_time_day[j],
                          bfinal_type, bfinal_time, final_tat_day[j], bfinal_tat_day[j])
 
                 st.plotly_chart(fig)
@@ -869,8 +879,6 @@ if st.button('all info is correct'):
                             start_day_dt + start_time_day[j],
                             str(date + timedelta(days=j))])
 
-            cat_par_day.clear()
-             
             st.markdown("---")
             j += 1
 
@@ -882,7 +890,6 @@ if st.button('all info is correct'):
                            data=PDFbyte2,
                            file_name=tour_name+'.pdf')
         os.remove("dummy2.pdf")
-
 
         st.header("Overview for all days")
         df = pd.DataFrame(data, columns=['Type', 'Begin', 'End', 'day'])
