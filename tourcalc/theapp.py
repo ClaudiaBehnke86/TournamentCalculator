@@ -473,13 +473,13 @@ with right_column_2:
     uploaded_file = st.file_uploader("Choose a file",
                                      help="Make sure to have a CSV with the right input")
 
-
 if uploaded_file is not None:
     cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
         start_time, breaktype, date_inp = read_in_file(uploaded_file)
     tour_name = str(uploaded_file.name)[:-4]
     fname = tour_name + ".csv"
     st.write("Make the planning for", tour_name)
+
     try:
         date_time_obj = datetime.strptime(date_inp[0:10], '%Y-%m-%d')
     except ValueError:
@@ -548,12 +548,12 @@ with right_column:
 left_column, right_column = st.columns(2)
 with left_column:
     age_select = st.multiselect('Select the participating age divisions',
-                            AGE_INP,
-                            AGE_SEL)
+                                AGE_INP,
+                                AGE_SEL)
 with right_column:
     dis_select = st.multiselect('Select the participating disciplines',
-                            DIS_INP,
-                            DIS_SEL)
+                                DIS_INP,
+                                DIS_SEL)
 
 cat_all = cal_cat(age_select, dis_select)  # calculate categories
 
@@ -562,40 +562,31 @@ tot_par = 0
 
 input_df = pd.DataFrame()
 with st.expander("Hide categories"):
+
     left_column1, right_column2 = st.columns(2)
     for i in cat_all:
         if random_inp is True:
-            _rtmp = round(np.random.normal(8, 5.32))
-            while _rtmp < 0:
-                _rtmp = round(np.random.normal(8, 5.32))
-            with left_column1:
-                inp = st.number_input("Number of athletes " + i,
-                                      min_value=0, value=_rtmp, key="athletes_" + str(i))
-            day_rtmp = np.random.randint(1, days+1)
-            with right_column2:
-                day = st.number_input("Competition day " + i,
-                                      min_value=1, max_value=int(days), value=day_rtmp, key="com_day_" + str(i))
-        else: 
+            val = round(np.random.normal(8, 5.32))
+            while val < 0:
+                val = round(np.random.normal(8, 5.32))
+            val1 = np.random.randint(1, days+1)
+        if uploaded_file is not None:
             val = cat_par.get(i)
             val1 = cat_dict_day.get(i)
-            with left_column1:
-                if val is None:
-                    val = 0
-                inp = st.number_input("Number of athletes " + str(i),
-                                      min_value=0,
-                                      key="N_athletes" + str(i),
-                                      value=val)
-            with right_column2:
-                if val1 is None:
-                    val1 = 1
-                day = st.number_input("Competition day " + str(i),
-                                      min_value=1, key="cday_" + str(i), max_value=int(days), value=val1)
+        else:
+            val = 0
+            val1 = 1
 
-        input_df = input_df.append({'cate_name': str(i),
-                                    'participants': int(inp),
-                                    'day_df': int(day)}, ignore_index=True)
+        input_df = input_df.append({'Category Name': str(i),
+                                    'Number of athletes': int(val),
+                                    'Competition day': int(val1)}, ignore_index=True)
+        tot_par += int(val)
 
-        tot_par += int(inp)
+    edited_df = st.experimental_data_editor(input_df)
+
+    if (len(cat_all) > 0) and (len(edited_df[~edited_df['Competition day'].between(1, days)]))>0:
+        mis_cat = edited_df['Category Name'].values[~edited_df['Competition day'].between(1, days)]
+        st.warning("These categories are not correctly scheduled " + str(mis_cat))
 
 for key in cat_par.copy().keys():
     if key not in cat_all:
@@ -620,6 +611,7 @@ f_fix_start_time_day = [f_fix_start_time] * int(days)
 f_start_time_day = [time(15, 00)] * int(days)
 
 cols = st.columns(days)
+
 
 for j in range(days):
     col = cols[j%5]
@@ -665,15 +657,6 @@ for j in range(days):
             btime_day[j] = datetime.combine(date.min, btime_wid_day) - datetime.combine(date.min, start_time_wid_days)
             breaklength_day[j] = (datetime.combine(date.min,
                                   breakl_wid_day) - datetime.min)
-
-
-for j in range(days):
-    col = cols[j%5]
-    with col:
-        with st.expander("Change categories for day "
-                         + str(j + 1) + " : " + str(date + timedelta(days=j))):
-            cat_par_day = input_df['cate_name'][input_df['day_df']==j+1].tolist()
-            st.write(str(cat_par_day))
 
 fname = tour_name + ".csv"
 if st.button('all info is correct'):
@@ -721,13 +704,13 @@ if st.button('all info is correct'):
 
         data = []
         for j in range(0, days):
-            cat_par_day = input_df[input_df['day_df']==j+1]
-            cat_par_day = cat_par_day.set_index('cate_name')[['participants']].to_dict()
-            cat_par_day = json_normalize(cat_par_day)
+            cat_par_day = edited_df[edited_df['Competition day'] == j+1]
+            cat_par_day = cat_par_day.set_index('Category Name')[['Number of athletes']].to_dict()
+            cat_par_day = json_normalize(cat_par_day['Number of athletes'])
 
-            # st.write(str(cat_par_day.keys()))
             pdf.cell(200, 10, txt="Categories on Day " + str(date + timedelta(days=j)), ln=1, align='L')
-            pdf.multi_cell(250, 5, txt=str(cat_par_day.keys()), align='L')
+            blu = edited_df['Category Name'][edited_df['Competition day']==j+1].tolist()
+            pdf.multi_cell(250, 5, txt=str(blu), align='L')
             cat_fights_dict, cat_finals_dict, cat_time_dict, \
                 par_num_total, fight_num_total, \
                 tot_time, \
@@ -748,6 +731,8 @@ if st.button('all info is correct'):
                      " matches in ", len(cat_time_dict),
                      "categories with a total time fight time of (HH:MM:SS)",
                      tot_time + final_time)
+            with st.expander("Show categories"):
+                st.write(str(blu))
             if par_num_total > 1:
                 if final_day[j]:
                     st.write("You have ", len(cat_finals_dict),
