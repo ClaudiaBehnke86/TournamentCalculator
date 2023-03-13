@@ -563,6 +563,7 @@ tot_par = 0
 input_df = pd.DataFrame()
 with st.expander("Hide categories"):
 
+    st.info("If you make changes here, don't forget to Download the data again",icon="🚨")
     left_column1, right_column2 = st.columns(2)
     for i in cat_all:
         if random_inp is True:
@@ -586,7 +587,12 @@ with st.expander("Hide categories"):
 
     if (len(cat_all) > 0) and (len(edited_df[~edited_df['Competition day'].between(1, days)]))>0:
         mis_cat = edited_df['Category Name'].values[~edited_df['Competition day'].between(1, days)]
-        st.warning("These categories are not correctly scheduled " + str(mis_cat))
+        st.warning("These categories are not correctly scheduled " + str(mis_cat),icon="⚠️")
+
+    if (len(cat_all) > 0) and len(edited_df[edited_df['Number of athletes'] < 0]) > 0:
+        wrong_cat = edited_df['Category Name'].values[edited_df['Number of athletes'] < 0]
+        st.error("These categories have negative athletes and will be ignored " + str(wrong_cat),icon="🚨")
+        edited_df['Number of athletes'][edited_df['Number of athletes'] < 0] = 0
 
 for key in cat_par.copy().keys():
     if key not in cat_all:
