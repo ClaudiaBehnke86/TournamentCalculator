@@ -359,8 +359,8 @@ def api_call(cat_par):
         dictionary with categories and number of participants
         of each category [dict]
     '''
-    apidata = st.sidebar.checkbox("Get registration from Sportdata API", 
-                                  help="Check if the registration is still open")
+    apidata = st.sidebar.checkbox("Get registration from Sportdata API",
+                                  help="Will overwrite athletes from .csv with registration")
     if apidata is True:
         # get upcoming events
         uri_upc = "https://www.sportdata.org/ju-jitsu/rest/events/upcoming/"
@@ -532,7 +532,9 @@ else:
 
 # all on the sidebar:
 start_time_wid_day, breaktype, breakl_wid_day, btime_wid_day, SPLIT = timing(start_time)
-cat_par = api_call(cat_par)\
+
+# overrides the data from the input csv
+cat_par = api_call(cat_par)
 
 FINAL, final_tat, final_show, show_extra_t, f_fix_start_time, f_start_time, \
     bfinals, bfinal_tat_inp, bfinal_type, ms_mode = final_setting(FINAL, TATAMI)
@@ -559,23 +561,27 @@ cat_all = cal_cat(age_select, dis_select)  # calculate categories
 
 random_inp = st.checkbox('Random participants')
 tot_par = 0
-
 input_df = pd.DataFrame()
 with st.expander("Hide categories"):
 
     st.info("If you make changes here, don't forget to Download the data again",icon="🚨")
     left_column1, right_column2 = st.columns(2)
     for i in cat_all:
+
         if random_inp is True:
             val = round(np.random.normal(8, 5.32))
             while val < 0:
                 val = round(np.random.normal(8, 5.32))
-            val1 = np.random.randint(1, days+1)
-        if uploaded_file is not None:
-            val = cat_par.get(i)
-            val1 = cat_dict_day.get(i)
+        elif len(cat_par) > 0:
+            val = cat_par.get(i, 0)
         else:
             val = 0
+
+        if random_inp is True:
+            val1 = np.random.randint(1, days+1)
+        elif len(cat_dict_day) > 0:
+            val1 = cat_dict_day.get(i, 1)
+        else:
             val1 = 1
 
         input_df = input_df.append({'Category Name': str(i),
@@ -675,8 +681,7 @@ if st.button('all info is correct'):
                  please add disciplines or reduce tatamis")
     else:
         tour_file = write_tour_file(tour_name,
-                                    cat_par,
-                                    cat_dict_day,
+                                    edited_df,
                                     TATAMI,
                                     days,
                                     FINAL,

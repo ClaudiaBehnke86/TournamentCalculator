@@ -90,8 +90,7 @@ def descition_matrix(cat_time_dict,
 
 
 def write_tour_file(tour_name,
-                    cat_par,
-                    cat_dict_day,
+                    df,
                     i_tatami,
                     days,
                     final,
@@ -135,12 +134,8 @@ def write_tour_file(tour_name,
     tour_file.write("breaktype;" + str(break_t) + "\n")
     tour_file.write("startime;" + str(start_time) + "\n")
     tour_file.write("date;" + str(date) + "\n")
-    for cat_name, par_num in cat_par.items():
-        day = cat_dict_day[cat_name]
-        tour_file.write(str(cat_name) + ";" + str(par_num) + ";" + str(day) + "\n")
-
+    df.to_csv(tour_file, mode='a', index=False, header=False, sep=';')
     tour_file.close()
-
     return tour_file
 
 
