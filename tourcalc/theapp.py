@@ -383,6 +383,8 @@ def api_call(cat_par):
 
         if sd_key > 0:
             cat_par = getdata(str(sd_key), st.secrets['user'], st.secrets['password'])
+            if len(cat_par) < 1:
+                st.sidebar.warning("This event has no valid categories ", icon="🚨")
 
     return cat_par
 

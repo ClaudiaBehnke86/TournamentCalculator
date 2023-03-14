@@ -305,19 +305,24 @@ def getdata(eventid, user, password):
 
     response = requests.get(uri, auth=HTTPBasicAuth(user,password),)
     d = response.json()
-    df_out = json_normalize(d['categories'])
 
-    num_par = df_out[['id', 'number_of_participants']]
-    newdict = num_par.set_index('id').to_dict()
+    if 'categories' in d:
+	    df_out = json_normalize(d['categories'])
 
-    # number_of_participants
-    num_par_dic = newdict['number_of_participants']
-    num_par_dict_exp = {}
+	    num_par = df_out[['id', 'number_of_participants']]
+	    newdict = num_par.set_index('id').to_dict()
 
-    for key, value in num_par_dic.items():
-        if str(key) in key_map.keys():
-            num_par_dict_exp[key_map[str(key)]] = value
-        else:
-            print("no mapping found for key ", key)
+	    # number_of_participants
+	    num_par_dic = newdict['number_of_participants']
+	    num_par_dict_exp = {}
+
+	    for key, value in num_par_dic.items():
+	        if str(key) in key_map.keys():
+	            num_par_dict_exp[key_map[str(key)]] = value
+	        else:
+	            print("no mapping found for key ", key)
+    else:
+    	print('no valid categories in event')
+    	num_par_dict_exp = {}
 
     return num_par_dict_exp
