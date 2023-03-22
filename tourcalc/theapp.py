@@ -674,7 +674,7 @@ for j in range(days):
 
 fname = tour_name + ".csv"
 if st.button('all info is correct'):
-    if tot_par == 0:
+    if len(edited_df) == 0:
         st.write("Please add at least one athlete")
     elif len(fname) < 1:
         st.write("Please give the event a name")
