@@ -592,8 +592,6 @@ with st.expander("Hide categories"):
         tot_par += int(val)
 
     edited_df = st.experimental_data_editor(input_df)
-    edited_df['Number of athletes'] = edited_df['Number of athletes'].astype(int)
-    edited_df['Competition day'] = edited_df['Competition day'].astype(int)
 
     if (len(cat_all) > 0) and (len(edited_df[~edited_df['Competition day'].between(1, days)]))>0:
         mis_cat = edited_df['Category Name'].values[~edited_df['Competition day'].between(1, days)]
@@ -603,6 +601,9 @@ with st.expander("Hide categories"):
         wrong_cat = edited_df['Category Name'].values[edited_df['Number of athletes'] < 0]
         st.error("These categories have negative athletes and will be ignored " + str(wrong_cat),icon="🚨")
         edited_df['Number of athletes'][edited_df['Number of athletes'] < 0] = 0
+
+    edited_df['Number of athletes'] = edited_df['Number of athletes'].astype(int)
+    edited_df['Competition day'] = edited_df['Competition day'].astype(int)
 
 for key in cat_par.copy().keys():
     if key not in cat_all:
