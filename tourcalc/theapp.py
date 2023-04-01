@@ -602,8 +602,10 @@ with st.expander("Hide categories"):
         st.error("These categories have negative athletes and will be ignored " + str(wrong_cat),icon="🚨")
         edited_df['Number of athletes'][edited_df['Number of athletes'] < 0] = 0
 
-    edited_df['Number of athletes'] = edited_df['Number of athletes'].astype(int)
-    edited_df['Competition day'] = edited_df['Competition day'].astype(int)
+    if len(cat_all) > 0:
+        edited_df['Number of athletes'] = edited_df['Number of athletes'].astype(int)
+    if len(cat_all) > 0:
+        edited_df['Competition day'] = edited_df['Competition day'].astype(int)
 
 for key in cat_par.copy().keys():
     if key not in cat_all:
