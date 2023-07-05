@@ -192,7 +192,7 @@ def cal_cat(age_select, dis_select):
     weight_m18 = ['-46', '-50', '-55', '-60', '-66', '-73', '-81', '+81']
     weight_m16 = ['-38', '-42', '-46', '-50', '-55', '-60', '-66', '-73', '+73']
     weight_m14 = ['-30', '-34', '-38', '-42', '-46', '-50', '-55', '-60', '-66', '+66']
-    weight_m12 = ['-24','-27','-30', '-34', '-38', '-42', '-46', '-50', '+50']
+    weight_m12 = ['-24', '-27', '-30', '-34', '-38', '-42', '-46', '-50', '+50']
 
     cat_team = {"Women", "Men", "Mixed"}
 
@@ -201,12 +201,16 @@ def cal_cat(age_select, dis_select):
         for j in dis_select:  # Looping Disciplines
             if j in ("Duo", "Show"):
                 for k in cat_team:
-                    cat_all.append(i + " " + j + " " + k)
+                    if i != "Master":
+                        cat_all.append(i + " " + j + " " + k)
+                    if i == "Master":
+                        for n in ["M1", "M2", "M3", "M4"]:
+                            cat_all.append(i + " "+n + " " + j + " " + k)
             elif i == "U12":
                 for k in weight_m12:
                     cat_all.append(i + " " + j + " Men " + k + " kg")
                 for k in weight_w12:
-                    cat_all.append(i + " " + j + " Women " + k + " kg")        
+                    cat_all.append(i + " " + j + " Women " + k + " kg")
             elif i == "U14":
                 for k in weight_m14:
                     cat_all.append(i + " " + j + " Men " + k + " kg")
