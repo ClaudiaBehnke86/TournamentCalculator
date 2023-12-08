@@ -586,9 +586,10 @@ with st.expander("Hide categories"):
         else:
             val1 = 1
 
-        input_df = input_df.append({'Category Name': str(i),
-                                    'Number of athletes': int(val),
-                                    'Competition day': int(val1)}, ignore_index=True)
+        input_df = pd.concat([input_df, pd.DataFrame([{'Category Name': str(i),
+                                                       'Number of athletes': int(val),
+                                                       'Competition day': int(val1)}])], ignore_index=True)
+
         tot_par += int(val)
 
     edited_df = st.data_editor(input_df)
