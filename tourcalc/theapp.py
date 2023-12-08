@@ -591,7 +591,7 @@ with st.expander("Hide categories"):
                                     'Competition day': int(val1)}, ignore_index=True)
         tot_par += int(val)
 
-    edited_df = st.experimental_data_editor(input_df)
+    edited_df = st.data_editor(input_df)
 
     if (len(cat_all) > 0) and (len(edited_df[~edited_df['Competition day'].between(1, days)]))>0:
         mis_cat = edited_df['Category Name'].values[~edited_df['Competition day'].between(1, days)]
