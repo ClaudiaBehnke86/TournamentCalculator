@@ -103,7 +103,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
     for df_tatami in l_master:
         df_tatami.columns = ['category', 'tatami']
         df_tatami['time'] = df_tatami['category'].replace(cat_time_dict_i)
-        df_tatami['end_time'] = np.cumsum(df_tatami['time']).values.astype('datetime64[ns]')
+        df_tatami['end_time'] = pd.Series(np.cumsum(df_tatami['time'])).values.astype('datetime64[ns]')
         df_tatami['end_time'] += start_time_i
         df_tatami['start_time'] = df_tatami['end_time'].shift(periods=1).astype('datetime64[ns]')
         df_tatami['time'] = df_tatami['time'].values.astype('datetime64[ns]')
