@@ -281,16 +281,16 @@ def calculate_fight_time(dict_inp, final, bronze_final, ms_mode):
                 "Master M2 Fighting": timedelta(minutes=6, seconds=00),
                 "Master M3 Fighting": timedelta(minutes=6, seconds=00),
                 "Master M4 Fighting": timedelta(minutes=6, seconds=00),
-                "U12 Duo": timedelta(minutes=5),
-                "U14 Duo": timedelta(minutes=5),
-                "U16 Duo": timedelta(minutes=5),
-                "U18 Duo": timedelta(minutes=7),
-                "U21 Duo": timedelta(minutes=7),
-                "Adults Duo": timedelta(minutes=7),
-                "Master M1 Duo": timedelta(minutes=7),
-                "Master M2 Duo": timedelta(minutes=7),
-                "Master M3 Duo": timedelta(minutes=7),
-                "Master M4 Duo": timedelta(minutes=7),
+                "U12 Duo": timedelta(minutes=1, seconds=30),
+                "U14 Duo": timedelta(minutes=1, seconds=30),
+                "U16 Duo": timedelta(minutes=1, seconds=30),
+                "U18 Duo": timedelta(minutes=1, seconds=30),
+                "U21 Duo": timedelta(minutes=1, seconds=30),
+                "Adults Duo": timedelta(minutes=1, seconds=30),
+                "Master M1 Duo": timedelta(minutes=1, seconds=30),
+                "Master M2 Duo": timedelta(minutes=1, seconds=30),
+                "Master M3 Duo": timedelta(minutes=1, seconds=30),
+                "Master M4 Duo": timedelta(minutes=1, seconds=30),
                 "U12 Show": timedelta(minutes=4),
                 "U14 Show": timedelta(minutes=4),
                 "U16 Show": timedelta(minutes=4),
@@ -325,6 +325,26 @@ def calculate_fight_time(dict_inp, final, bronze_final, ms_mode):
                         cat_finals_dict[cat_name] = time_inp[keys]
                         final_time += time_inp[keys] * par_num
             fight_num = par_num
+        if "Duo" in cat_name and par_num > 1:
+            if final is True and par_num > 2:
+                for keys in time_inp:
+                    # if name of Discipline is in string of category:
+                    if keys in cat_name:
+                        cat_finals_dict[cat_name] = time_inp[keys]
+                        final_time += time_inp[keys] * 2
+            if par_num == 2:
+                fight_num = par_num * 3
+            elif par_num == 3:
+                fight_num = par_num * 3 + 2
+            elif par_num == 4:
+                fight_num = par_num * 3 + 4
+            elif par_num == 5:
+                fight_num = par_num * 3 + 4
+            elif par_num == 6:
+                fight_num = par_num * 3 + 8
+            elif par_num >= 7:
+                fight_num = par_num * 3 + 12
+
         else:
             if final is True and par_num > 5:
                 fight_num = -1  # remove final

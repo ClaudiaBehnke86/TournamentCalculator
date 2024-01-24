@@ -564,6 +564,9 @@ cat_all = cal_cat(age_select, dis_select)  # calculate categories
 random_inp = st.checkbox('Random participants')
 tot_par = 0
 input_df = pd.DataFrame()
+
+st.warning("Times for Duo system are based on 2024 rule proposal. Check carefully if correct")
+
 with st.expander("Hide categories"):
 
     st.info("If you make changes here, don't forget to Download the data again",icon="🚨")
