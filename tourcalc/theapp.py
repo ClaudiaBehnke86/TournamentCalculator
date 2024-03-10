@@ -191,7 +191,6 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
                               'cat_type': 'Final Block'}, index=[0])
             df_list.append(df)
 
-
     if final_time.seconds > 0:
         for x in range(int(final_tat)):
             y = int(x) + math.ceil(np.mean(tat_dev)-math.floor((np.std(tat_dev)/3*final_tat)))        
@@ -201,7 +200,7 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
                                'start_time': str(final_start_time),
                                'cat_type':'Final Block'}, index=[0])
             df_list.append(df)
-  
+
     df_print = pd.concat(df_list, ignore_index=True, axis=0)
 
     fig = px.timeline(
@@ -462,6 +461,8 @@ cat_dict_day = {}  # day per category
 
 st.header('Tournament Calculator')
 
+print("new round")
+
 LINK = '[Click here for tutorial](https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
 st.markdown(LINK, unsafe_allow_html=True)
 
@@ -615,6 +616,7 @@ for key in cat_par.copy().keys():
     if key not in cat_all:
         st.write("You have not chosen the age division/disciple of ", key, "as input")
         cat_par.pop(key, None)
+
 
 # lists with default values
 tatami_day = [int(TATAMI)] * int(days)
