@@ -477,7 +477,7 @@ with left_column_2:
 with right_column_2:
     st.subheader("Read in file")
     uploaded_file = st.file_uploader("Choose a file",
-                                     help="Make sure to have a CSV with the right input")
+                                     help="Make sure to have a CSV with the right input", key = "file_uploader")
 
 if uploaded_file is not None:
     cat_par_inp, cat_dict_day, FINAL, TATAMI, days, \
