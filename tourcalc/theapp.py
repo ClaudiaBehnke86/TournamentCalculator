@@ -439,6 +439,7 @@ def final_setting(final, TATAMI):
         else:
             bfinal_tat_inp = 1
             bf_type = None
+            ms_mode = False
 
     else:
         final_tat_inp = 1
@@ -449,6 +450,8 @@ def final_setting(final, TATAMI):
         bronze_finals = False
         bfinal_tat_inp = 1
         bf_type = None
+        ms_mode = False
+
 
     return final, final_tat_inp, final_show_inp, show_extra_t_inp, final_fix_start_time, final_start_time, bronze_finals, bfinal_tat_inp, bf_type, ms_mode
 
