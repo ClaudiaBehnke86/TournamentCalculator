@@ -289,9 +289,9 @@ def calculate_fight_time(dict_inp, final, bronze_final, ms_mode):
                 "Master M2 Fighting": timedelta(minutes=6, seconds=00),
                 "Master M3 Fighting": timedelta(minutes=6, seconds=00),
                 "Master M4 Fighting": timedelta(minutes=6, seconds=00),
-                "U10 Duo": timedelta(minutes=1, seconds=30),
-                "U12 Duo": timedelta(minutes=1, seconds=30),
-                "U14 Duo": timedelta(minutes=1, seconds=30),
+                "U10 Duo": timedelta(minutes=0, seconds=45),
+                "U12 Duo": timedelta(minutes=0, seconds=45),
+                "U14 Duo": timedelta(minutes=1, seconds=10),
                 "U16 Duo": timedelta(minutes=1, seconds=30),
                 "U18 Duo": timedelta(minutes=1, seconds=30),
                 "U21 Duo": timedelta(minutes=1, seconds=30),
@@ -324,6 +324,21 @@ def calculate_fight_time(dict_inp, final, bronze_final, ms_mode):
                 "Master M4 Jiu-Jitsu": timedelta(minutes=5, seconds=30)
                 }
 
+    dict_finals_duo = {
+        1: 0,
+        2: 1,    # one final
+        3: 2.5,  # one final, one table with 3
+        4: 3,    # one final, two semi finals
+        5: 3,    # one final, two semi finals
+        6: 4,    # two finals, two semi finals
+        7: 5.5,  # two finals, two semi finals, one table with 3
+        8: 6,    # two finals, four semi finals,
+        9: 6,    # two finals, four semi finals,
+        10: 7,   # three finals, four semi finals,
+        11: 8.5,  # three finals, four semi finals, one table with 3
+        12: 9     # three finals, six semi finals,
+    }  # based on the 2024 duo rules.. not the most elegant but it works
+
     for cat_name in dict_inp:  # loop over dictionary
         par_num = int(dict_inp.get(cat_name))  # number of fights per category
         fight_num = 0  # reset counter
@@ -342,19 +357,24 @@ def calculate_fight_time(dict_inp, final, bronze_final, ms_mode):
                     # if name of Discipline is in string of category:
                     if keys in cat_name:
                         cat_finals_dict[cat_name] = time_inp[keys]
-                        final_time += time_inp[keys] * 2
-            if par_num == 2:
-                fight_num = par_num * 3
-            elif par_num == 3:
-                fight_num = par_num * 3 + 2
-            elif par_num == 4:
-                fight_num = par_num * 3 + 4
-            elif par_num == 5:
-                fight_num = par_num * 3 + 4
-            elif par_num == 6:
-                fight_num = par_num * 3 + 8
-            elif par_num >= 7:
-                fight_num = par_num * 3 + 12
+                        final_time += time_inp[keys] * 2 *1.5
+                        # finals have more attacks
+                        fight_num = -1  # remove final of world division
+
+            if ("Adults" or "U21" or "U18") in cat_name:
+                # three rounds of preliminaries
+                fight_num_pre = par_num * 3
+            else:
+                # youth categories only have 2 rounds
+                fight_num_pre = par_num * 2
+
+            if par_num <= 12:
+                num_duo_finals = int(dict_finals_duo[par_num])
+            else:
+                num_duo_finals = 9
+
+            # each couple shows attacks and finals have more attacks
+            fight_num = fight_num_pre + num_duo_finals*2*1.5
 
         else:
             if final is True and par_num > 5:
