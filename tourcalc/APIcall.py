@@ -21,6 +21,10 @@ def read_in_catkey():
         ['cat_id', 'name']
     ].set_index('cat_id').to_dict()['name']
 
+    # String comparison does not handle + well... replaced with p in csv
+    # and here replaced back
+    key_map_inp['category_name'].replace(" p", " +", regex=True, inplace=True)
+
     return key_map_inp
 
 
