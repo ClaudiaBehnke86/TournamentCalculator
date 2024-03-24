@@ -14,7 +14,9 @@ def read_in_catkey():
      Reads in a csv  and convert catergory ids to catergoy names
 
     '''
-    inp_file = pd.read_csv("catID_name.csv", sep=';')
+    inp_file = pd.read_csv('https://raw.githubusercontent.com/ClaudiaBehnke86/JJIFsupportFiles/main/catID_name.csv', sep=';')
+
+    print(inp_file)
     key_map_inp = inp_file[
         ['cat_id', 'name']
     ].set_index('cat_id').to_dict()['name']
