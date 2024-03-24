@@ -16,14 +16,13 @@ def read_in_catkey():
     '''
     inp_file = pd.read_csv('https://raw.githubusercontent.com/ClaudiaBehnke86/JJIFsupportFiles/main/catID_name.csv', sep=';')
 
-    print(inp_file)
+    inp_file['name'].replace(" p", " +", regex=True, inplace=True)
     key_map_inp = inp_file[
         ['cat_id', 'name']
     ].set_index('cat_id').to_dict()['name']
 
     # String comparison does not handle + well... replaced with p in csv
     # and here replaced back
-    key_map_inp['category_name'].replace(" p", " +", regex=True, inplace=True)
 
     return key_map_inp
 
