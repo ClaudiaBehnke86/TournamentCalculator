@@ -456,6 +456,38 @@ def final_setting(final, TATAMI):
     return final, final_tat_inp, final_show_inp, show_extra_t_inp, final_fix_start_time, final_start_time, bronze_finals, bfinal_tat_inp, bf_type, ms_mode
 
 
+def referee_settings(TATAMI):
+    ''' The sidebar elements for the final settings
+
+    Parameters
+    ----------
+    FINAL
+        bool to say if there is a final block planned
+    '''
+    st.sidebar.markdown("""---""")
+    refs = st.sidebar.checkbox('Change referee settings',
+                                help='If you want to limit the number of tatamis per discipline',
+                                value=True)
+
+    if refs is True:
+        ref_duo = st.sidebar.number_input('Duo/Show Tatamis ',
+                                            help='On how many tatamis can Duo/Show run',
+                                            value=TATAMI, min_value = 1, max_value= TATAMI)
+        ref_fighting = st.sidebar.number_input('Fighting Tatamis ',
+                                            help='On how many tatamis can Fighting run',
+                                            value=TATAMI, min_value = 1, max_value= TATAMI)
+        ref_jiu_jitsu= st.sidebar.number_input('Jiu-Jitsu Tatamis ',
+                                            help='On how many tatamis can Jiu-Jitsu run',
+                                            value=TATAMI, min_value = 1, max_value= TATAMI)
+
+    else:
+        ref_duo = TATAMI
+        ref_fighting = TATAMI
+        ref_jiu_jitsu =TATAMI
+
+    return ref_duo, ref_fighting, ref_jiu_jitsu
+
+
 permutations_object = itertools.permutations(DIS_INP)
 permutations_list = list(permutations_object)
 
@@ -544,6 +576,9 @@ cat_par = api_call(cat_par)
 
 FINAL, final_tat, final_show, show_extra_t, f_fix_start_time, f_start_time, \
     bfinals, bfinal_tat_inp, bfinal_type, ms_mode = final_setting(FINAL, TATAMI)
+
+# Set special referee settings
+ref_duo, ref_fighting, ref_jiu_jitsu = referee_settings(TATAMI)
 
 left_column, middle_column, right_column = st.columns(3)
 with left_column:
@@ -790,7 +825,11 @@ if st.button('all info is correct'):
                                                          int(tatami_day[j]),
                                                          btype_day[j],
                                                          btime_day[j],
-                                                         breaklength_day[j])
+                                                         breaklength_day[j],
+                                                         ref_duo,
+                                                         ref_fighting,
+                                                         ref_jiu_jitsu
+                                                         )
 
                 best_res = {k: v for k, v in sorted(most_abundand.items(),
                             key=lambda item: item[1], reverse=True)}

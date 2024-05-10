@@ -26,7 +26,11 @@ def descition_matrix(cat_time_dict,
                      tatami,
                      break_t,
                      breaktime,
-                     breaklength):
+                     breaklength,
+                     ref_duo,
+                     ref_fighting,
+                     ref_jiu_jitsu
+                     ):
     ''' to find the best solution based on penalty and weighting of the results
 
     Parameters
@@ -49,6 +53,8 @@ def descition_matrix(cat_time_dict,
     permutations_object = itertools.permutations(DIS_INP)
     permutations_list = list(permutations_object)
 
+    print( ref_duo, " ", ref_fighting," ", ref_jiu_jitsu)
+
     # array for all possible outcomes
     scheduled_jobs = np.array([[[None] * tatami] * len(permutations_list)] * DIS_CHA_TIME)
     loads = np.array([[[None] * tatami] * len(permutations_list)] * DIS_CHA_TIME)
@@ -68,7 +74,10 @@ def descition_matrix(cat_time_dict,
                                 permutations_list[j],
                                 pen_var_t, tatami,
                                 break_t, breaktime,
-                                breaklength)
+                                breaklength,
+                                ref_duo,
+                                ref_fighting,
+                                ref_jiu_jitsu)
     min_id = np.array([[0.1] * len(happiness)] * len(pen_time_list))
     min_score = np.array([[0.1] * len(happiness)] * len(pen_time_list))
 
@@ -447,7 +456,8 @@ def split_categories(cat_time_dict, av_time):
 
 
 def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
-                  tatami, break_t, breaktime, breaklength):
+                  tatami, break_t, breaktime, breaklength, ref_duo,
+                  ref_fighting, ref_jiu_jitsu):
     '''
     Run the algorithm. Create List of dictionaries with,
     where each discipline has its own dictionary. And fill
@@ -474,6 +484,12 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
         time when the break should happen [dateime]
     breaklength
         length of the break [datetime]
+    ref_duo
+        number of tatamis for Duo/Show System[int]
+    ref_fighting
+        number of tatamis for Fighting System[int]
+    ref_jiu_jitsu
+        number of tatamis for Jiu-Jitsu System[int]
     '''
 
     # dict to have the parts entries
@@ -516,6 +532,8 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
         #      "{:.2f}".format(time_needed[i]/3600))
 
     remove_tat = 0
+
+
     # Step 3
     for i, j in enumerate(distr_sor_list):
         # print(" --- next discipline is ---  ",  DIS_INP[i] )
@@ -555,7 +573,25 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
             else:
                 pass
 
+
+
             # Step c) distribute categories
+
+            # set max number of tatamis based on referees
+            if "Duo" in DIS_INP[i]:
+               t_duo = ref_duo
+            elif "Show" in DIS_INP[i]:
+                t_duo = ref_duo
+            elif "Fighting" in DIS_INP[i]:
+                t_fighting = ref_fighting
+            elif "Jiu-Jitsu" in DIS_INP[i]:
+                t_jiu_jitsu = ref_jiu_jitsu
+
+
+            search = 'Jiu-Jitsu'
+            print(len([l for l in scheduled_jobs if any(search in s for s in l)]))
+
+
             for job in distr_sor_list[i]:
                 if distr_sor_list[i][job].seconds > 0:
                     minload_tatami = minloadtatami(loads)
