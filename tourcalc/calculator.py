@@ -12,7 +12,7 @@ import numpy as np
 # some global variables
 AGE_INP = ["U10", "U12", "U14", "U16", "U18", "U21", "Adults", "Master"]  # the supported age divisions
 # order does not matter -> permutations
-DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]  # supported disciplines
+DIS_INP = ["Duo", "Show", "Jiu-Jitsu","Fighting", "Jiu-Jitsu NoGi"]  # supported disciplines
 # just a name
 DIS_CHA = "Discipline change"  # indicator of a change of a discipline
 # add the changing time for the change between disciplines in minutes
@@ -208,7 +208,7 @@ def cal_cat(age_select, dis_select):
                     if i == "Master":
                         for n in ["M1", "M2", "M3", "M4"]:
                             cat_all.append(i + " "+n + " " + j + " " + k)
-            elif i == "U10":
+            if i == "U10":
                 for k in weight_m10:
                     cat_all.append(i + " " + j + " Men " + k + " kg")
                 for k in weight_w10:

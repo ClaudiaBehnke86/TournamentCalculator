@@ -35,7 +35,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 AGE_INP = ["U12", "U14", "U16", "U18", "U21", "Adults", "Master"]  # the supported age divisions
-DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting"]
+DIS_INP = ["Duo", "Show", "Jiu-Jitsu","Fighting", "Jiu-Jitsu NoGi"]  # supported disciplines
 
 AGE_SEL = []  # an empty list to select the age divisions
 DIS_SEL = []  # an empty list to select the age categories
