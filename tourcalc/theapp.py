@@ -452,8 +452,52 @@ def final_setting(final, TATAMI):
         bf_type = None
         ms_mode = False
 
-
     return final, final_tat_inp, final_show_inp, show_extra_t_inp, final_fix_start_time, final_start_time, bronze_finals, bfinal_tat_inp, bf_type, ms_mode
+
+
+def max_tat_setting(TATAMI):
+    ''' The sidebar elements for the final settings
+
+    Parameters
+    ----------
+    FINAL
+        bool to say if there is a final block planned
+    '''
+    st.sidebar.markdown("""---""")
+    max_tat_set = st.sidebar.checkbox('Limit number of tatamis per disciple',
+                                help='If you check this box the event will be able to limit the number of tatamis per dicipline',
+                                value=True)
+
+    if max_tat_set is True:
+
+        max_tat_duo = st.sidebar.number_input('Max number of tatamis for Duo ',
+                                                       value=1,max_value=TATAMI,min_value = 1)
+        max_tat_show = st.sidebar.number_input('Max number of tatamis for Show ',
+                                                       value=1,max_value=TATAMI,min_value = 1)
+        max_tat_jj = st.sidebar.number_input('Max number of tatamis for Jiu-Jitsu ',
+                                                       value=min(3,TATAMI),max_value=TATAMI,min_value = 1)
+        max_tat_fs = st.sidebar.number_input('Max number of tatamis for Fighting System ',
+                                                       value=TATAMI,max_value=TATAMI,min_value = 1)
+
+        max_tatamis_per_discipline = {"Duo": max_tat_duo,
+                              "Show": max_tat_show,
+                              "Jiu-Jitsu": max_tat_jj,
+                              "Fighting": max_tat_fs,
+                             "Jiu-Jitsu NoGi": max_tat_jj}
+        if (max_tat_duo+max_tat_show+max_tat_jj+max_tat_fs) < TATAMI:
+            TATAMI = max_tat_duo+max_tat_show+max_tat_jj+max_tat_fs
+            st.error("Max number of tatamis is too little, correct total number of tatamis reduced to f'{TATAMI}")
+
+    else:
+        max_tatamis_per_discipline = {"Duo": TATAMI,
+                              "Show": TATAMI,
+                              "Jiu-Jitsu": TATAMI,
+                              "Fighting": TATAMI,
+                             "Jiu-Jitsu NoGi": TATAMI}
+
+
+
+    return max_tatamis_per_discipline, TATAMI
 
 
 permutations_object = itertools.permutations(DIS_INP)
@@ -463,8 +507,6 @@ cat_par = {}  # number of participants
 cat_dict_day = {}  # day per category
 
 st.header('Tournament Calculator')
-
-print("new round")
 
 LINK = '[Click here for tutorial](https://tournamentcalculator.readthedocs.io/en/latest/tutorial.html)'
 st.markdown(LINK, unsafe_allow_html=True)
@@ -544,6 +586,8 @@ cat_par = api_call(cat_par)
 
 FINAL, final_tat, final_show, show_extra_t, f_fix_start_time, f_start_time, \
     bfinals, bfinal_tat_inp, bfinal_type, ms_mode = final_setting(FINAL, TATAMI)
+
+max_tatamis_per_discipline, TATAMI = max_tat_setting(TATAMI)
 
 left_column, middle_column, right_column = st.columns(3)
 with left_column:
@@ -730,6 +774,7 @@ if st.button('all info is correct'):
         st.markdown("---")
 
         data = []
+
         for j in range(0, days):
             cat_par_day = edited_df[edited_df['Competition day'] == j+1]
             cat_par_day = cat_par_day.set_index('Category Name')[['Number of athletes']].to_dict()
@@ -790,7 +835,8 @@ if st.button('all info is correct'):
                                                          int(tatami_day[j]),
                                                          btype_day[j],
                                                          btime_day[j],
-                                                         breaklength_day[j])
+                                                         breaklength_day[j],
+                                                         max_tatamis_per_discipline)
 
                 best_res = {k: v for k, v in sorted(most_abundand.items(),
                             key=lambda item: item[1], reverse=True)}

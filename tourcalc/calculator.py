@@ -12,7 +12,7 @@ import numpy as np
 # some global variables
 AGE_INP = ["U10", "U12", "U14", "U16", "U18", "U21", "Adults", "Master"]  # the supported age divisions
 # order does not matter -> permutations
-DIS_INP = ["Duo", "Show", "Jiu-Jitsu","Fighting", "Jiu-Jitsu NoGi"]  # supported disciplines
+DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting", "Jiu-Jitsu NoGi"]  # supported disciplines
 # just a name
 DIS_CHA = "Discipline change"  # indicator of a change of a discipline
 # add the changing time for the change between disciplines in minutes
@@ -26,7 +26,8 @@ def descition_matrix(cat_time_dict,
                      tatami,
                      break_t,
                      breaktime,
-                     breaklength):
+                     breaklength,
+                     max_tatamis_per_discipline):
     ''' to find the best solution based on penalty and weighting of the results
 
     Parameters
@@ -68,7 +69,8 @@ def descition_matrix(cat_time_dict,
                                 permutations_list[j],
                                 pen_var_t, tatami,
                                 break_t, breaktime,
-                                breaklength)
+                                breaklength, max_tatamis_per_discipline)
+
     min_id = np.array([[0.1] * len(happiness)] * len(pen_time_list))
     min_score = np.array([[0.1] * len(happiness)] * len(pen_time_list))
 
@@ -447,33 +449,41 @@ def split_categories(cat_time_dict, av_time):
 
 
 def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
-                  tatami, break_t, breaktime, breaklength):
+                  tatami, break_t, breaktime, breaklength, max_tatamis_per_discipline):
     '''
-    Run the algorithm. Create List of dictionaries with,
-    where each discipline has its own dictionary. And fill
-    it with the existing categories. Sort each dictionary
-    by size (longest competitions in beginning of list)
+    Run the algorithm. Create a list of dictionaries, where each discipline
+    has its own dictionary, and fill it with the existing categories.
+    Sort each dictionary by size (longest competitions at the beginning of the list).
 
     Parameters
     ----------
-    jobs
-        dict of categories that need to be distributed (dict)
-    av_time
-        reference time for average tatami (float [s])
-    cur_per
-        current order of disciplines [list]
-    DIS_CHA_TIME
-        penalty time for changing a discipline [fload [s]]
-    DIS_CHA
-        indicate change of discipline [str]
-    tatami
-        number of tatamis [int]
-    break_type
-        "block" ; "Individual" [str]
-    breaktime
-        time when the break should happen [dateime]
-    breaklength
-        length of the break [datetime]
+    jobs : dict
+        dict of categories that need to be distributed.
+    av_time : float
+        reference time for average tatami [s].
+    cur_per : list
+        current order of disciplines.
+    cur_pen_time : float
+        penalty time for changing a discipline [s].
+    tatami : int
+        number of tatamis.
+    break_t : str
+        "block" or "Individual".
+    breaktime : datetime
+        time when the break should happen.
+    breaklength : datetime
+        length of the break.
+    max_tatamis_per_discipline : dict
+        maximum number of tatamis allowed for each discipline.
+
+    Returns
+    -------
+    scheduled_jobs : list
+        the final schedule per tatami.
+    loads : list
+        the time loads on each tatami.
+    jobs_new : dict
+        the updated job list after potential splitting due to breaks.
     '''
 
     # dict to have the parts entries
@@ -488,14 +498,14 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
     time_needed = []
     distr_sor_list = distr_list
 
-    # print(" ----- ",cur_per," ----- ")
     # Step 1
     for i in cur_per:
         distr_list.append({})  # add a new list for each discipline
-    for (key, value) in jobs.items():
+    for key, value in jobs.items():
         for i, j in enumerate(cur_per):  # loop over all entries in the input
             if j in key:  # Check if key is the same add pair to new dictionary
                 distr_list[i][key] = value
+
     # Step 2
     # sort individual list by length of categories
     for i, j in enumerate(distr_list):
@@ -506,26 +516,28 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
     par_tat_need.clear()
     for i, j in enumerate(distr_sor_list):
         time_needed.append(0)  # add 0 as starting time for discipline
-        for (key, value) in distr_list[i].items():
+        for key, value in distr_list[i].items():
             time_needed[i] += value.seconds
-        par_tat_need.append(time_needed[i]/av_time.seconds
-                            - time_needed[i]//av_time.seconds)
-        # print("Tatamis needed for", cur_per[i], " : ",
-        #     "{:.2f}".format(time_needed[i]/av_time.seconds))
-        # print("Time needed for", cur_per[i], " : ",
-        #      "{:.2f}".format(time_needed[i]/3600))
+        par_tat_need.append(time_needed[i] / av_time.seconds
+                            - time_needed[i] // av_time.seconds)
 
     remove_tat = 0
     # Step 3
+
     for i, j in enumerate(distr_sor_list):
-        # print(" --- next discipline is ---  ",  DIS_INP[i] )
+        # Get the maximum number of tatamis for the current discipline
+        max_tatamis = max_tatamis_per_discipline.get(cur_per[i], tatami)
         if time_needed[i] != 0:  # ignore empty disciplines
-            extra_time_t = (1-par_tat_need[i])*av_time.seconds
-            # to check extra time, if added time need to be later removed
+            # add  time block for penalties
+            extra_time_t = (1 - par_tat_need[i]) * av_time.seconds
+            # remove for half tatamis
             remove = False
+            # remove for max tatamis
+            remove_maxT = False
 
             # Step a) creates all of "full" tatamis
             for _ in range(0, time_needed[i] // av_time.seconds):
+                # create  all tatamis or the max number
                 if len(loads) < tatami:
                     loads.append(0)  # create loads for tatamis
                     scheduled_jobs.append([])  # create tatamis
@@ -539,23 +551,28 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
                 scheduled_jobs.append([])  # create tatamis
             elif i == 0:  # extra tatami is needed for first rounds
                 scheduled_jobs.append([])  # add empty tatami
-                # adds the time to the tatami
                 loads.append(extra_time_t + cur_pen_time)
                 remove = True
                 remove_tat = len(scheduled_jobs) - 1
             elif loads[remove_tat] > (extra_time_t - cur_pen_time):
                 # extra tatami is needed
-
-                # add empty tatami
-                scheduled_jobs.append([])
-                # adds the time to the tatami
+                scheduled_jobs.append([])  # add empty tatami
                 loads.append(extra_time_t + cur_pen_time)
                 remove = True
                 remove_tat = len(scheduled_jobs) - 1
             else:
                 pass
 
-            # Step c) distribute categories
+            # Step c) create blocks to reduce number of available tatamis
+            if len(loads) > max_tatamis:
+                # find out how many tatamis need to be removed
+                N = len(loads) - max_tatamis
+                sres = sorted(range(len(loads)), key = lambda sub: loads[sub])[-N:]
+                for q in sres:
+                    loads[q] += timedelta(hours=12).seconds
+                remove_maxT = True
+
+            # Step d) distribute categories
             for job in distr_sor_list[i]:
                 if distr_sor_list[i][job].seconds > 0:
                     minload_tatami = minloadtatami(loads)
@@ -587,19 +604,24 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
                                 del jobs_new[job]
                                 jobs_new[job1] = timedelta(seconds=time1)
                                 jobs_new[job2] = timedelta(seconds=time2)
-
                         else:
                             scheduled_jobs[minload_tatami].append(job)
                             loads[minload_tatami] += distr_sor_list[i][job].seconds
                     else:
                         scheduled_jobs[minload_tatami].append(job)
                         loads[minload_tatami] += distr_sor_list[i][job].seconds
-                if remove is True:
-                    # removed the time from the tatami.
-                    loads[remove_tat] -= (extra_time_t)
-                    remove = False
 
-            # add dis change after each distribution
+            # remove added time blocks
+            if remove is True:
+                # removed the time from the tatami.
+                loads[remove_tat] -= (extra_time_t)
+                remove = False
+            if remove_maxT is True:
+                for p in sres:
+                    loads[p] -= timedelta(hours=12).seconds
+                remove_maxT = False
+
+            # add discipline change after each distribution
             for tat_used in range(0, len(loads)):
                 if len(scheduled_jobs[tat_used]) > 0 and scheduled_jobs[tat_used][-1] is not DIS_CHA and scheduled_jobs[tat_used][-1] is not BREAK:
                     scheduled_jobs[tat_used].append(DIS_CHA)
@@ -609,8 +631,6 @@ def distr_cat_alg(jobs, av_time, cur_per, cur_pen_time,
         if len(scheduled_jobs[tat_used]) > 0 and scheduled_jobs[tat_used][-1] is DIS_CHA:
             scheduled_jobs[tat_used].pop()
             loads[tat_used] -= cur_pen_time * 60
-    # if(cur_pen_time == 25 and
-    # cur_per == ('Fighting', 'Show', 'Duo', 'Jiu-Jitsu')):
 
     return scheduled_jobs, loads, jobs_new
 
