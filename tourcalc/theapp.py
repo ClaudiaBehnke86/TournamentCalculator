@@ -464,8 +464,8 @@ def max_tat_setting(TATAMI):
         bool to say if there is a final block planned
     '''
     st.sidebar.markdown("""---""")
-    max_tat_set = st.sidebar.checkbox('Limit number of tatamis per disciple',
-                                help='If you check this box the event will be able to limit the number of tatamis per dicipline',
+    max_tat_set = st.sidebar.checkbox('Limit number of tatamis per Discipline',
+                                help='If you check this box the event will be able to limit the number of tatamis per discipline',
                                 value=True)
 
     if max_tat_set is True:
