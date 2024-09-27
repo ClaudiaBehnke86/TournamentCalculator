@@ -12,7 +12,7 @@ import numpy as np
 # some global variables
 AGE_INP = ["U10", "U12", "U14", "U16", "U18", "U21", "Adults", "Master"]  # the supported age divisions
 # order does not matter -> permutations
-DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting", "Jiu-Jitsu NoGi"]  # supported disciplines
+DIS_INP = ["Duo", "Show", "Jiu-Jitsu", "Fighting", "Jiu-Jitsu NoGi", "Contact", "Contact Hif"]  # supported disciplines
 # just a name
 DIS_CHA = "Discipline change"  # indicator of a change of a discipline
 # add the changing time for the change between disciplines in minutes
@@ -198,54 +198,56 @@ def cal_cat(age_select, dis_select):
     weight_m12 = ['-25', '-28', '-32', '-36', '-40', '-44', '-48', '-52', '+52']
     weight_m10 = ['-22', '-25', '-28', '-32', '-36', '-40', '-44', '+44']
 
-    cat_team = {"Women", "Men", "Mixed", "Open"}
-
     cat_all = []
     for i in age_select:  # Looping AgeDivisions
         for j in dis_select:  # Looping Disciplines
             if j in ("Duo", "Show"):
-                for k in cat_team:
-                    if i != "Master":
-                        cat_all.append(i + " " + j + " " + k)
-                    if i == "Master":
+                if i != "Master":
+                    for o in ["Women", "Men", "Mixed"]:
+                        cat_all.append(i + " " + j + " " + o)
+                if i == "Master":
+                    for o in ["Women", "Men", "Mixed"]:
                         for n in ["M1", "M2", "M3", "M4"]:
-                            cat_all.append(i + " "+n + " " + j + " " + k)
-            if i == "U10":
-                for k in weight_m10:
-                    cat_all.append(i + " " + j + " Men " + k + " kg")
-                for k in weight_w10:
-                    cat_all.append(i + " " + j + " Women " + k + " kg")
-            elif i == "U12":
-                for k in weight_m12:
-                    cat_all.append(i + " " + j + " Men " + k + " kg")
-                for k in weight_w12:
-                    cat_all.append(i + " " + j + " Women " + k + " kg")
-            elif i == "U14":
-                for k in weight_m14:
-                    cat_all.append(i + " " + j + " Men " + k + " kg")
-                for k in weight_w14:
-                    cat_all.append(i + " " + j + " Women " + k + " kg")
-            elif i == "U16":
-                for k in weight_m16:
-                    cat_all.append(i + " " + j + " Men " + k + " kg")
-                for k in weight_w16:
-                    cat_all.append(i + " " + j + " Women " + k + " kg")
-            elif i == "U18":
-                for k in weight_m18:
-                    cat_all.append(i + " " + j + " Men " + k + " kg")
-                for k in weight_w18:
-                    cat_all.append(i + " " + j + " Women " + k + " kg")
-            elif i == "Master":
-                for n in ["M1", "M2", "M3", "M4"]:
-                    for k in weight_m:
-                        cat_all.append(i + " "+n + " " + j + " Men " + k + " kg")
-                    for k in weight_w:
-                        cat_all.append(i + " "+n + " " + j + " Women " + k + " kg")
+                            cat_all.append(i + " "+n + " " + j + " " + o)
+                if i == "Adults":
+                    cat_all.append(i + " " + j + " Open")
             else:
-                for k in weight_m:
-                    cat_all.append(i + " " + j + " Men " + k + " kg")
-                for k in weight_w:
-                    cat_all.append(i + " " + j + " Women " + k + " kg")
+                if i == "U10":
+                    for k in weight_m10:
+                        cat_all.append(i + " " + j + " Men " + k + " kg")
+                    for k in weight_w10:
+                        cat_all.append(i + " " + j + " Women " + k + " kg")
+                elif i == "U12":
+                    for k in weight_m12:
+                        cat_all.append(i + " " + j + " Men " + k + " kg")
+                    for k in weight_w12:
+                        cat_all.append(i + " " + j + " Women " + k + " kg")
+                elif i == "U14":
+                    for k in weight_m14:
+                        cat_all.append(i + " " + j + " Men " + k + " kg")
+                    for k in weight_w14:
+                        cat_all.append(i + " " + j + " Women " + k + " kg")
+                elif i == "U16":
+                    for k in weight_m16:
+                        cat_all.append(i + " " + j + " Men " + k + " kg")
+                    for k in weight_w16:
+                        cat_all.append(i + " " + j + " Women " + k + " kg")
+                elif i == "U18":
+                    for k in weight_m18:
+                        cat_all.append(i + " " + j + " Men " + k + " kg")
+                    for k in weight_w18:
+                        cat_all.append(i + " " + j + " Women " + k + " kg")
+                elif i == "Master":
+                    for n in ["M1", "M2", "M3", "M4"]:
+                        for k in weight_m:
+                            cat_all.append(i + " "+n + " " + j + " Men " + k + " kg")
+                        for k in weight_w:
+                            cat_all.append(i + " "+n + " " + j + " Women " + k + " kg")
+                else:
+                    for k in weight_m:
+                        cat_all.append(i + " " + j + " Men " + k + " kg")
+                    for k in weight_w:
+                        cat_all.append(i + " " + j + " Women " + k + " kg")
 
     return cat_all
 
@@ -323,7 +325,8 @@ def calculate_fight_time(dict_inp, final, bronze_final, ms_mode):
                 "Master M1 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
                 "Master M2 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
                 "Master M3 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
-                "Master M4 Jiu-Jitsu": timedelta(minutes=5, seconds=30)
+                "Master M4 Jiu-Jitsu": timedelta(minutes=5, seconds=30),
+                "Contact": timedelta(minutes=7, seconds=00),
                 }
 
     dict_finals_duo = {
@@ -342,7 +345,7 @@ def calculate_fight_time(dict_inp, final, bronze_final, ms_mode):
     }  # based on the 2024 duo rules.. not the most elegant but it works
 
     for cat_name in dict_inp:  # loop over dictionary
-        par_num = int(dict_inp.get(cat_name))  # number of fights per category
+        par_num = int(dict_inp.get(cat_name))  # number of athletes per category
         fight_num = 0  # reset counter
 
         if "Show" in cat_name and par_num > 1:
@@ -402,6 +405,14 @@ def calculate_fight_time(dict_inp, final, bronze_final, ms_mode):
                             if keys in cat_name:
                                 cat_bfinals_dict[cat_name] = time_inp[keys]
                                 bfinal_time += 2*time_inp[keys]
+
+        if "Contact" in cat_name:
+            if par_num < 4: # round robin used for less than 4
+                fight_num += low_par_num.get(par_num)
+            else: #single elimination
+                fight_num += par_num - 1
+
+        else:
 
             if par_num < 8:
                 fight_num += low_par_num.get(par_num)

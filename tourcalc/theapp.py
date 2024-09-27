@@ -35,7 +35,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 AGE_INP = ["U12", "U14", "U16", "U18", "U21", "Adults", "Master"]  # the supported age divisions
-DIS_INP = ["Duo", "Show", "Jiu-Jitsu","Fighting", "Jiu-Jitsu NoGi"]  # supported disciplines
+DIS_INP = ["Duo", "Show", "Jiu-Jitsu","Fighting", "Jiu-Jitsu NoGi", "Contact Ju-Jitsu", "Contact Hif Ju-Jitsu"]  # supported disciplines
 
 AGE_SEL = []  # an empty list to select the age divisions
 DIS_SEL = []  # an empty list to select the age categories
@@ -122,6 +122,8 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
                          other="Duo", inplace=True)
     df['cat_type'].where(~(df['cat_type'].str.contains("Show")),
                          other="Show", inplace=True)
+    df['cat_type'].where(~(df['cat_type'].str.contains("Contact")),
+                         other="Contact", inplace=True)
 
     df['end_time'] = str(date_i) + ' ' + \
         df['end_time'].apply(lambda x: str(x)[-8:])
@@ -214,7 +216,8 @@ def plot_schedule_time(scheduled_jobs_i, cat_time_dict_i, start_time_i, date_i, 
                 "Fighting": 'rgb(0,144,206)',
                 "Duo": 'rgb(211,211,211)',
                 "Show": 'rgb(105,105,105)',
-                "Discipline change": 'rgb(255,255,255)',
+                "Contact":'rgb(44,46,148)',
+                "Discipline change":'rgb(255,255,255)',
                 "Break": 'rgb(255,255,255)'},
         hover_name='category',
         text='category'
@@ -310,8 +313,14 @@ def make_input(cat_par_inp):
             DIS_SEL.append("Duo")
         if ("Fighting" in cat_name) and ("Fighting" not in DIS_SEL):
             DIS_SEL.append("Fighting")
+        if ("Jiu-Jitsu NoGi" in cat_name) and ("Jiu-Jitsu NoGi" not in DIS_SEL):
+            DIS_SEL.append("Jiu-Jitsu NoGi")
         if ("Jiu-Jitsu" in cat_name) and ("Jiu-Jitsu" not in DIS_SEL):
             DIS_SEL.append("Jiu-Jitsu")
+        if ("Contact HiF Ju-Jitsu" in cat_name) and ("Contact Hif Ju-Jitsu" not in DIS_SEL):
+            DIS_SEL.append("Contact Hif Ju-Jitsu")
+        if ("Contact Ju-Jitsu" in cat_name) and ("Contact Ju-Jitsu" not in DIS_SEL):
+            DIS_SEL.append("Contact Ju-Jitsu")
         if len(DIS_SEL) == 0:
             st.write("No disciplines in input file")
 
@@ -369,6 +378,15 @@ def api_call(cat_par):
                                                    timeout=5)
         d_upc = response.json()
         df_upc = json_normalize(d_upc)
+
+        # skip events which are not tournaments
+        df_upc = df_upc[~df_upc['name'].str.contains("Referee")]
+        df_upc = df_upc[~df_upc['name'].str.contains("Course")]
+        df_upc = df_upc[~df_upc['name'].str.contains("REFEREE")]
+
+        offmail = ["sportdata@jjif.org","worlds@jjif.org","pesk@adsys.gr" ,"rick.frowyn@jjeu.eu", "office@jjau.org", "mail@jjif.org", "jjif@sportdata.org", "jiujitsucolombia@hotmail.com", "fjjitalia@gmail.com"]
+        evts = df_upc['name'][df_upc['contactemail'].isin(offmail)].tolist()
+
         evts = df_upc['name'].tolist()
         evts.append('Other')
         option = st.sidebar.selectbox("Choose your event", evts,
@@ -478,12 +496,17 @@ def max_tat_setting(TATAMI):
                                                        value=min(3,TATAMI),max_value=TATAMI,min_value = 1)
         max_tat_fs = st.sidebar.number_input('Max number of tatamis for Fighting System ',
                                                        value=TATAMI,max_value=TATAMI,min_value = 1)
+        max_tat_cs = st.sidebar.number_input('Max number of tatamis for Contact System ',
+                                                       value=3,max_value=TATAMI,min_value = 1)
 
         max_tatamis_per_discipline = {"Duo": max_tat_duo,
-                              "Show": max_tat_show,
-                              "Jiu-Jitsu": max_tat_jj,
-                              "Fighting": max_tat_fs,
-                             "Jiu-Jitsu NoGi": max_tat_jj}
+                                      "Show": max_tat_show,
+                                      "Jiu-Jitsu": max_tat_jj,
+                                      "Fighting": max_tat_fs,
+                                      "Jiu-Jitsu NoGi": max_tat_jj,
+                                      "Contact Ju-Jitsu": max_tat_cs,
+                                      "Contact Hif Ju-Jitsu": max_tat_cs
+                                      }
         if (max_tat_duo+max_tat_show+max_tat_jj+max_tat_fs) < TATAMI:
             TATAMI = max_tat_duo+max_tat_show+max_tat_jj+max_tat_fs
             st.error("Max number of tatamis is too little, correct total number of tatamis reduced to f'{TATAMI}")
