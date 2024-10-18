@@ -930,7 +930,7 @@ if st.button('all info is correct'):
                                                  f_start_time_day[j], bfinal_type,
                                                  bfinal_time, final_tat_day[j], bfinal_tat_day[j])
 
-                        st.plotly_chart(fig, key=j)
+                        st.plotly_chart(fig, key="d"+str(j)+"per"+str(permut_num))
                         st.write("Start time day:",
                                  str(start_time_day[j])[-8:],
                                  "  \n Final can start at: ",
